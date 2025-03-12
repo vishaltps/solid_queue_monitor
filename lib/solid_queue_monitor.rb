@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "solid_queue_monitor/version"
+require_relative "solid_queue_monitor/engine"
 
 module SolidQueueMonitor
   class Error < StandardError; end
