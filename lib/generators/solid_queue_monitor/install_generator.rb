@@ -7,7 +7,7 @@ module SolidQueueMonitor
     end
 
     def add_routes
-      route 'mount SolidQueueMonitor::Engine => "/queue"'
+      route 'mount SolidQueueMonitor::Engine => "/solid_queue"'
     end
 
     def show_readme
