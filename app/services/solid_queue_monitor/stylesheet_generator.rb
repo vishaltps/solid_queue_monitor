@@ -316,6 +316,79 @@ input[type="checkbox"] {
           display: none;
         }
       }
+
+      .filter-form-container {
+        background: white;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      }
+
+      .filter-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: flex-end;
+      }
+
+      .filter-group {
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .filter-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #4b5563;
+      }
+
+      .filter-group input,
+      .filter-group select {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+      }
+
+      .filter-actions {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .filter-button {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .filter-button:hover {
+        background: #2563eb;
+      }
+
+      .reset-button {
+        background: #f3f4f6;
+        color: #4b5563;
+        border: 1px solid #d1d5db;
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .reset-button:hover {
+        background: #e5e7eb;
+      }
       CSS
     end
   end

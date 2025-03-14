@@ -2,45 +2,70 @@ module SolidQueueMonitor
   class BasePresenter
     include ActionView::Helpers::DateHelper
     include ActionView::Helpers::TextHelper
+    include Rails.application.routes.url_helpers
+    include SolidQueueMonitor::Engine.routes.url_helpers
+
+    def default_url_options
+      { only_path: true }
+    end
 
     def section_wrapper(title, content)
       <<-HTML
-        #{content}
+        <div class="section-wrapper">
+          <div class="section">
+            #{content}
+          </div>
+        </div>
       HTML
     end
 
     def generate_pagination(current_page, total_pages)
       return '' if total_pages <= 1
-
+      
       links = []
       
-      # Previous button
+      # Previous page link
       if current_page > 1
-        links << "<a href='?page=#{current_page - 1}' class='pagination-link pagination-nav'>&laquo; Previous</a>"
+        links << "<a href='?page=#{current_page - 1}#{query_params}' class='pagination-link'>&laquo; Previous</a>"
       else
-        links << "<span class='pagination-link pagination-nav disabled'>&laquo; Previous</span>"
+        links << "<span class='pagination-link disabled'>&laquo; Previous</span>"
       end
-
-      # Page numbers
-      visible_pages = calculate_visible_pages(current_page, total_pages)
       
-      visible_pages.each do |page|
-        if page == :gap
-          links << "<span class='pagination-gap'>...</span>"
-        elsif page == current_page
-          links << "<span class='pagination-current'>#{page}</span>"
-        else
-          links << "<a href='?page=#{page}' class='pagination-link'>#{page}</a>"
+      # Page number links
+      if total_pages <= 7
+        # Show all pages if there are 7 or fewer
+        (1..total_pages).each do |page|
+          links << page_link(page, current_page)
         end
-      end
-
-      # Next button
-      if current_page < total_pages
-        links << "<a href='?page=#{current_page + 1}' class='pagination-link pagination-nav'>Next &raquo;</a>"
       else
-        links << "<span class='pagination-link pagination-nav disabled'>Next &raquo;</span>"
+        # Show first page, last page, and pages around current
+        links << page_link(1, current_page)
+        
+        if current_page > 3
+          links << "<span class='pagination-gap'>...</span>"
+        end
+        
+        start_page = [current_page - 1, 2].max
+        end_page = [current_page + 1, total_pages - 1].min
+        
+        (start_page..end_page).each do |page|
+          links << page_link(page, current_page)
+        end
+        
+        if current_page < total_pages - 2
+          links << "<span class='pagination-gap'>...</span>"
+        end
+        
+        links << page_link(total_pages, current_page)
       end
-
+      
+      # Next page link
+      if current_page < total_pages
+        links << "<a href='?page=#{current_page + 1}#{query_params}' class='pagination-link'>Next &raquo;</a>"
+      else
+        links << "<span class='pagination-link disabled'>Next &raquo;</span>"
+      end
+      
       <<-HTML
         <div class="pagination">
           #{links.join}
@@ -64,11 +89,48 @@ module SolidQueueMonitor
     end
 
     def format_datetime(datetime)
-      datetime&.strftime('%Y-%m-%d %H:%M:%S')
+      return '-' unless datetime
+      datetime.strftime('%Y-%m-%d %H:%M:%S')
     end
 
     def format_arguments(arguments)
-      "<code>#{arguments}</code>"
+      return '-' unless arguments.present?
+      
+      if arguments.is_a?(Array) && arguments.length == 1 && arguments[0].is_a?(Hash)
+        # Handle ActiveJob-style arguments
+        format_hash(arguments[0])
+      else
+        "<code>#{arguments.to_json}</code>"
+      end
+    end
+
+    def format_hash(hash)
+      return '-' unless hash.present?
+      
+      formatted = hash.map do |key, value|
+        "<strong>#{key}:</strong> #{value.to_s.truncate(50)}"
+      end.join(', ')
+      
+      "<code>#{formatted}</code>"
+    end
+
+    private
+
+    def page_link(page, current_page)
+      if page == current_page
+        "<span class='pagination-current'>#{page}</span>"
+      else
+        "<a href='?page=#{page}#{query_params}' class='pagination-link'>#{page}</a>"
+      end
+    end
+
+    def query_params
+      params = []
+      params << "class_name=#{CGI.escape(@filters[:class_name])}" if @filters && @filters[:class_name].present?
+      params << "queue_name=#{CGI.escape(@filters[:queue_name])}" if @filters && @filters[:queue_name].present?
+      params << "status=#{CGI.escape(@filters[:status])}" if @filters && @filters[:status].present?
+      
+      params.empty? ? '' : "&#{params.join('&')}"
     end
   end
 end

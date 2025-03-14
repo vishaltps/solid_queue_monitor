@@ -8,30 +8,39 @@ module SolidQueueMonitor
 
     def index
       @stats = SolidQueueMonitor::StatsCalculator.calculate
-      @recent_jobs = paginate(SolidQueue::Job.order(created_at: :desc))
+      @recent_jobs = paginate(filter_jobs(SolidQueue::Job.order(created_at: :desc)))
       
       render_page('Overview', generate_overview_content)
     end
 
     def ready_jobs
-      @ready_jobs = paginate(SolidQueue::ReadyExecution.includes(:job).order(created_at: :desc))
+      base_query = SolidQueue::ReadyExecution.includes(:job).order(created_at: :desc)
+      @ready_jobs = paginate(filter_ready_jobs(base_query))
       render_page('Ready Jobs', SolidQueueMonitor::ReadyJobsPresenter.new(@ready_jobs[:records], 
         current_page: @ready_jobs[:current_page],
-        total_pages: @ready_jobs[:total_pages]).render)
+        total_pages: @ready_jobs[:total_pages],
+        filters: filter_params
+      ).render)
     end
 
     def scheduled_jobs
-      @scheduled_jobs = paginate(SolidQueue::ScheduledExecution.includes(:job).order(scheduled_at: :asc))
+      base_query = SolidQueue::ScheduledExecution.includes(:job).order(scheduled_at: :asc)
+      @scheduled_jobs = paginate(filter_scheduled_jobs(base_query))
       render_page('Scheduled Jobs', SolidQueueMonitor::ScheduledJobsPresenter.new(@scheduled_jobs[:records],
         current_page: @scheduled_jobs[:current_page],
-        total_pages: @scheduled_jobs[:total_pages]).render)
+        total_pages: @scheduled_jobs[:total_pages],
+        filters: filter_params
+      ).render)
     end
 
     def failed_jobs
-      @failed_jobs = paginate(SolidQueue::FailedExecution.includes(:job).order(created_at: :desc))
+      base_query = SolidQueue::FailedExecution.includes(:job).order(created_at: :desc)
+      @failed_jobs = paginate(filter_failed_jobs(base_query))
       render_page('Failed Jobs', SolidQueueMonitor::FailedJobsPresenter.new(@failed_jobs[:records],
         current_page: @failed_jobs[:current_page],
-        total_pages: @failed_jobs[:total_pages]).render)
+        total_pages: @failed_jobs[:total_pages],
+        filters: filter_params
+      ).render)
     end
 
     def queues
@@ -76,8 +85,11 @@ module SolidQueueMonitor
 
     def generate_overview_content
       SolidQueueMonitor::StatsPresenter.new(@stats).render + 
-      SolidQueueMonitor::JobsPresenter.new(@recent_jobs[:records], current_page: @recent_jobs[:current_page],
-      total_pages: @recent_jobs[:total_pages]).render
+      SolidQueueMonitor::JobsPresenter.new(@recent_jobs[:records], 
+        current_page: @recent_jobs[:current_page],
+        total_pages: @recent_jobs[:total_pages],
+        filters: filter_params
+      ).render
     end
 
     def current_page
@@ -86,6 +98,85 @@ module SolidQueueMonitor
 
     def per_page
       SolidQueueMonitor.jobs_per_page
+    end
+
+    def filter_jobs(relation)
+      relation = relation.where("class_name LIKE ?", "%#{params[:class_name]}%") if params[:class_name].present?
+      relation = relation.where("queue_name LIKE ?", "%#{params[:queue_name]}%") if params[:queue_name].present?
+      
+      if params[:status].present?
+        case params[:status]
+        when 'completed'
+          relation = relation.where.not(finished_at: nil)
+        when 'failed'
+          failed_job_ids = SolidQueue::FailedExecution.pluck(:job_id)
+          relation = relation.where(id: failed_job_ids)
+        when 'scheduled'
+          scheduled_job_ids = SolidQueue::ScheduledExecution.pluck(:job_id)
+          relation = relation.where(id: scheduled_job_ids)
+        when 'pending'
+          # Pending jobs are those that are not completed, failed, or scheduled
+          failed_job_ids = SolidQueue::FailedExecution.pluck(:job_id)
+          scheduled_job_ids = SolidQueue::ScheduledExecution.pluck(:job_id)
+          relation = relation.where(finished_at: nil)
+                            .where.not(id: failed_job_ids + scheduled_job_ids)
+        end
+      end
+      
+      relation
+    end
+
+    def filter_ready_jobs(relation)
+      return relation unless params[:class_name].present? || params[:queue_name].present?
+      
+      if params[:class_name].present?
+        job_ids = SolidQueue::Job.where("class_name LIKE ?", "%#{params[:class_name]}%").pluck(:id)
+        relation = relation.where(job_id: job_ids)
+      end
+      
+      if params[:queue_name].present?
+        relation = relation.where("queue_name LIKE ?", "%#{params[:queue_name]}%")
+      end
+      
+      relation
+    end
+
+    def filter_scheduled_jobs(relation)
+      return relation unless params[:class_name].present? || params[:queue_name].present?
+      
+      if params[:class_name].present?
+        job_ids = SolidQueue::Job.where("class_name LIKE ?", "%#{params[:class_name]}%").pluck(:id)
+        relation = relation.where(job_id: job_ids)
+      end
+      
+      if params[:queue_name].present?
+        relation = relation.where("queue_name LIKE ?", "%#{params[:queue_name]}%")
+      end
+      
+      relation
+    end
+
+    def filter_failed_jobs(relation)
+      return relation unless params[:class_name].present? || params[:queue_name].present?
+      
+      if params[:class_name].present?
+        job_ids = SolidQueue::Job.where("class_name LIKE ?", "%#{params[:class_name]}%").pluck(:id)
+        relation = relation.where(job_id: job_ids)
+      end
+      
+      if params[:queue_name].present?
+        relation = relation.where("queue_name LIKE ?", "%#{params[:queue_name]}%")
+      end
+      
+      relation
+    end
+
+    def filter_params
+      {
+        class_name: params[:class_name],
+        queue_name: params[:queue_name],
+        status: params[:status]
+      }
     end
   end
 end

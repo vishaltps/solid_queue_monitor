@@ -1,17 +1,40 @@
 module SolidQueueMonitor
   class FailedJobsPresenter < BasePresenter
-    def initialize(records, current_page: 1, total_pages: 1)
-      @records = records
+    def initialize(jobs, current_page: 1, total_pages: 1, filters: {})
+      @jobs = jobs
       @current_page = current_page
       @total_pages = total_pages
+      @filters = filters
     end
 
-
     def render
-      section_wrapper('Failed Jobs', generate_table + generate_pagination(@current_page, @total_pages))
+      section_wrapper('Failed Jobs', generate_filter_form + generate_table + generate_pagination(@current_page, @total_pages))
     end
 
     private
+
+    def generate_filter_form
+      <<-HTML
+        <div class="filter-form-container">
+          <form method="get" action="" class="filter-form">
+            <div class="filter-group">
+              <label for="class_name">Job Class:</label>
+              <input type="text" name="class_name" id="class_name" value="#{@filters[:class_name]}" placeholder="Filter by class name">
+            </div>
+
+            <div class="filter-group">
+              <label for="queue_name">Queue:</label>
+              <input type="text" name="queue_name" id="queue_name" value="#{@filters[:queue_name]}" placeholder="Filter by queue">
+            </div>
+
+            <div class="filter-actions">
+              <button type="submit" class="filter-button">Apply Filters</button>
+              <a href="#{failed_jobs_path}" class="reset-button">Reset</a>
+            </div>
+          </form>
+        </div>
+      HTML
+    end
 
     def generate_table
       <<-HTML
@@ -26,7 +49,7 @@ module SolidQueueMonitor
               </tr>
             </thead>
             <tbody>
-              #{@records.map { |execution| generate_row(execution) }.join}
+              #{@jobs.map { |execution| generate_row(execution) }.join}
             </tbody>
           </table>
         </div>
