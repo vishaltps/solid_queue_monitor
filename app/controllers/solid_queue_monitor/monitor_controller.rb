@@ -4,134 +4,88 @@ module SolidQueueMonitor
 
     before_action :authenticate
     layout false
-    skip_before_action :verify_authenticity_token, only: [:execute_job]
+    skip_before_action :verify_authenticity_token, only: [:execute_jobs]
 
     def index
-      @message = params[:message]
-      @message_type = params[:message_type]
+      @stats = SolidQueueMonitor::StatsCalculator.calculate
+      @recent_jobs = paginate(SolidQueue::Job.order(created_at: :desc))
       
-      @stats = {
-        total_jobs: SolidQueue::Job.count,
-        scheduled: SolidQueue::ScheduledExecution.count,
-        ready: SolidQueue::ReadyExecution.count,
-        failed: SolidQueue::FailedExecution.count,
-        recurring: SolidQueue::RecurringTask.count
-      }
+      render_page('Overview', generate_overview_content)
+    end
 
-      @recent_jobs = SolidQueue::Job.order(created_at: :desc)
-                                  .limit(SolidQueueMonitor.jobs_per_page)
-      
-      render html: generate_html('Recent Jobs', generate_recent_jobs_table).html_safe
+    def ready_jobs
+      @ready_jobs = paginate(SolidQueue::ReadyExecution.includes(:job).order(created_at: :desc))
+      render_page('Ready Jobs', SolidQueueMonitor::ReadyJobsPresenter.new(@ready_jobs[:records], 
+        current_page: @ready_jobs[:current_page],
+        total_pages: @ready_jobs[:total_pages]).render)
     end
 
     def scheduled_jobs
-      @scheduled_jobs = SolidQueue::ScheduledExecution.includes(:job)
-                                                     .order(scheduled_at: :asc)
-                                                     .limit(SolidQueueMonitor.jobs_per_page)
-      
-      render html: generate_html('Scheduled Jobs', generate_scheduled_jobs_table).html_safe
-    end
-
-    def recurring_jobs
-      @recurring_jobs = SolidQueue::RecurringTask.order(:key)
-      
-      render html: generate_html('Recurring Jobs', generate_recurring_jobs_table).html_safe
+      @scheduled_jobs = paginate(SolidQueue::ScheduledExecution.includes(:job).order(scheduled_at: :asc))
+      render_page('Scheduled Jobs', SolidQueueMonitor::ScheduledJobsPresenter.new(@scheduled_jobs[:records],
+        current_page: @scheduled_jobs[:current_page],
+        total_pages: @scheduled_jobs[:total_pages]).render)
     end
 
     def failed_jobs
-      @failed_jobs = SolidQueue::FailedExecution.includes(:job)
-                                               .order(created_at: :desc)
-                                               .limit(SolidQueueMonitor.jobs_per_page)
-      
-      render html: generate_html('Failed Jobs', generate_failed_jobs_table).html_safe
+      @failed_jobs = paginate(SolidQueue::FailedExecution.includes(:job).order(created_at: :desc))
+      render_page('Failed Jobs', SolidQueueMonitor::FailedJobsPresenter.new(@failed_jobs[:records],
+        current_page: @failed_jobs[:current_page],
+        total_pages: @failed_jobs[:total_pages]).render)
     end
 
-    # ... keep existing execute_job, authenticate, and auth_check methods ...
+    def queues
+      @queues = SolidQueue::Job.group(:queue_name)
+                              .select('queue_name, COUNT(*) as job_count')
+                              .order('job_count DESC')
+      render_page('Queues', SolidQueueMonitor::QueuesPresenter.new(@queues).render)
+    end
+
+    def execute_jobs
+      if params[:job_ids].present?
+        SolidQueueMonitor::ExecuteJobService.new.execute_many(params[:job_ids])
+        redirect_url = "#{root_path}?message=Selected jobs moved to ready queue&message_type=success"
+      else
+        redirect_url = "#{root_path}?message=No jobs selected&message_type=error"
+      end
+      redirect_to redirect_url
+    end
 
     private
 
-    def generate_html(title, content)
-      <<-HTML
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <title>Solid Queue Monitor - #{title}</title>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <style>
-              #{generate_css}
-            </style>
-          </head>
-          <body>
-            #{render_message}
-            <div class="container">
-              <header>
-                <h1>Solid Queue Monitor</h1>
-                <nav class="navigation">
-                  <a href="#{root_path}" class="nav-link">Overview</a>
-                  <a href="#{scheduled_jobs_path}" class="nav-link">Scheduled Jobs</a>
-                  <a href="#{recurring_jobs_path}" class="nav-link">Recurring Jobs</a>
-                  <a href="#{failed_jobs_path}" class="nav-link">Failed Jobs</a>
-                </nav>
-              </header>
-
-              #{show_stats if current_page == root_path}
-
-              <div class="section">
-                <h2>#{title}</h2>
-                #{content}
-              </div>
-
-              <footer>
-                <p>Powered by Solid Queue Monitor</p>
-              </footer>
-            </div>
-          </body>
-        </html>
-      HTML
+    def authenticate
+      authenticate_or_request_with_http_basic do |username, password|
+        SolidQueueMonitor::AuthenticationService.authenticate(username, password)
+      end
     end
 
-    def show_stats
-      <<-HTML
-        <div class="stats">
-          #{generate_stats_html}
-        </div>
-      HTML
+    def paginate(relation)
+      PaginationService.new(relation, current_page, per_page).paginate
+    end
+
+    def render_page(title, content)
+      html = SolidQueueMonitor::HtmlGenerator.new(
+        title: title,
+        content: content,
+        message: params[:notice] || params[:alert],
+        message_type: params[:notice] ? 'success' : 'error'
+      ).generate
+      
+      render html: html.html_safe
+    end
+
+    def generate_overview_content
+      SolidQueueMonitor::StatsPresenter.new(@stats).render + 
+      SolidQueueMonitor::JobsPresenter.new(@recent_jobs[:records], current_page: @recent_jobs[:current_page],
+      total_pages: @recent_jobs[:total_pages]).render
     end
 
     def current_page
-      request.path
+      (params[:page] || 1).to_i
     end
 
-    # Add navigation styles to your existing CSS
-    def generate_css
-      <<-CSS
-        #{existing_css}
-
-        .navigation {
-          margin: 1rem 0;
-          display: flex;
-          justify-content: center;
-          gap: 1rem;
-        }
-
-        .nav-link {
-          text-decoration: none;
-          color: var(--text-color);
-          padding: 0.5rem 1rem;
-          border-radius: 0.375rem;
-          background: white;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-          transition: all 0.2s;
-        }
-
-        .nav-link:hover {
-          background: var(--primary-color);
-          color: white;
-        }
-      CSS
+    def per_page
+      SolidQueueMonitor.jobs_per_page
     end
-
-    # ... keep your existing table generation methods ...
   end
 end

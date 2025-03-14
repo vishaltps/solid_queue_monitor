@@ -10,29 +10,41 @@ Add this line to your application's Gemfile:
 gem 'solid_queue_monitor'
 ```
 
+Then execute:
+
+```bash
+$ bundle install
+```
+
+After bundling, run the generator:
+
 ```bash
 bundle install
 rails generate solid_queue_monitor:install
 ```
 
+This will:
+
+1. Create an initializer at `config/initializers/solid_queue_monitor.rb`
+2. Add required routes to your `config/routes.rb`
+
 ## Configuration
 
-Edit `config/initializers/solid_queue_monitor.rb`:
+The generator will create an initializer at `config/initializers/solid_queue_monitor.rb` where you can configure authentication:
 
 ```ruby
 SolidQueueMonitor.setup do |config|
 # Configure authentication credentials
-config.username = 'your_username'
-config.password = 'your_secure_password'
+  config.username = 'your_username'
+  config.password = 'your_secure_password'
 # Configure number of jobs to display per section
-config.jobs_per_page = 50
+  config.jobs_per_page = 50
 end
-
 ```
 
 ## Usage
 
-Visit `/queue` in your browser to access the monitor interface.
+After installation, visit `/solid_queue` in your browser to access the monitoring interface.
 
 ### Features
 
