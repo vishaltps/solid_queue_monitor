@@ -15,6 +15,7 @@ module SolidQueueMonitor
             #{generate_stat_card('Scheduled', @stats[:scheduled])}
             #{generate_stat_card('Failed', @stats[:failed])}
             #{generate_stat_card('Completed', @stats[:completed])}
+            #{generate_stat_card('Recurring', @stats[:recurring])}
           </div>
         </div>
       HTML

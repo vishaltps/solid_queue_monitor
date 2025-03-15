@@ -1,3 +1,3 @@
 Rails.application.routes.draw do
-  mount SolidQueueMonitor::Engine => "/queue"
+  mount SolidQueueMonitor::Engine => "/solid_queue"
 end

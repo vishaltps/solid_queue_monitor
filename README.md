@@ -21,6 +21,16 @@ A lightweight, zero-dependency web interface for monitoring Solid Queue jobs in 
 - **Responsive Design**: Works on desktop and mobile devices
 - **Zero Dependencies**: No additional JavaScript libraries or frameworks required
 
+## Screenshots
+
+### Dashboard Overview
+
+![Dashboard Overview](screenshots/dashboard.png)
+
+### Recurring Jobs
+
+![Recurring Jobs](screenshots/recurring_jobs.png)
+
 ## Installation
 
 Add this line to your application's Gemfile:

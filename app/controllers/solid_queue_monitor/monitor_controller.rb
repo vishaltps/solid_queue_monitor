@@ -38,6 +38,16 @@ module SolidQueueMonitor
       ).render)
     end
 
+    def recurring_jobs
+      base_query = filter_recurring_jobs(SolidQueue::RecurringTask.order(:key))
+      @recurring_jobs = paginate(base_query)
+      render_page('Recurring Jobs', SolidQueueMonitor::RecurringJobsPresenter.new(@recurring_jobs[:records],
+        current_page: @recurring_jobs[:current_page],
+        total_pages: @recurring_jobs[:total_pages],
+        filters: filter_params
+      ).render)
+    end
+
     def failed_jobs
       base_query = SolidQueue::FailedExecution.includes(:job).order(created_at: :desc)
       @failed_jobs = paginate(filter_failed_jobs(base_query))
@@ -191,6 +201,20 @@ module SolidQueueMonitor
       if params[:class_name].present?
         job_ids = SolidQueue::Job.where("class_name LIKE ?", "%#{params[:class_name]}%").pluck(:id)
         relation = relation.where(job_id: job_ids)
+      end
+      
+      if params[:queue_name].present?
+        relation = relation.where("queue_name LIKE ?", "%#{params[:queue_name]}%")
+      end
+      
+      relation
+    end
+
+    def filter_recurring_jobs(relation)
+      return relation unless params[:class_name].present? || params[:queue_name].present?
+      
+      if params[:class_name].present?
+        relation = relation.where("class_name LIKE ?", "%#{params[:class_name]}%")
       end
       
       if params[:queue_name].present?

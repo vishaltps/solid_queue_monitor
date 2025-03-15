@@ -44,7 +44,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rubocop", "~> 1.60"
   spec.add_development_dependency "rubocop-rails", "~> 2.23"
   spec.add_development_dependency "rubocop-rspec", "~> 2.26"
-
+  spec.add_development_dependency "factory_bot_rails", "~> 6.2"
+  spec.add_development_dependency "database_cleaner-active_record", "~> 2.1"
+  spec.add_development_dependency "pry"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
