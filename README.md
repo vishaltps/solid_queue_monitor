@@ -58,13 +58,13 @@ This will:
 
 ## Configuration
 
-You can configure Solid Queue Monitor by creating an initializer:
+You can configure Solid Queue Monitor by editing the initializer:
 
 ```ruby
 # config/initializers/solid_queue_monitor.rb
 SolidQueueMonitor.setup do |config|
   # Enable or disable authentication
-  # When disabled, no authentication is required to access the monitor
+  # By default, authentication is disabled for ease of setup
   config.authentication_enabled = false
 
   # Set the username for HTTP Basic Authentication (only used if authentication is enabled)
@@ -82,12 +82,10 @@ end
 
 By default, Solid Queue Monitor does not require authentication to access the dashboard. This makes it easy to get started in development environments.
 
-If you want to enable authentication (recommended for production):
+For production environments, it's strongly recommended to enable authentication:
 
 1. **Enable authentication**: Set `config.authentication_enabled = true` in the initializer
-2. **Configure credentials**: Set `username` and `password` in the initializer (defaults are 'admin'/'password')
-
-For production environments, it's strongly recommended to enable authentication and set secure credentials to prevent unauthorized access to your job management interface.
+2. **Configure secure credentials**: Set `username` and `password` to strong values in the initializer
 
 ## Usage
 

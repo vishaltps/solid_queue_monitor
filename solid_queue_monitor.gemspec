@@ -11,7 +11,8 @@ Gem::Specification.new do |spec|
   spec.summary = "Simple monitoring interface for Solid Queue"
   spec.description = "A lightweight, zero-dependency web interface for monitoring Solid Queue jobs in Rails applications"
   spec.homepage = "https://github.com/vishaltps/solid_queue_monitor"
-  spec.required_ruby_version = ">= 2.7.0"
+  spec.license = "MIT"
+  spec.required_ruby_version = ">= 3.1.6"
 
   spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"
 
@@ -35,8 +36,9 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   # Uncomment to register a new dependency of your gem
-  spec.add_dependency "rails", ">= 7.0"
-  spec.add_dependency "solid_queue"
+  spec.add_dependency "rails", ">= 7.1"
+  spec.add_dependency "solid_queue", ">= 0.1.0"
+  
   spec.add_development_dependency "rspec-rails", "~> 6.0"
   spec.add_development_dependency "capybara", "~> 3.39"
   spec.add_development_dependency "sqlite3", "~> 1.6"
@@ -46,7 +48,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rubocop-rspec", "~> 2.26"
   spec.add_development_dependency "factory_bot_rails", "~> 6.2"
   spec.add_development_dependency "database_cleaner-active_record", "~> 2.1"
-  spec.add_development_dependency "pry"
+  spec.add_development_dependency "pry", "~> 0.14"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
