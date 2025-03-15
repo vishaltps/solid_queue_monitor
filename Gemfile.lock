@@ -2,8 +2,8 @@ PATH
   remote: .
   specs:
     solid_queue_monitor (0.1.0)
-      rails (>= 7.0)
-      solid_queue
+      rails (>= 7.1)
+      solid_queue (>= 0.1.0)
 
 GEM
   remote: https://rubygems.org/
@@ -307,7 +307,7 @@ DEPENDENCIES
   capybara (~> 3.39)
   database_cleaner-active_record (~> 2.1)
   factory_bot_rails (~> 6.2)
-  pry
+  pry (~> 0.14)
   puma (~> 6.0)
   rake (~> 13.0)
   rspec-rails (~> 6.0)
