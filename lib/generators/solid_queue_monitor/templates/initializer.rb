@@ -1,8 +1,14 @@
 SolidQueueMonitor.setup do |config|
-  # Configure authentication credentials
-  config.username = 'admin'
-  config.password = 'password123'
+  # Enable or disable authentication
+  # When disabled, no authentication is required to access the monitor
+  config.authentication_enabled = false
 
-  # Configure number of jobs to display per section
-  config.jobs_per_page = 50
+  # Set the username for HTTP Basic Authentication (only used if authentication is enabled)
+  # config.username = 'admin'
+
+  # Set the password for HTTP Basic Authentication (only used if authentication is enabled)
+  # config.password = 'password'
+
+  # Number of jobs to display per page
+  # config.jobs_per_page = 25
 end

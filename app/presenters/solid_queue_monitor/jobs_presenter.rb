@@ -11,7 +11,16 @@ module SolidQueueMonitor
     end
 
     def render
-      section_wrapper('Recent Jobs', generate_filter_form + generate_table + generate_pagination(@current_page, @total_pages))
+      <<-HTML
+        <div class="section-wrapper">
+          <div class="section">
+            <h3>Recent Jobs</h3>
+            #{generate_filter_form}
+            #{generate_table}
+            #{generate_pagination(@current_page, @total_pages)}
+          </div>
+        </div>
+      HTML
     end
 
     private

@@ -6,7 +6,7 @@ module SolidQueueMonitor
 
     def calculate
       return 'completed' if @job.finished_at.present?
-      return 'failed' if SolidQueue::FailedExecution.exists?(job_id: @job.id)
+      return 'failed' if @job.failed?
       return 'scheduled' if @job.scheduled_at&.future?
       'pending'
     end
