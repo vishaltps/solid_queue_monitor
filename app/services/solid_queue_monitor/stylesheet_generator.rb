@@ -2,7 +2,7 @@ module SolidQueueMonitor
   class StylesheetGenerator
     def generate
       <<-CSS
-        :root {
+        .solid_queue_monitor {
           --primary-color: #3b82f6;
           --success-color: #10b981;
           --error-color: #ef4444;
@@ -11,33 +11,33 @@ module SolidQueueMonitor
           --background-color: #f9fafb;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        .solid_queue_monitor * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body {
+        .solid_queue_monitor {
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
           line-height: 1.5;
           color: var(--text-color);
           background: var(--background-color);
         }
 
-        .container {
+        .solid_queue_monitor .container {
           max-width: 1200px;
           margin: 0 auto;
           padding: 2rem;
         }
 
-        header {
+        .solid_queue_monitor header {
           margin-bottom: 2rem;
           text-align: center;
         }
 
-        h1 {
+        .solid_queue_monitor h1 {
           font-size: 2rem;
           font-weight: 600;
           margin-bottom: 0.5rem;
         }
 
-        .navigation {
+        .solid_queue_monitor .navigation {
           display: flex;
           flex-wrap: wrap;
           justify-content: center;
@@ -45,7 +45,7 @@ module SolidQueueMonitor
           padding: 0.5rem;
         }
 
-        .nav-link {
+        .solid_queue_monitor .nav-link {
           text-decoration: none;
           color: var(--text-color);
           padding: 0.5rem 1rem;
@@ -55,28 +55,28 @@ module SolidQueueMonitor
           transition: all 0.2s;
         }
 
-        .nav-link:hover {
+        .solid_queue_monitor .nav-link:hover {
           background: var(--primary-color);
           color: white;
         }
 
-        .section-wrapper {
+        .solid_queue_monitor .section-wrapper {
           margin-top: 2rem;
         }
 
 
-        .section h2 {
+        .solid_queue_monitor .section h2 {
           padding: 1rem;
           border-bottom: 1px solid var(--border-color);
           font-size: 1.25rem;
           background: var(--background-color);
         }
 
-        .stats-container {
+        .solid_queue_monitor .stats-container {
           margin-bottom: 2rem;
         }
 
-        .stats {
+        .solid_queue_monitor .stats {
           display: flex;
           flex-direction: row;
           flex-wrap: wrap;
@@ -84,7 +84,7 @@ module SolidQueueMonitor
           margin: 0 -0.5rem;
         }
 
-        .stat-card {
+        .solid_queue_monitor .stat-card {
           flex: 1 1 0;
           min-width: 150px;
           background: white;
@@ -94,7 +94,7 @@ module SolidQueueMonitor
           text-align: center;
         }
 
-        .stat-card h3 {
+        .solid_queue_monitor .stat-card h3 {
           color: #6b7280;
           font-size: 0.875rem;
           text-transform: uppercase;
@@ -102,38 +102,39 @@ module SolidQueueMonitor
           margin-bottom: 0.5rem;
         }
 
-        .stat-card p {
+        .solid_queue_monitor .stat-card p {
           font-size: 1.5rem;
           font-weight: 600;
           color: var(--primary-color);
         }
 
-        .section h2 {
+        .solid_queue_monitor .section h2 {
           padding: 1rem;
           border-bottom: 1px solid var(--border-color);
           font-size: 1.25rem;
         }
 
-        .table-container {
+        .solid_queue_monitor .table-container {
           width: 100%;
           overflow-x: auto;
           -webkit-overflow-scrolling: touch;
         }
 
-        table {
+        .solid_queue_monitor table {
           width: 100%;
           min-width: 800px; /* Ensures table doesn't get too squeezed */
           border-collapse: collapse;
           white-space: nowrap;
         }
 
-        th, td {
+        .solid_queue_monitor th, 
+        .solid_queue_monitor td {
           padding: 0.75rem 1rem;
           text-align: left;
           border-bottom: 1px solid var(--border-color);
         }
 
-        th {
+        .solid_queue_monitor th {
           background: var(--background-color);
           font-weight: 500;
           font-size: 0.875rem;
@@ -141,7 +142,7 @@ module SolidQueueMonitor
           letter-spacing: 0.05em;
         }
 
-        .status-badge {
+        .solid_queue_monitor .status-badge {
           display: inline-block;
           padding: 0.25rem 0.5rem;
           border-radius: 9999px;
@@ -149,38 +150,38 @@ module SolidQueueMonitor
           font-weight: 500;
         }
 
-        .table-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  border-top: 1px solid var(--border-color);
-}
+        .solid_queue_monitor .table-actions {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1rem;
+          border-top: 1px solid var(--border-color);
+        }
 
-.select-all {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-}
+        .solid_queue_monitor .select-all {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          cursor: pointer;
+        }
 
-.execute-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+        .solid_queue_monitor .execute-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
 
-input[type="checkbox"] {
-  width: 1rem;
-  height: 1rem;
-  cursor: pointer;
-}
+        .solid_queue_monitor input[type="checkbox"] {
+          width: 1rem;
+          height: 1rem;
+          cursor: pointer;
+        }
 
-        .status-completed { background: #d1fae5; color: #065f46; }
-        .status-failed { background: #fee2e2; color: #991b1b; }
-        .status-scheduled { background: #dbeafe; color: #1e40af; }
-        .status-pending { background: #f3f4f6; color: #374151; }
+        .solid_queue_monitor .status-completed { background: #d1fae5; color: #065f46; }
+        .solid_queue_monitor .status-failed { background: #fee2e2; color: #991b1b; }
+        .solid_queue_monitor .status-scheduled { background: #dbeafe; color: #1e40af; }
+        .solid_queue_monitor .status-pending { background: #f3f4f6; color: #374151; }
 
-        .execute-btn {
+        .solid_queue_monitor .execute-btn {
           background: var(--primary-color);
           color: white;
           border: none;
@@ -191,33 +192,33 @@ input[type="checkbox"] {
           transition: background-color 0.2s;
         }
 
-        .execute-btn:hover {
+        .solid_queue_monitor .execute-btn:hover {
           background: #2563eb;
         }
 
-        .message {
+        .solid_queue_monitor .message {
           padding: 1rem;
           margin-bottom: 1rem;
           border-radius: 0.375rem;
         }
 
-        .message-success {
+        .solid_queue_monitor .message-success {
           background: #d1fae5;
           color: #065f46;
         }
 
-        .message-error {
+        .solid_queue_monitor .message-error {
           background: #fee2e2;
           color: #991b1b;
         }
 
-        footer {
+        .solid_queue_monitor footer {
           text-align: center;
           padding: 2rem 0;
           color: #6b7280;
         }
 
-        .pagination {
+        .solid_queue_monitor .pagination {
           display: flex;
           justify-content: center;
           gap: 0.5rem;
@@ -225,12 +226,12 @@ input[type="checkbox"] {
           padding: 1rem;
         }
 
-        .pagination-nav {
+        .solid_queue_monitor .pagination-nav {
           padding: 0.5rem 1rem;
           font-size: 0.875rem;
         }
         
-        .pagination-gap {
+        .solid_queue_monitor .pagination-gap {
           display: inline-flex;
           align-items: center;
           justify-content: center;
@@ -240,14 +241,14 @@ input[type="checkbox"] {
           color: var(--text-color);
         }
 
-        .pagination-link.disabled {
+        .solid_queue_monitor .pagination-link.disabled {
           opacity: 0.5;
           cursor: not-allowed;
           pointer-events: none;
         }
 
-        .pagination-link,
-        .pagination-current {
+        .solid_queue_monitor .pagination-link,
+        .solid_queue_monitor .pagination-current {
           display: inline-flex;
           align-items: center;
           justify-content: center;
@@ -260,64 +261,64 @@ input[type="checkbox"] {
           transition: all 0.2s;
         }
 
-        .pagination-link {
+        .solid_queue_monitor .pagination-link {
           background: white;
           color: var(--text-color);
           border: 1px solid var(--border-color);
         }
 
-        .pagination-link:hover {
+        .solid_queue_monitor .pagination-link:hover {
           background: var(--primary-color);
           color: white;
           border-color: var(--primary-color);
         }
 
-        .pagination-current {
+        .solid_queue_monitor .pagination-current {
           background: var(--primary-color);
           color: white;
           font-weight: 500;
         }
 
       @media (max-width: 768px) {
-        .container {
+        .solid_queue_monitor .container {
           padding: 0.5rem;
         }
 
-        .stats {
+        .solid_queue_monitor .stats {
           margin: 0;
         }
 
-        .stat-card {
+        .solid_queue_monitor .stat-card {
           flex: 1 1 calc(33.333% - 1rem);
           min-width: 120px;
         }
 
-        .section {
+        .solid_queue_monitor .section {
           margin: 0.5rem 0;
           border-radius: 0.375rem;
         }
 
-        .table-container {
+        .solid_queue_monitor .table-container {
           width: 100%;
           overflow-x: auto;
         }
       }
 
       @media (max-width: 480px) {
-        .stat-card {
+        .solid_queue_monitor .stat-card {
           flex: 1 1 calc(50% - 1rem);
         }
 
-        .nav-link {
+        .solid_queue_monitor .nav-link {
           width: 100%;
           text-align: center;
         }
-        .pagination-nav {
+        .solid_queue_monitor .pagination-nav {
           display: none;
         }
       }
 
-      .filter-form-container {
+      .solid_queue_monitor .filter-form-container {
         background: white;
         padding: 1rem;
         border-radius: 0.5rem;
@@ -325,19 +326,19 @@ input[type="checkbox"] {
         box-shadow: 0 1px 3px rgba(0,0,0,0.1);
       }
 
-      .filter-form {
+      .solid_queue_monitor .filter-form {
         display: flex;
         flex-wrap: wrap;
         gap: 1rem;
         align-items: flex-end;
       }
 
-      .filter-group {
+      .solid_queue_monitor .filter-group {
         flex: 1;
         min-width: 200px;
       }
 
-      .filter-group label {
+      .solid_queue_monitor .filter-group label {
         display: block;
         margin-bottom: 0.5rem;
         font-size: 0.875rem;
@@ -345,8 +346,8 @@ input[type="checkbox"] {
         color: #4b5563;
       }
 
-      .filter-group input,
-      .filter-group select {
+      .solid_queue_monitor .filter-group input,
+      .solid_queue_monitor .filter-group select {
         width: 100%;
         padding: 0.5rem;
         border: 1px solid #d1d5db;
@@ -354,12 +355,12 @@ input[type="checkbox"] {
         font-size: 0.875rem;
       }
 
-      .filter-actions {
+      .solid_queue_monitor .filter-actions {
         display: flex;
         gap: 0.5rem;
       }
 
-      .filter-button {
+      .solid_queue_monitor .filter-button {
         background: var(--primary-color);
         color: white;
         border: none;
@@ -370,11 +371,11 @@ input[type="checkbox"] {
         transition: background-color 0.2s;
       }
 
-      .filter-button:hover {
+      .solid_queue_monitor .filter-button:hover {
         background: #2563eb;
       }
 
-      .reset-button {
+      .solid_queue_monitor .reset-button {
         background: #f3f4f6;
         color: #4b5563;
         border: 1px solid #d1d5db;
@@ -386,7 +387,7 @@ input[type="checkbox"] {
         transition: background-color 0.2s;
       }
 
-      .reset-button:hover {
+      .solid_queue_monitor .reset-button:hover {
         background: #e5e7eb;
       }
       CSS

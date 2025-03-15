@@ -18,7 +18,7 @@ module SolidQueueMonitor
             <title>Solid Queue Monitor - #{@title}</title>
             #{generate_head}
           </head>
-          <body>
+          <body class="solid_queue_monitor">
             #{generate_body}
           </body>
         </html>
