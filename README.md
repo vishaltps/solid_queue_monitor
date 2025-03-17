@@ -1,6 +1,9 @@
 # SolidQueueMonitor
 
-A lightweight, zero-dependency web interface for monitoring Solid Queue jobs in Rails applications.
+[![Gem Version](https://badge.fury.io/rb/solid_queue_monitor.svg)](https://badge.fury.io/rb/solid_queue_monitor)
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+A lightweight, zero-dependency web interface for monitoring Solid Queue background jobs in Ruby on Rails applications. Perfect for Rails API-only applications and traditional Rails apps.
 
 ## Key Advantages
 
@@ -8,6 +11,7 @@ A lightweight, zero-dependency web interface for monitoring Solid Queue jobs in 
 - **No External Dependencies**: No JavaScript frameworks, no CSS libraries, no additional gems required - just pure Rails.
 - **Self-contained UI**: All HTML, CSS, and JavaScript are generated server-side, making deployment simple and reliable.
 - **Minimal Footprint**: Adds minimal overhead to your application while providing powerful monitoring capabilities.
+- **Rails 7 Compatible**: Fully compatible with Rails 7.1+ and the latest Solid Queue versions.
 
 ## Features
 
@@ -16,6 +20,7 @@ A lightweight, zero-dependency web interface for monitoring Solid Queue jobs in 
 - **Job Management**: Execute scheduled jobs on demand
 - **Failed Job Inspection**: View detailed error information for failed jobs
 - **Queue Monitoring**: Track job distribution across different queues
+- **Recurring Jobs**: Monitor and manage recurring background tasks
 - **Pagination**: Navigate through large job lists with ease
 - **Optional Authentication**: Secure your dashboard with HTTP Basic Authentication
 - **Responsive Design**: Works on desktop and mobile devices
@@ -96,12 +101,27 @@ The dashboard provides several views:
 - **Overview**: Shows statistics and recent jobs
 - **Ready Jobs**: Jobs that are ready to be executed
 - **Scheduled Jobs**: Jobs scheduled for future execution
+- **Recurring Jobs**: Jobs that run on a recurring schedule
 - **Failed Jobs**: Jobs that have failed with error details
 - **Queues**: Distribution of jobs across different queues
 
 ### API-only Applications
 
 For API-only Rails applications, SolidQueueMonitor works out of the box without requiring you to enable the asset pipeline or webpacker. This makes it an ideal choice for monitoring background jobs in modern API-based architectures.
+
+## Use Cases
+
+- **Production Monitoring**: Keep an eye on your background job processing in production environments
+- **Debugging**: Quickly identify and troubleshoot failed jobs
+- **Job Management**: Execute scheduled jobs on demand when needed
+- **Performance Analysis**: Track job distribution and identify bottlenecks
+- **DevOps Integration**: Easily integrate with your monitoring stack
+
+## Compatibility
+
+- **Ruby**: 3.1.6 or higher
+- **Rails**: 7.1 or higher
+- **Solid Queue**: 0.1.0 or higher
 
 ## Contributing
 
@@ -126,3 +146,9 @@ The gem is available as open source under the terms of the [MIT License](https:/
 ## Code of Conduct
 
 Everyone interacting in the SolidQueueMonitor project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/yourusername/solid_queue_monitor/blob/main/CODE_OF_CONDUCT.md).
+
+## Related Projects
+
+- [Solid Queue](https://github.com/rails/solid_queue) - The official Rails background job framework
+- [Rails](https://github.com/rails/rails) - The web application framework
+- [ActiveJob](https://github.com/rails/rails/tree/main/activejob) - Rails job framework
