@@ -151,4 +151,4 @@ Everyone interacting in the SolidQueueMonitor project's codebases, issue tracker
 
 - [Solid Queue](https://github.com/rails/solid_queue) - The official Rails background job framework
 - [Rails](https://github.com/rails/rails) - The web application framework
-- [ActiveJob](https://github.com/rails/rails/tree/main/activejob) - Rails job framework
+- [ActiveJob](https://github.com/rails/rails/tree/main/activejob) - Rails job frameworkk
