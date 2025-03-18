@@ -37,21 +37,24 @@ module SolidQueueMonitor
             </div>
           </form>
         </div>
+        
+        <div class="bulk-actions-bar">
+          <button type="button" class="action-button execute-button" id="execute-selected-top" disabled>Execute Selected</button>
+        </div>
       HTML
     end
 
     def generate_table_with_actions
       <<-HTML
-      <form action="#{execute_jobs_path}" method="POST">
+      <form id="scheduled-jobs-form" action="#{execute_jobs_path}" method="POST">
         #{generate_table}
-        <div class="table-actions">
-          <button type="submit" class="execute-btn" id="bulk-execute" disabled>Execute Selected</button>
-        </div>
       </form>
       <script>
         document.addEventListener('DOMContentLoaded', function() {
           const selectAllCheckbox = document.querySelector('th input[type="checkbox"]');
           const jobCheckboxes = document.getElementsByName('job_ids[]');
+          const executeButton = document.getElementById('execute-selected-top');
+          const form = document.getElementById('scheduled-jobs-form');
           
           selectAllCheckbox.addEventListener('change', function() {
             jobCheckboxes.forEach(checkbox => checkbox.checked = this.checked);
@@ -64,13 +67,33 @@ module SolidQueueMonitor
               updateExecuteButton();
             });
           });
+          
+          // Add event listener for the execute button
+          executeButton.addEventListener('click', function() {
+            const selectedIds = Array.from(document.querySelectorAll('input[name="job_ids[]"]:checked')).map(cb => cb.value);
+            if (selectedIds.length === 0) return;
+            
+            // Add selected IDs as hidden inputs
+            selectedIds.forEach(id => {
+              const input = document.createElement('input');
+              input.type = 'hidden';
+              input.name = 'job_ids[]';
+              input.value = id;
+              form.appendChild(input);
+            });
+            
+            form.submit();
+          });
+          
+          function updateExecuteButton() {
+            const checkboxes = document.getElementsByName('job_ids[]');
+            const checked = Array.from(checkboxes).some(cb => cb.checked);
+            executeButton.disabled = !checked;
+          }
+          
+          // Initialize button state
+          updateExecuteButton();
         });
-
-        function updateExecuteButton() {
-          const checkboxes = document.getElementsByName('job_ids[]');
-          const checked = Array.from(checkboxes).some(cb => cb.checked);
-          document.getElementById('bulk-execute').disabled = !checked;
-        }
       </script>
       HTML
     end

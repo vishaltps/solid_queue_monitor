@@ -1,10 +1,17 @@
 module SolidQueueMonitor
   class MonitorController < ActionController::Base
     include ActionController::HttpAuthentication::Basic::ControllerMethods
+    include ActionController::Flash
 
     before_action :authenticate, if: -> { SolidQueueMonitor::AuthenticationService.authentication_required? }
     layout false
-    skip_before_action :verify_authenticity_token, only: [:execute_jobs]
+    skip_before_action :verify_authenticity_token, only: [:execute_jobs, :retry_failed_job, :discard_failed_job, :retry_failed_jobs, :discard_failed_jobs]
+
+    # Define a helper method for setting flash messages
+    def set_flash_message(message, type)
+      session[:flash_message] = message
+      session[:flash_type] = type
+    end
 
     def index
       @stats = SolidQueueMonitor::StatsCalculator.calculate
@@ -68,11 +75,57 @@ module SolidQueueMonitor
     def execute_jobs
       if params[:job_ids].present?
         SolidQueueMonitor::ExecuteJobService.new.execute_many(params[:job_ids])
-        redirect_url = "#{scheduled_jobs_path}?message=Selected jobs moved to ready queue&message_type=success"
+        set_flash_message('Selected jobs moved to ready queue', 'success')
       else
-        redirect_url = "#{scheduled_jobs_path}?message=No jobs selected&message_type=error"
+        set_flash_message('No jobs selected', 'error')
       end
-      redirect_to redirect_url
+      redirect_to scheduled_jobs_path
+    end
+
+    def retry_failed_job
+      id = params[:id]
+      service = SolidQueueMonitor::FailedJobService.new
+      
+      if service.retry_job(id)
+        set_flash_message("Job #{id} has been queued for retry.", 'success')
+      else
+        set_flash_message("Failed to retry job #{id}.", 'error')
+      end
+      redirect_to failed_jobs_path
+    end
+    
+    def discard_failed_job
+      id = params[:id]
+      service = SolidQueueMonitor::FailedJobService.new
+      
+      if service.discard_job(id)
+        set_flash_message("Job #{id} has been discarded.", 'success')
+      else
+        set_flash_message("Failed to discard job #{id}.", 'error')
+      end
+      redirect_to failed_jobs_path
+    end
+    
+    def retry_failed_jobs
+      result = SolidQueueMonitor::FailedJobService.new.retry_all(params[:job_ids])
+      
+      if result[:success]
+        set_flash_message(result[:message], 'success')
+      else
+        set_flash_message(result[:message], 'error')
+      end
+      redirect_to failed_jobs_path
+    end
+    
+    def discard_failed_jobs
+      result = SolidQueueMonitor::FailedJobService.new.discard_all(params[:job_ids])
+      
+      if result[:success]
+        set_flash_message(result[:message], 'success')
+      else
+        set_flash_message(result[:message], 'error')
+      end
+      redirect_to failed_jobs_path
     end
 
     private
@@ -88,11 +141,19 @@ module SolidQueueMonitor
     end
 
     def render_page(title, content)
+      # Get flash message from session
+      message = session[:flash_message]
+      message_type = session[:flash_type]
+      
+      # Clear the flash message from session after using it
+      session.delete(:flash_message)
+      session.delete(:flash_type)
+      
       html = SolidQueueMonitor::HtmlGenerator.new(
         title: title,
         content: content,
-        message: params[:notice] || params[:alert],
-        message_type: params[:notice] ? 'success' : 'error'
+        message: message,
+        message_type: message_type
       ).generate
       
       render html: html.html_safe
@@ -233,7 +294,14 @@ module SolidQueueMonitor
       end
       
       if params[:queue_name].present?
-        relation = relation.where("queue_name LIKE ?", "%#{params[:queue_name]}%")
+        # Check if FailedExecution has queue_name column
+        if relation.column_names.include?('queue_name')
+          relation = relation.where("queue_name LIKE ?", "%#{params[:queue_name]}%")
+        else
+          # If not, filter by job's queue_name
+          job_ids = SolidQueue::Job.where("queue_name LIKE ?", "%#{params[:queue_name]}%").pluck(:id)
+          relation = relation.where(job_id: job_ids)
+        end
       end
       
       relation

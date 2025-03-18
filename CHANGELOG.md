@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.2] - 2024-03-18
+
+### Added
+
+- Ability to retry failed jobs individually or in bulk
+- Ability to discard failed jobs individually or in bulk
+- Improved error display with collapsible backtrace
+
 ## [0.1.1] - 2024-03-16
 
 ### Changed

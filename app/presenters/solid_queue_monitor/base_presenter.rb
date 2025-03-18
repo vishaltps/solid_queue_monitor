@@ -22,55 +22,33 @@ module SolidQueueMonitor
     def generate_pagination(current_page, total_pages)
       return '' if total_pages <= 1
       
-      links = []
+      html = '<div class="pagination">'
       
       # Previous page link
       if current_page > 1
-        links << "<a href='?page=#{current_page - 1}#{query_params}' class='pagination-link'>&laquo; Previous</a>"
+        html += "<a href=\"?page=#{current_page - 1}#{query_params}\" class=\"pagination-link pagination-nav\">Previous</a>"
       else
-        links << "<span class='pagination-link disabled'>&laquo; Previous</span>"
+        html += '<span class="pagination-link pagination-nav disabled">Previous</span>'
       end
       
-      # Page number links
-      if total_pages <= 7
-        # Show all pages if there are 7 or fewer
-        (1..total_pages).each do |page|
-          links << page_link(page, current_page)
+      # Page links
+      (1..total_pages).each do |page|
+        if page == current_page
+          html += "<span class=\"pagination-current\">#{page}</span>"
+        else
+          html += "<a href=\"?page=#{page}#{query_params}\" class=\"pagination-link\">#{page}</a>"
         end
-      else
-        # Show first page, last page, and pages around current
-        links << page_link(1, current_page)
-        
-        if current_page > 3
-          links << "<span class='pagination-gap'>...</span>"
-        end
-        
-        start_page = [current_page - 1, 2].max
-        end_page = [current_page + 1, total_pages - 1].min
-        
-        (start_page..end_page).each do |page|
-          links << page_link(page, current_page)
-        end
-        
-        if current_page < total_pages - 2
-          links << "<span class='pagination-gap'>...</span>"
-        end
-        
-        links << page_link(total_pages, current_page)
       end
       
       # Next page link
       if current_page < total_pages
-        links << "<a href='?page=#{current_page + 1}#{query_params}' class='pagination-link'>Next &raquo;</a>"
+        html += "<a href=\"?page=#{current_page + 1}#{query_params}\" class=\"pagination-link pagination-nav\">Next</a>"
       else
-        links << "<span class='pagination-link disabled'>Next &raquo;</span>"
+        html += '<span class="pagination-link pagination-nav disabled">Next</span>'
       end
       
-      <<-HTML
-        <div class="pagination">
-          #{links.join}
-        </div>
-      HTML
+      html += '</div>'
+      html
     end
 
     def calculate_visible_pages(current_page, total_pages)
@@ -96,12 +74,15 @@ module SolidQueueMonitor
     def format_arguments(arguments)
       return '-' unless arguments.present?
       
-      if arguments.is_a?(Array) && arguments.length == 1 && arguments[0].is_a?(Hash)
-        # Handle ActiveJob-style arguments
-        format_hash(arguments[0])
-      else
-        "<code>#{arguments.to_json}</code>"
+      # For ActiveJob format
+      if arguments.is_a?(Hash) && arguments['arguments'].present?
+        return "<code>#{arguments['arguments'].inspect}</code>"
+      elsif arguments.is_a?(Array) && arguments.length == 1 && arguments[0].is_a?(Hash) && arguments[0]['arguments'].present?
+        return "<code>#{arguments[0]['arguments'].inspect}</code>"
       end
+      
+      # For regular arguments format
+      "<code>#{arguments.inspect}</code>"
     end
 
     def format_hash(hash)
@@ -114,23 +95,47 @@ module SolidQueueMonitor
       "<code>#{formatted}</code>"
     end
 
-    private
-
-    def page_link(page, current_page)
-      if page == current_page
-        "<span class='pagination-current'>#{page}</span>"
+    # Helper method to get the current request path
+    def request_path
+      # Try to get the current path from the controller's request
+      if defined?(controller) && controller.respond_to?(:request)
+        controller.request.path
       else
-        "<a href='?page=#{page}#{query_params}' class='pagination-link'>#{page}</a>"
+        # Fallback to a default path if we can't get the current path
+        "/solid_queue"
       end
     end
 
+    # Helper method to get the mount point of the engine
+    def engine_mount_point
+      path_parts = request_path.split('/')
+      if path_parts.length >= 3
+        "/#{path_parts[1]}/#{path_parts[2]}"
+      else
+        "/solid_queue"
+      end
+    end
+
+    private
+
     def query_params
       params = []
-      params << "class_name=#{CGI.escape(@filters[:class_name])}" if @filters && @filters[:class_name].present?
-      params << "queue_name=#{CGI.escape(@filters[:queue_name])}" if @filters && @filters[:queue_name].present?
-      params << "status=#{CGI.escape(@filters[:status])}" if @filters && @filters[:status].present?
+      params << "class_name=#{@filters[:class_name]}" if @filters && @filters[:class_name].present?
+      params << "queue_name=#{@filters[:queue_name]}" if @filters && @filters[:queue_name].present?
+      params << "status=#{@filters[:status]}" if @filters && @filters[:status].present?
       
       params.empty? ? '' : "&#{params.join('&')}"
+    end
+
+    # Helper method to get the full path for a route
+    def full_path(route_name, *args)
+      begin
+        # Try to use the engine routes first
+        SolidQueueMonitor::Engine.routes.url_helpers.send(route_name, *args)
+      rescue NoMethodError
+        # Fall back to main app routes
+        Rails.application.routes.url_helpers.send("solid_queue_#{route_name}", *args)
+      end
     end
   end
 end

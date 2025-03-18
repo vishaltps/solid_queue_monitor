@@ -54,7 +54,32 @@ module SolidQueueMonitor
     def render_message
       return '' unless @message
       class_name = @message_type == 'success' ? 'message-success' : 'message-error'
-      "<div class='message #{class_name}'>#{@message}</div>"
+      <<-HTML
+        <div id="flash-message" class="message #{class_name}">#{@message}</div>
+        <script>
+          // Automatically hide the flash message after 5 seconds
+          document.addEventListener('DOMContentLoaded', function() {
+            var flashMessage = document.getElementById('flash-message');
+            if (flashMessage) {
+              setTimeout(function() {
+                flashMessage.style.opacity = '1';
+                // Fade out animation
+                var fadeEffect = setInterval(function() {
+                  if (!flashMessage.style.opacity) {
+                    flashMessage.style.opacity = 1;
+                  }
+                  if (flashMessage.style.opacity > 0) {
+                    flashMessage.style.opacity -= 0.1;
+                  } else {
+                    clearInterval(fadeEffect);
+                    flashMessage.style.display = 'none';
+                  }
+                }, 50);
+              }, 5000); // 5 seconds
+            }
+          });
+        </script>
+      HTML
     end
 
     def generate_header
