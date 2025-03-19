@@ -32,9 +32,9 @@ A lightweight, zero-dependency web interface for monitoring Solid Queue backgrou
 
 ![Dashboard Overview](screenshots/dashboard.png)
 
-### Recurring Jobs
+### Failed Jobs
 
-![Recurring Jobs](screenshots/recurring_jobs.png)
+![Failed Jobs](screenshots/failed_jobs.png)
 
 ## Installation
 
