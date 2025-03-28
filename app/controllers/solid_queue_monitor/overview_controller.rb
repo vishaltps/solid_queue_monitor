@@ -1,0 +1,26 @@
+module SolidQueueMonitor
+  class OverviewController < BaseController
+    def index
+      @stats = SolidQueueMonitor::StatsCalculator.calculate
+      
+      # Get all jobs with pagination
+      @recent_jobs = paginate(filter_jobs(SolidQueue::Job.order(created_at: :desc)))
+      
+      # Preload failed job information
+      preload_job_statuses(@recent_jobs[:records])
+      
+      render_page('Overview', generate_overview_content)
+    end
+    
+    private
+    
+    def generate_overview_content
+      SolidQueueMonitor::StatsPresenter.new(@stats).render + 
+      SolidQueueMonitor::JobsPresenter.new(@recent_jobs[:records], 
+        current_page: @recent_jobs[:current_page],
+        total_pages: @recent_jobs[:total_pages],
+        filters: filter_params
+      ).render
+    end
+  end
+end 
