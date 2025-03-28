@@ -15,13 +15,16 @@ A lightweight, zero-dependency web interface for monitoring Solid Queue backgrou
 
 ## Features
 
-- **Dashboard Overview**: Get a quick snapshot of your job queue with statistics and counts
-- **Job Filtering**: Filter jobs by class name, queue name, and status
-- **Job Management**: Execute scheduled jobs on demand
-- **Failed Job Inspection**: View detailed error information for failed jobs
-- **Queue Monitoring**: Track job distribution across different queues
-- **Recurring Jobs**: Monitor and manage recurring background tasks
-- **Pagination**: Navigate through large job lists with ease
+- **Dashboard Overview**: Get a quick snapshot of your queue's health with statistics on all job types
+- **Ready Jobs**: View jobs that are ready to be executed
+- **In Progress Jobs**: Monitor jobs currently being processed by workers
+- **Scheduled Jobs**: See upcoming jobs scheduled for future execution
+- **Recurring Jobs**: Manage periodic jobs that run on a schedule
+- **Failed Jobs**: Track and debug failed jobs, with the ability to retry or discard them
+- **Queue Management**: View and filter jobs by queue
+- **Job Filtering**: Filter jobs by class name, queue, and status
+- **Quick Actions**: Retry or discard failed jobs directly from any view
+- **Performance Optimized**: Designed for high-volume applications with smart pagination
 - **Optional Authentication**: Secure your dashboard with HTTP Basic Authentication
 - **Responsive Design**: Works on desktop and mobile devices
 - **Zero Dependencies**: No additional JavaScript libraries or frameworks required
@@ -30,7 +33,7 @@ A lightweight, zero-dependency web interface for monitoring Solid Queue backgrou
 
 ### Dashboard Overview
 
-![Dashboard Overview](screenshots/dashboard.png)
+![Dashboard Overview](screenshots/dashboard-2.png)
 
 ### Failed Jobs
 
