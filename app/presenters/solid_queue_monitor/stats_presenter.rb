@@ -10,12 +10,12 @@ module SolidQueueMonitor
           <h3>Queue Statistics</h3>
           <div class="stats">
             #{generate_stat_card('Total Jobs', @stats[:total_jobs])}
-            #{generate_stat_card('Unique Queues', @stats[:unique_queues])}
             #{generate_stat_card('Ready', @stats[:ready])}
+            #{generate_stat_card('In Progress', @stats[:in_progress])}
             #{generate_stat_card('Scheduled', @stats[:scheduled])}
+            #{generate_stat_card('Recurring', @stats[:recurring])}
             #{generate_stat_card('Failed', @stats[:failed])}
             #{generate_stat_card('Completed', @stats[:completed])}
-            #{generate_stat_card('Recurring', @stats[:recurring])}
           </div>
         </div>
       HTML

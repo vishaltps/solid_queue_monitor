@@ -41,7 +41,7 @@ A lightweight, zero-dependency web interface for monitoring Solid Queue backgrou
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'solid_queue_monitor', '~> 0.1.2'
+gem 'solid_queue_monitor', '~> 0.2.0'
 ```
 
 Then execute:

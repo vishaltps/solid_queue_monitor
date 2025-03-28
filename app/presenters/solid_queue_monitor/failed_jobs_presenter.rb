@@ -302,9 +302,5 @@ module SolidQueueMonitor
       # If there's an error accessing queue_name, fall back to job's queue_name
       job.queue_name
     end
-    
-    def default_url_options
-      { only_path: true }
-    end
   end
 end

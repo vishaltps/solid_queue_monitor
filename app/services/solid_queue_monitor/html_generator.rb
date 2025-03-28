@@ -89,8 +89,9 @@ module SolidQueueMonitor
           <nav class="navigation">
             <a href="#{root_path}" class="nav-link">Overview</a>
             <a href="#{ready_jobs_path}" class="nav-link">Ready Jobs</a>
-            <a href="#{recurring_jobs_path}" class="nav-link">Recurring Jobs</a>
+            <a href="#{in_progress_jobs_path}" class="nav-link">In Progress Jobs</a>
             <a href="#{scheduled_jobs_path}" class="nav-link">Scheduled Jobs</a>
+            <a href="#{recurring_jobs_path}" class="nav-link">Recurring Jobs</a>
             <a href="#{failed_jobs_path}" class="nav-link">Failed Jobs</a>
             <a href="#{queues_path}" class="nav-link">Queues</a>
           </nav>

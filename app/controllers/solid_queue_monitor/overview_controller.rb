@@ -3,10 +3,9 @@ module SolidQueueMonitor
     def index
       @stats = SolidQueueMonitor::StatsCalculator.calculate
       
-      # Get all jobs with pagination
-      @recent_jobs = paginate(filter_jobs(SolidQueue::Job.order(created_at: :desc)))
+      recent_jobs_query = SolidQueue::Job.order(created_at: :desc).limit(100)
+      @recent_jobs = paginate(filter_jobs(recent_jobs_query))
       
-      # Preload failed job information
       preload_job_statuses(@recent_jobs[:records])
       
       render_page('Overview', generate_overview_content)

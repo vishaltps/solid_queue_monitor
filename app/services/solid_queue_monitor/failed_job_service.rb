@@ -8,14 +8,12 @@ module SolidQueueMonitor
       return { success: false, message: "Associated job not found" } unless job
       
       ActiveRecord::Base.transaction do
-        # Create a ready execution for the job
         SolidQueue::ReadyExecution.create!(
           job_id: job.id,
           queue_name: get_queue_name(failed_execution, job),
           priority: job.priority
         )
         
-        # Delete the failed execution
         failed_execution.destroy!
       end
       
@@ -30,10 +28,8 @@ module SolidQueueMonitor
       return { success: false, message: "Associated job not found" } unless job
       
       ActiveRecord::Base.transaction do
-        # Mark the job as finished
         job.update!(finished_at: Time.current)
         
-        # Delete the failed execution
         failed_execution.destroy!
       end
       
@@ -91,11 +87,9 @@ module SolidQueueMonitor
     private
     
     def get_queue_name(failed_execution, job)
-      # Try to get queue_name from failed_execution if the method exists
       if failed_execution.respond_to?(:queue_name) && failed_execution.queue_name.present?
         failed_execution.queue_name
       else
-        # Fall back to job's queue_name
         job.queue_name
       end
     end

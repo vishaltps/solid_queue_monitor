@@ -32,8 +32,12 @@ module SolidQueueMonitor
       end
       
       # Page links
-      (1..total_pages).each do |page|
-        if page == current_page
+      visible_pages = calculate_visible_pages(current_page, total_pages)
+      
+      visible_pages.each do |page|
+        if page == :gap
+          html += "<span class=\"pagination-gap\">...</span>"
+        elsif page == current_page
           html += "<span class=\"pagination-current\">#{page}</span>"
         else
           html += "<a href=\"?page=#{page}#{query_params}\" class=\"pagination-link\">#{page}</a>"

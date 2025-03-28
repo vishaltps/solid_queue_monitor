@@ -70,6 +70,7 @@ module SolidQueueMonitor
                 <th>Queue</th>
                 <th>Status</th>
                 <th>Created At</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -82,15 +83,48 @@ module SolidQueueMonitor
 
     def generate_row(job)
       status = job_status(job)
-      <<-HTML
+
+      # Build the row HTML
+      row_html = <<-HTML
         <tr>
           <td>#{job.id}</td>
           <td>#{job.class_name}</td>
           <td>#{job.queue_name}</td>
           <td><span class='status-badge status-#{status}'>#{status}</span></td>
           <td>#{format_datetime(job.created_at)}</td>
-        </tr>
       HTML
+
+      # Add actions column only for failed jobs
+      if status == 'failed'
+        # Find the failed execution record for this job
+        failed_execution = SolidQueue::FailedExecution.find_by(job_id: job.id)
+
+        if failed_execution
+          row_html += <<-HTML
+            <td class="actions-cell">
+              <div class="job-actions">
+                <form method="post" action="#{retry_failed_job_path(id: failed_execution.id)}" class="inline-form">
+                  <input type="hidden" name="redirect_to" value="#{root_path}">
+                  <button type="submit" class="action-button retry-button">Retry</button>
+                </form>
+
+                <form method="post" action="#{discard_failed_job_path(id: failed_execution.id)}" class="inline-form"
+                      onsubmit="return confirm('Are you sure you want to discard this job?');">
+                  <input type="hidden" name="redirect_to" value="#{root_path}">
+                  <button type="submit" class="action-button discard-button">Discard</button>
+                </form>
+              </div>
+            </td>
+          HTML
+        else
+          row_html += "<td></td>"
+        end
+      else
+        row_html += "<td></td>"
+      end
+
+      row_html += "</tr>"
+      row_html
     end
 
     def job_status(job)

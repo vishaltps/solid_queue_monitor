@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.2.0] - 2023-03-28
+
+### Added
+
+- Redesigned with RESTful architecture using separate controllers for each resource
+- Added monitoring for In Progress jobs using the SolidQueue claimed executions table
+- Added direct retry/discard actions for failed jobs in the Recent Jobs view
+- Added improved pagination with ellipsis for better navigation
+- Added CSS styling for inline forms to improve action buttons layout
+
+### Changed
+
+- Limited Recent Jobs to 100 entries for better performance in high-volume applications
+- Reorganized navigation and stat cards to follow logical job lifecycle
+- Improved the redirect handling for job actions to maintain context
+- Restructured HTML generation for more consistent table layouts
+- Optimized database queries for job status determination
+
+### Fixed
+
+- Fixed pagination display for large result sets
+- Fixed routing issues with controller namespacing
+- Fixed redirect behavior after job actions
+
 ## [0.1.2] - 2024-03-18
 
 ### Added
