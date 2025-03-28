@@ -1,17 +1,16 @@
 SolidQueueMonitor::Engine.routes.draw do
-  root to: 'monitor#index'
+  root to: 'overview#index', as: :root
   
-  get 'ready_jobs', to: 'monitor#ready_jobs', as: 'ready_jobs'
-  get 'scheduled_jobs', to: 'monitor#scheduled_jobs', as: 'scheduled_jobs'
-  get 'failed_jobs', to: 'monitor#failed_jobs', as: 'failed_jobs'
-  get 'recurring_jobs', to: 'monitor#recurring_jobs', as: 'recurring_jobs'
-  get 'queues', to: 'monitor#queues', as: 'queues'
+  resources :ready_jobs, only: [:index]
+  resources :scheduled_jobs, only: [:index]
+  resources :recurring_jobs, only: [:index]
+  resources :failed_jobs, only: [:index]
+  resources :queues, only: [:index]
   
-  post 'execute_jobs', to: 'monitor#execute_jobs', as: 'execute_jobs'
+  post 'execute_jobs', to: 'scheduled_jobs#create', as: :execute_jobs
   
-  # Failed job actions
-  post 'retry_failed_job/:id', to: 'monitor#retry_failed_job', as: 'retry_failed_job'
-  post 'discard_failed_job/:id', to: 'monitor#discard_failed_job', as: 'discard_failed_job'
-  post 'retry_failed_jobs', to: 'monitor#retry_failed_jobs', as: 'retry_failed_jobs'
-  post 'discard_failed_jobs', to: 'monitor#discard_failed_jobs', as: 'discard_failed_jobs'
+  post 'retry_failed_job/:id', to: 'failed_jobs#retry', as: :retry_failed_job
+  post 'discard_failed_job/:id', to: 'failed_jobs#discard', as: :discard_failed_job
+  post 'retry_failed_jobs', to: 'failed_jobs#retry_all', as: :retry_failed_jobs
+  post 'discard_failed_jobs', to: 'failed_jobs#discard_all', as: :discard_failed_jobs
 end
