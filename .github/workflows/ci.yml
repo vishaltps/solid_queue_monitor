@@ -2,9 +2,13 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - fix-pipeline
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
+      - develop
 
 jobs:
   test:
