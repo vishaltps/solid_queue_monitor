@@ -19,18 +19,21 @@ jobs:
         rails-version: ['7.0', '7.1']
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby-version }}
         bundler-cache: true
+        bundler: '2.4.22'
 
     - name: Install dependencies
       run: |
-        gem install bundler
-        bundle install
+        gem update --system
+        gem install bundler -v '2.4.22'
+        bundle config set --local path 'vendor/bundle'
+        bundle install --jobs 4 --retry 3
 
     - name: Run tests
       run: bundle exec rspec
