@@ -25,14 +25,18 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby-version }}
-        bundler-cache: true
+        bundler-cache: false
         bundler: '2.4.22'
 
-    - name: Install dependencies
+    - name: Configure Bundler
       run: |
         gem update --system
         gem install bundler -v '2.4.22'
         bundle config set --local path 'vendor/bundle'
+        bundle config set --local frozen 'false'
+
+    - name: Install dependencies
+      run: |
         bundle install --jobs 4 --retry 3
 
     - name: Run tests
