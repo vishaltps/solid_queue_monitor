@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description = "A lightweight, zero-dependency web interface for monitoring Solid Queue jobs in Rails applications"
   spec.homepage = "https://github.com/vishaltps/solid_queue_monitor"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 3.1.6"
+  spec.required_ruby_version = ">= 3.0.0"
 
   spec.metadata["allowed_push_host"] = "https://rubygems.org"
 
@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   # Uncomment to register a new dependency of your gem
-  spec.add_dependency "rails", ">= 7.1"
+  spec.add_dependency "rails", ">= 7.0"
   spec.add_dependency "solid_queue", ">= 0.1.0"
   
   spec.add_development_dependency "rspec-rails", "~> 6.0"

@@ -1,4 +1,4 @@
-name: RuboCop Check
+name: CI
 
 on:
   push:
@@ -11,7 +11,7 @@ on:
       - develop
 
 jobs:
-  rubocop:
+  test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -20,10 +20,17 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: '3.2'
-        bundler-cache: true
+        bundler-cache: false
 
     - name: Install dependencies
-      run: bundle install
+      run: |
+        gem install bundler -v '2.4.22'
+        bundle config set --local path 'vendor/bundle'
+        bundle config set --local frozen 'false'
+        bundle install
 
     - name: Run RuboCop
       run: bundle exec rubocop
+
+    - name: Run RSpec
+      run: bundle exec rspec
