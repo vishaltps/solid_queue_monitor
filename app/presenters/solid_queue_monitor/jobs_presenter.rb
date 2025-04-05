@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SolidQueueMonitor
   class JobsPresenter < BasePresenter
     include Rails.application.routes.url_helpers
@@ -99,8 +101,8 @@ module SolidQueueMonitor
         # Find the failed execution record for this job
         failed_execution = SolidQueue::FailedExecution.find_by(job_id: job.id)
 
-        if failed_execution
-          row_html += <<-HTML
+        row_html += if failed_execution
+                      <<-HTML
             <td class="actions-cell">
               <div class="job-actions">
                 <form method="post" action="#{retry_failed_job_path(id: failed_execution.id)}" class="inline-form">
@@ -115,15 +117,15 @@ module SolidQueueMonitor
                 </form>
               </div>
             </td>
-          HTML
-        else
-          row_html += "<td></td>"
-        end
+                      HTML
+                    else
+                      '<td></td>'
+                    end
       else
-        row_html += "<td></td>"
+        row_html += '<td></td>'
       end
 
-      row_html += "</tr>"
+      row_html += '</tr>'
       row_html
     end
 

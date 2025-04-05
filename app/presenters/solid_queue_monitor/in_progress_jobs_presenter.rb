@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SolidQueueMonitor
   class InProgressJobsPresenter < BasePresenter
     include SolidQueueMonitor::Engine.routes.url_helpers
@@ -10,7 +12,8 @@ module SolidQueueMonitor
     end
 
     def render
-      section_wrapper('In Progress Jobs', generate_filter_form + generate_table + generate_pagination(@current_page, @total_pages))
+      section_wrapper('In Progress Jobs',
+                      generate_filter_form + generate_table + generate_pagination(@current_page, @total_pages))
     end
 
     private
@@ -68,4 +71,4 @@ module SolidQueueMonitor
       HTML
     end
   end
-end 
+end

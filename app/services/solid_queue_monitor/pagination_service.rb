@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SolidQueueMonitor
   class PaginationService
     def initialize(relation, page, per_page)

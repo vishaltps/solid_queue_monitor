@@ -1,7 +1,11 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe SolidQueueMonitor::StatsPresenter do
   describe '#render' do
+    subject { described_class.new(stats) }
+
     let(:stats) do
       {
         total_jobs: 100,
@@ -12,17 +16,15 @@ RSpec.describe SolidQueueMonitor::StatsPresenter do
         completed: 40
       }
     end
-    
-    subject { described_class.new(stats) }
-    
+
     it 'returns HTML string' do
       expect(subject.render).to be_a(String)
       expect(subject.render).to include('<!DOCTYPE html>', '<html>')
     end
-    
+
     it 'includes all stats in the output' do
       html = subject.render
-      
+
       expect(html).to include('Queue Statistics')
       expect(html).to include('Total Jobs')
       expect(html).to include('100')
@@ -37,11 +39,11 @@ RSpec.describe SolidQueueMonitor::StatsPresenter do
       expect(html).to include('Completed')
       expect(html).to include('40')
     end
-    
+
     it 'does not include recurring jobs count' do
       html = subject.render
-      
+
       expect(html).not_to include('Recurring')
     end
   end
-end 
+end

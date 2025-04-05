@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SolidQueueMonitor
   class FailedJobsPresenter < BasePresenter
     include Rails.application.routes.url_helpers
@@ -11,7 +13,8 @@ module SolidQueueMonitor
     end
 
     def render
-      section_wrapper('Failed Jobs', generate_filter_form + generate_table + generate_pagination(@current_page, @total_pages))
+      section_wrapper('Failed Jobs',
+                      generate_filter_form + generate_table + generate_pagination(@current_page, @total_pages))
     end
 
     private
@@ -36,7 +39,7 @@ module SolidQueueMonitor
             </div>
           </form>
         </div>
-        
+
         <div class="bulk-actions-bar">
           <button type="button" class="action-button retry-button" id="retry-selected-top" disabled>Retry Selected</button>
           <button type="button" class="action-button discard-button" id="discard-selected-top" disabled>Discard Selected</button>
@@ -64,7 +67,7 @@ module SolidQueueMonitor
             </table>
           </div>
         </form>
-        
+
         <script>
           document.addEventListener('DOMContentLoaded', function() {
             // Handle select all checkboxes
@@ -73,13 +76,13 @@ module SolidQueueMonitor
             const retrySelectedBtn = document.getElementById('retry-selected-top');
             const discardSelectedBtn = document.getElementById('discard-selected-top');
             const form = document.getElementById('failed-jobs-form');
-            
+        #{'    '}
             function updateButtonState() {
               const checkedBoxes = document.querySelectorAll('.job-checkbox:checked');
               retrySelectedBtn.disabled = checkedBoxes.length === 0;
               discardSelectedBtn.disabled = checkedBoxes.length === 0;
             }
-            
+        #{'    '}
             function toggleAll(checked) {
               checkboxes.forEach(checkbox => {
                 checkbox.checked = checked;
@@ -87,36 +90,36 @@ module SolidQueueMonitor
               selectAllHeader.checked = checked;
               updateButtonState();
             }
-            
+        #{'    '}
             selectAllHeader.addEventListener('change', function() {
               toggleAll(this.checked);
             });
-            
+        #{'    '}
             checkboxes.forEach(checkbox => {
               checkbox.addEventListener('change', function() {
                 updateButtonState();
-                
+        #{'        '}
                 // Update select all checkboxes if needed
                 const allChecked = document.querySelectorAll('.job-checkbox:checked').length === checkboxes.length;
                 selectAllHeader.checked = allChecked;
               });
             });
-            
+        #{'    '}
             // Handle bulk actions
             retrySelectedBtn.addEventListener('click', function() {
               const selectedIds = Array.from(document.querySelectorAll('.job-checkbox:checked')).map(cb => cb.value);
               if (selectedIds.length === 0) return;
-              
+        #{'      '}
               if (confirm('Are you sure you want to retry the selected jobs?')) {
                 form.action = '#{retry_failed_jobs_path}';
-                
+        #{'        '}
                 // Add a special flag to indicate this should redirect properly
                 const redirectInput = document.createElement('input');
                 redirectInput.type = 'hidden';
                 redirectInput.name = 'redirect_cleanly';
                 redirectInput.value = 'true';
                 form.appendChild(redirectInput);
-                
+        #{'        '}
                 // Add selected IDs as hidden inputs
                 selectedIds.forEach(id => {
                   const input = document.createElement('input');
@@ -125,10 +128,10 @@ module SolidQueueMonitor
                   input.value = id;
                   form.appendChild(input);
                 });
-                
+        #{'        '}
                 // Submit the form and then replace the URL location immediately after
                 form.submit();
-                
+        #{'        '}
                 // Delay the redirect to give the form time to submit
                 setTimeout(function() {
                   // Reset to the clean URL without query parameters
@@ -136,21 +139,21 @@ module SolidQueueMonitor
                 }, 100);
               }
             });
-            
+        #{'    '}
             discardSelectedBtn.addEventListener('click', function() {
               const selectedIds = Array.from(document.querySelectorAll('.job-checkbox:checked')).map(cb => cb.value);
               if (selectedIds.length === 0) return;
-              
+        #{'      '}
               if (confirm('Are you sure you want to discard the selected jobs?')) {
                 form.action = '#{discard_failed_jobs_path}';
-                
+        #{'        '}
                 // Add a special flag to indicate this should redirect properly
                 const redirectInput = document.createElement('input');
                 redirectInput.type = 'hidden';
                 redirectInput.name = 'redirect_cleanly';
                 redirectInput.value = 'true';
                 form.appendChild(redirectInput);
-                
+        #{'        '}
                 // Add selected IDs as hidden inputs
                 selectedIds.forEach(id => {
                   const input = document.createElement('input');
@@ -159,10 +162,10 @@ module SolidQueueMonitor
                   input.value = id;
                   form.appendChild(input);
                 });
-                
+        #{'        '}
                 // Submit the form and then replace the URL location immediately after
                 form.submit();
-                
+        #{'        '}
                 // Delay the redirect to give the form time to submit
                 setTimeout(function() {
                   // Reset to the clean URL without query parameters
@@ -170,58 +173,58 @@ module SolidQueueMonitor
                 }, 100);
               }
             });
-            
+        #{'    '}
             // Initialize button state
             updateButtonState();
-            
+        #{'    '}
             // Global function for retry action
             window.submitRetryForm = function(id) {
               const form = document.createElement('form');
               form.method = 'post';
-              form.action = '#{retry_failed_job_path(id: "PLACEHOLDER")}';
+              form.action = '#{retry_failed_job_path(id: 'PLACEHOLDER')}';
               form.action = form.action.replace('PLACEHOLDER', id);
               form.style.display = 'none';
-              
+        #{'      '}
               // Add a special flag to indicate this should redirect properly
               const redirectInput = document.createElement('input');
               redirectInput.type = 'hidden';
               redirectInput.name = 'redirect_cleanly';
               redirectInput.value = 'true';
               form.appendChild(redirectInput);
-              
+        #{'      '}
               document.body.appendChild(form);
-              
+        #{'      '}
               // Submit the form and then replace the URL location immediately after
               form.submit();
-              
+        #{'      '}
               // Delay the redirect to give the form time to submit
               setTimeout(function() {
                 // Reset to the clean URL without query parameters
                 window.history.replaceState({}, '', window.location.pathname);
               }, 100);
             };
-            
+        #{'    '}
             // Global function for discard action
             window.submitDiscardForm = function(id) {
               if (confirm('Are you sure you want to discard this job?')) {
                 const form = document.createElement('form');
                 form.method = 'post';
-                form.action = '#{discard_failed_job_path(id: "PLACEHOLDER")}';
+                form.action = '#{discard_failed_job_path(id: 'PLACEHOLDER')}';
                 form.action = form.action.replace('PLACEHOLDER', id);
                 form.style.display = 'none';
-                
+        #{'        '}
                 // Add a special flag to indicate this should redirect properly
                 const redirectInput = document.createElement('input');
                 redirectInput.type = 'hidden';
                 redirectInput.name = 'redirect_cleanly';
                 redirectInput.value = 'true';
                 form.appendChild(redirectInput);
-                
+        #{'        '}
                 document.body.appendChild(form);
-                
+        #{'        '}
                 // Submit the form and then replace the URL location immediately after
                 form.submit();
-                
+        #{'        '}
                 // Delay the redirect to give the form time to submit
                 setTimeout(function() {
                   // Reset to the clean URL without query parameters
@@ -237,7 +240,7 @@ module SolidQueueMonitor
     def generate_row(failed_execution)
       job = failed_execution.job
       error = parse_error(failed_execution.error)
-      
+
       <<-HTML
         <tr>
           <td><input type="checkbox" class="job-checkbox" value="#{failed_execution.id}"></td>
@@ -262,12 +265,12 @@ module SolidQueueMonitor
           </td>
           <td class="actions-cell">
             <div class="job-actions">
-              <a href="javascript:void(0)" 
-                 onclick="submitRetryForm(#{failed_execution.id})" 
+              <a href="javascript:void(0)"#{' '}
+                 onclick="submitRetryForm(#{failed_execution.id})"#{' '}
                  class="action-button retry-button">Retry</a>
-              
-              <a href="javascript:void(0)" 
-                 onclick="submitDiscardForm(#{failed_execution.id})" 
+        #{'      '}
+              <a href="javascript:void(0)"#{' '}
+                 onclick="submitDiscardForm(#{failed_execution.id})"#{' '}
                  class="action-button discard-button">Discard</a>
             </div>
           </td>
@@ -277,7 +280,7 @@ module SolidQueueMonitor
 
     def parse_error(error)
       return { message: 'Unknown error', backtrace: '' } unless error
-      
+
       if error.is_a?(String)
         { message: error, backtrace: '' }
       elsif error.is_a?(Hash)

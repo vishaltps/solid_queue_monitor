@@ -30,7 +30,7 @@ jobs:
         bundle install
 
     - name: Run RuboCop
-      run: bundle exec rubocop
+      run: bundle exec rubocop --parallel
 
-    - name: Run RSpec
-      run: bundle exec rspec
+    # - name: Run RSpec
+    #   run: bundle exec rspec

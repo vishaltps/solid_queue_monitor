@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 SolidQueueMonitor.setup do |config|
   # Enable or disable authentication
   # When disabled, no authentication is required to access the monitor

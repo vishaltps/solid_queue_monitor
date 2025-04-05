@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SolidQueueMonitor
   class HtmlGenerator
     include Rails.application.routes.url_helpers
@@ -50,9 +52,10 @@ module SolidQueueMonitor
         </div>
       HTML
     end
-    
+
     def render_message
       return '' unless @message
+
       class_name = @message_type == 'success' ? 'message-success' : 'message-error'
       <<-HTML
         <div id="flash-message" class="message #{class_name}">#{@message}</div>

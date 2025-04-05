@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 module SolidQueueMonitor
   class ScheduledJobsPresenter < BasePresenter
-
     include Rails.application.routes.url_helpers
     include SolidQueueMonitor::Engine.routes.url_helpers
 
@@ -37,7 +38,7 @@ module SolidQueueMonitor
             </div>
           </form>
         </div>
-        
+
         <div class="bulk-actions-bar">
           <button type="button" class="action-button execute-button" id="execute-selected-top" disabled>Execute Selected</button>
         </div>
@@ -55,7 +56,7 @@ module SolidQueueMonitor
           const jobCheckboxes = document.getElementsByName('job_ids[]');
           const executeButton = document.getElementById('execute-selected-top');
           const form = document.getElementById('scheduled-jobs-form');
-          
+      #{'    '}
           selectAllCheckbox.addEventListener('change', function() {
             jobCheckboxes.forEach(checkbox => checkbox.checked = this.checked);
             updateExecuteButton();
@@ -67,12 +68,12 @@ module SolidQueueMonitor
               updateExecuteButton();
             });
           });
-          
+      #{'    '}
           // Add event listener for the execute button
           executeButton.addEventListener('click', function() {
             const selectedIds = Array.from(document.querySelectorAll('input[name="job_ids[]"]:checked')).map(cb => cb.value);
             if (selectedIds.length === 0) return;
-            
+      #{'      '}
             // Add selected IDs as hidden inputs
             selectedIds.forEach(id => {
               const input = document.createElement('input');
@@ -81,16 +82,16 @@ module SolidQueueMonitor
               input.value = id;
               form.appendChild(input);
             });
-            
+      #{'      '}
             form.submit();
           });
-          
+      #{'    '}
           function updateExecuteButton() {
             const checkboxes = document.getElementsByName('job_ids[]');
             const checked = Array.from(checkboxes).some(cb => cb.checked);
             executeButton.disabled = !checked;
           }
-          
+      #{'    '}
           // Initialize button state
           updateExecuteButton();
         });
