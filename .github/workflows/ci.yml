@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - fix-pipeline
+      - fix-tests-2
   pull_request:
     branches:
       - main
@@ -14,23 +14,23 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: '3.2'
-        bundler-cache: false
+      - uses: actions/checkout@v4
 
-    - name: Install dependencies
-      run: |
-        gem install bundler -v '2.4.22'
-        bundle config set --local path 'vendor/bundle'
-        bundle config set --local frozen 'false'
-        bundle install
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+          bundler-cache: false
 
-    - name: Run RuboCop
-      run: bundle exec rubocop --parallel
+      - name: Install dependencies
+        run: |
+          gem install bundler -v '2.4.22'
+          bundle config set --local path 'vendor/bundle'
+          bundle config set --local frozen 'false'
+          bundle install
+
+      - name: Run RuboCop
+        run: bundle exec rubocop --parallel
 
     # - name: Run RSpec
     #   run: bundle exec rspec

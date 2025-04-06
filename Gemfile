@@ -6,9 +6,8 @@ source 'https://rubygems.org'
 gemspec
 
 group :development, :test do
-  gem 'factory_bot_rails'
-  gem 'rspec-rails'
-  gem 'rubocop'
-  gem 'rubocop-rails'
-  gem 'rubocop-rspec'
+  gem 'factory_bot_rails', '~> 6.4.0'
+  gem 'pg', '~> 1.5.0'
+  gem 'rubocop', '~> 1.57.0'
+  gem 'rubocop-rails', '~> 2.24.0'
 end
