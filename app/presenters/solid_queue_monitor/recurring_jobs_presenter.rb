@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SolidQueueMonitor
   class RecurringJobsPresenter < BasePresenter
     include Rails.application.routes.url_helpers
@@ -11,7 +13,8 @@ module SolidQueueMonitor
     end
 
     def render
-      section_wrapper('Recurring Jobs', generate_filter_form + generate_table + generate_pagination(@current_page, @total_pages))
+      section_wrapper('Recurring Jobs',
+                      generate_filter_form + generate_table + generate_pagination(@current_page, @total_pages))
     end
 
     private

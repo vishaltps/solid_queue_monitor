@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
-RSpec.describe 'Dashboard', type: :feature do
+RSpec.describe 'Dashboard' do
   before do
     page.driver.basic_authorize('admin', 'password123')
   end
@@ -26,7 +28,7 @@ RSpec.describe 'Dashboard', type: :feature do
     it 'allows executing scheduled jobs' do
       visit '/queue'
       expect(page).to have_button('Execute Now')
-      
+
       click_button 'Execute Now'
       expect(page).to have_content('Job moved to ready queue')
     end

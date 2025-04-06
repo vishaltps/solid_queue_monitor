@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe SolidQueueMonitor::StatsCalculator do
@@ -12,10 +14,10 @@ RSpec.describe SolidQueueMonitor::StatsCalculator do
       create(:solid_queue_scheduled_execution)
       create(:solid_queue_ready_execution)
     end
-    
+
     it 'returns a hash with all required statistics' do
       stats = described_class.calculate
-      
+
       expect(stats).to be_a(Hash)
       expect(stats).to include(
         :total_jobs,
@@ -26,10 +28,10 @@ RSpec.describe SolidQueueMonitor::StatsCalculator do
         :completed
       )
     end
-    
+
     it 'calculates the correct counts' do
       stats = described_class.calculate
-      
+
       expect(stats[:total_jobs]).to eq(6)
       expect(stats[:unique_queues]).to eq(2)
       expect(stats[:scheduled]).to eq(1)
@@ -38,4 +40,4 @@ RSpec.describe SolidQueueMonitor::StatsCalculator do
       expect(stats[:completed]).to eq(2)
     end
   end
-end 
+end

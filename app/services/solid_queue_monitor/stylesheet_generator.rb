@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SolidQueueMonitor
   class StylesheetGenerator
     def generate
@@ -127,7 +129,7 @@ module SolidQueueMonitor
           white-space: nowrap;
         }
 
-        .solid_queue_monitor th, 
+        .solid_queue_monitor th,#{' '}
         .solid_queue_monitor td {
           padding: 0.75rem 1rem;
           text-align: left;
@@ -231,7 +233,7 @@ module SolidQueueMonitor
           padding: 0.5rem 1rem;
           font-size: 0.875rem;
         }
-        
+      #{'  '}
         .solid_queue_monitor .pagination-gap {
           display: inline-flex;
           align-items: center;
@@ -359,7 +361,7 @@ module SolidQueueMonitor
         .solid_queue_monitor .filter-and-actions-container {
           flex-direction: column;
         }
-        
+      #{'  '}
         .solid_queue_monitor .bulk-actions-container {
           width: 100%;
         }
@@ -429,7 +431,7 @@ module SolidQueueMonitor
       .solid_queue_monitor .reset-button:hover {
         background: #e5e7eb;
       }
-      
+
       /* Action buttons for retry/discard */
       .solid_queue_monitor .action-button {
         padding: 0.5rem 1rem;
@@ -441,50 +443,50 @@ module SolidQueueMonitor
         border: none;
         text-decoration: none;
       }
-      
+
       .solid_queue_monitor .retry-button {
         background: #3b82f6;
         color: white;
       }
-      
+
       .solid_queue_monitor .retry-button:hover {
         background: #2563eb;
       }
-      
+
       .solid_queue_monitor .discard-button {
         background: #ef4444;
         color: white;
       }
-      
+
       .solid_queue_monitor .discard-button:hover {
         background: #dc2626;
       }
-      
+
       .solid_queue_monitor .action-button:disabled {
         opacity: 0.5;
         cursor: not-allowed;
       }
-      
+
       .solid_queue_monitor .inline-form {
         display: inline-block;
         margin-right: 0.5rem;
       }
-      
+
       .solid_queue_monitor .actions-cell {
         white-space: nowrap;
       }
-      
+
       .solid_queue_monitor .bulk-actions {
         display: flex;
         gap: 0.5rem;
       }
-      
+
       .solid_queue_monitor .error-message {
         color: #dc2626;
         font-weight: 500;
         margin-bottom: 0.25rem;
       }
-      
+
       .solid_queue_monitor .error-backtrace {
         font-size: 0.75rem;
         white-space: pre-wrap;
@@ -495,21 +497,21 @@ module SolidQueueMonitor
         border-radius: 0.25rem;
         margin-top: 0.5rem;
       }
-      
+
       .solid_queue_monitor details {
         margin-top: 0.25rem;
       }
-      
+
       .solid_queue_monitor summary {
         cursor: pointer;
         color: #6b7280;
         font-size: 0.75rem;
       }
-      
+
       .solid_queue_monitor summary:hover {
         color: #4b5563;
       }
-      
+
       .solid_queue_monitor .job-checkbox,
       .solid_queue_monitor .select-all-checkbox {
         width: 1rem;
@@ -525,7 +527,7 @@ module SolidQueueMonitor
         border-radius: 0.5rem;
         box-shadow: 0 1px 3px rgba(0,0,0,0.1);
       }
-      
+
       .solid_queue_monitor .bulk-actions-bar .action-button {
         padding: 0.6rem 1rem;
         font-size: 0.875rem;
@@ -535,7 +537,7 @@ module SolidQueueMonitor
         background: var(--primary-color);
         color: white;
       }
-      
+
       .solid_queue_monitor .execute-button:hover {
         background: #2563eb;
       }
