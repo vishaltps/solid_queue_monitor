@@ -1,8 +1,4 @@
 require:
-  - rubocop-rspec
-
-plugins:
-  - rubocop-factory_bot
   - rubocop-rails
 
 AllCops:
@@ -12,10 +8,11 @@ AllCops:
   Exclude:
     - 'db/**/*'
     - 'config/**/*'
+    - 'script/**/*'
     - 'bin/**/*'
     - 'vendor/**/*'
     - 'node_modules/**/*'
-    - 'spec/dummy/**/*'
+    - 'lib/tasks/auto_annotate_models.rake'
 
 Style/Documentation:
   Enabled: false
@@ -44,38 +41,12 @@ Metrics/PerceivedComplexity:
 Layout/LineLength:
   Max: 150
 
-RSpec/MultipleExpectations:
-  Max: 15
-
-RSpec/ExampleLength:
-  Max: 20
-
-RSpec/IndexedLet:
-  Enabled: false
-
-RSpec/AnyInstance:
-  Enabled: false
-
-RSpec/NamedSubject:
-  Enabled: false
-
-RSpec/LetSetup:
-  Enabled: false
-
-Capybara/RSpec/PredicateMatcher:
-  Enabled: false
-
-Capybara/NegationMatcher:
-  Enabled: false
-
-Capybara/ClickLinkOrButtonStyle:
-  Enabled: false
-
-FactoryBot:
+Rails/OutputSafety:
   Enabled: false
 
 Lint/MissingSuper:
   Enabled: false
 
-Rails/OutputSafety:
-  Enabled: false
+Style/FrozenStringLiteralComment:
+  Enabled: true
+  EnforcedStyle: always

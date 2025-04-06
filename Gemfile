@@ -7,6 +7,7 @@ gemspec
 
 group :development, :test do
   gem 'factory_bot_rails', '~> 6.4.0'
+  gem 'ostruct'
   gem 'pg', '~> 1.5.0'
   gem 'rubocop', '~> 1.57.0'
   gem 'rubocop-rails', '~> 2.24.0'
