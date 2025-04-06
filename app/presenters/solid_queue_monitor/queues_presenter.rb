@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SolidQueueMonitor
   class QueuesPresenter < BasePresenter
     def initialize(records)
@@ -43,8 +45,6 @@ module SolidQueueMonitor
       HTML
     end
 
-    private
-
     def ready_jobs_count(queue_name)
       SolidQueue::ReadyExecution.where(queue_name: queue_name).count
     end
@@ -55,8 +55,8 @@ module SolidQueueMonitor
 
     def failed_jobs_count(queue_name)
       SolidQueue::FailedExecution.joins(:job)
-                                .where(solid_queue_jobs: { queue_name: queue_name })
-                                .count
+                                 .where(solid_queue_jobs: { queue_name: queue_name })
+                                 .count
     end
   end
 end

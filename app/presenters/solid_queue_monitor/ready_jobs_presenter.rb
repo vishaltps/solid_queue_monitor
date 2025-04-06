@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SolidQueueMonitor
   class ReadyJobsPresenter < BasePresenter
     def initialize(jobs, current_page: 1, total_pages: 1, filters: {})
@@ -8,7 +10,8 @@ module SolidQueueMonitor
     end
 
     def render
-      section_wrapper('Ready Jobs', generate_filter_form + generate_table + generate_pagination(@current_page, @total_pages))
+      section_wrapper('Ready Jobs',
+                      generate_filter_form + generate_table + generate_pagination(@current_page, @total_pages))
     end
 
     private

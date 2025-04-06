@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SolidQueueMonitor
   class StatsPresenter < BasePresenter
     def initialize(stats)

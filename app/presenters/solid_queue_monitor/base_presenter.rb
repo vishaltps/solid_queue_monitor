@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SolidQueueMonitor
   class BasePresenter
     include ActionView::Helpers::DateHelper
@@ -9,7 +11,7 @@ module SolidQueueMonitor
       { only_path: true }
     end
 
-    def section_wrapper(title, content)
+    def section_wrapper(_title, content)
       <<-HTML
         <div class="section-wrapper">
           <div class="section">
@@ -21,36 +23,36 @@ module SolidQueueMonitor
 
     def generate_pagination(current_page, total_pages)
       return '' if total_pages <= 1
-      
+
       html = '<div class="pagination">'
-      
+
       # Previous page link
-      if current_page > 1
-        html += "<a href=\"?page=#{current_page - 1}#{query_params}\" class=\"pagination-link pagination-nav\">Previous</a>"
-      else
-        html += '<span class="pagination-link pagination-nav disabled">Previous</span>'
-      end
-      
+      html += if current_page > 1
+                "<a href=\"?page=#{current_page - 1}#{query_params}\" class=\"pagination-link pagination-nav\">Previous</a>"
+              else
+                '<span class="pagination-link pagination-nav disabled">Previous</span>'
+              end
+
       # Page links
       visible_pages = calculate_visible_pages(current_page, total_pages)
-      
+
       visible_pages.each do |page|
-        if page == :gap
-          html += "<span class=\"pagination-gap\">...</span>"
-        elsif page == current_page
-          html += "<span class=\"pagination-current\">#{page}</span>"
-        else
-          html += "<a href=\"?page=#{page}#{query_params}\" class=\"pagination-link\">#{page}</a>"
-        end
+        html += if page == :gap
+                  '<span class="pagination-gap">...</span>'
+                elsif page == current_page
+                  "<span class=\"pagination-current\">#{page}</span>"
+                else
+                  "<a href=\"?page=#{page}#{query_params}\" class=\"pagination-link\">#{page}</a>"
+                end
       end
-      
+
       # Next page link
-      if current_page < total_pages
-        html += "<a href=\"?page=#{current_page + 1}#{query_params}\" class=\"pagination-link pagination-nav\">Next</a>"
-      else
-        html += '<span class="pagination-link pagination-nav disabled">Next</span>'
-      end
-      
+      html += if current_page < total_pages
+                "<a href=\"?page=#{current_page + 1}#{query_params}\" class=\"pagination-link pagination-nav\">Next</a>"
+              else
+                '<span class="pagination-link pagination-nav disabled">Next</span>'
+              end
+
       html += '</div>'
       html
     end
@@ -72,30 +74,31 @@ module SolidQueueMonitor
 
     def format_datetime(datetime)
       return '-' unless datetime
+
       datetime.strftime('%Y-%m-%d %H:%M:%S')
     end
 
     def format_arguments(arguments)
-      return '-' unless arguments.present?
-      
+      return '-' if arguments.blank?
+
       # For ActiveJob format
       if arguments.is_a?(Hash) && arguments['arguments'].present?
         return "<code>#{arguments['arguments'].inspect}</code>"
       elsif arguments.is_a?(Array) && arguments.length == 1 && arguments[0].is_a?(Hash) && arguments[0]['arguments'].present?
         return "<code>#{arguments[0]['arguments'].inspect}</code>"
       end
-      
+
       # For regular arguments format
       "<code>#{arguments.inspect}</code>"
     end
 
     def format_hash(hash)
-      return '-' unless hash.present?
-      
+      return '-' if hash.blank?
+
       formatted = hash.map do |key, value|
         "<strong>#{key}:</strong> #{value.to_s.truncate(50)}"
       end.join(', ')
-      
+
       "<code>#{formatted}</code>"
     end
 
@@ -106,7 +109,7 @@ module SolidQueueMonitor
         controller.request.path
       else
         # Fallback to a default path if we can't get the current path
-        "/solid_queue"
+        '/solid_queue'
       end
     end
 
@@ -116,7 +119,7 @@ module SolidQueueMonitor
       if path_parts.length >= 3
         "/#{path_parts[1]}/#{path_parts[2]}"
       else
-        "/solid_queue"
+        '/solid_queue'
       end
     end
 
@@ -127,19 +130,17 @@ module SolidQueueMonitor
       params << "class_name=#{@filters[:class_name]}" if @filters && @filters[:class_name].present?
       params << "queue_name=#{@filters[:queue_name]}" if @filters && @filters[:queue_name].present?
       params << "status=#{@filters[:status]}" if @filters && @filters[:status].present?
-      
+
       params.empty? ? '' : "&#{params.join('&')}"
     end
 
     # Helper method to get the full path for a route
     def full_path(route_name, *args)
-      begin
-        # Try to use the engine routes first
-        SolidQueueMonitor::Engine.routes.url_helpers.send(route_name, *args)
-      rescue NoMethodError
-        # Fall back to main app routes
-        Rails.application.routes.url_helpers.send("solid_queue_#{route_name}", *args)
-      end
+      # Try to use the engine routes first
+      SolidQueueMonitor::Engine.routes.url_helpers.send(route_name, *args)
+    rescue NoMethodError
+      # Fall back to main app routes
+      Rails.application.routes.url_helpers.send("solid_queue_#{route_name}", *args)
     end
   end
 end

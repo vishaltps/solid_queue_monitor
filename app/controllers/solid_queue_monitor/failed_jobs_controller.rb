@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SolidQueueMonitor
   class FailedJobsController < BaseController
     def index
@@ -5,10 +7,9 @@ module SolidQueueMonitor
       @failed_jobs = paginate(filter_failed_jobs(base_query))
 
       render_page('Failed Jobs', SolidQueueMonitor::FailedJobsPresenter.new(@failed_jobs[:records],
-        current_page: @failed_jobs[:current_page],
-        total_pages: @failed_jobs[:total_pages],
-        filters: filter_params
-      ).render)
+                                                                            current_page: @failed_jobs[:current_page],
+                                                                            total_pages: @failed_jobs[:total_pages],
+                                                                            filters: filter_params).render)
     end
 
     def retry
@@ -21,7 +22,7 @@ module SolidQueueMonitor
         set_flash_message("Failed to retry job #{id}.", 'error')
       end
 
-      redirect_to params[:redirect_to].present? ? params[:redirect_to] : failed_jobs_path
+      redirect_to(params[:redirect_to].presence || failed_jobs_path)
     end
 
     def discard
@@ -34,7 +35,7 @@ module SolidQueueMonitor
         set_flash_message("Failed to discard job #{id}.", 'error')
       end
 
-      redirect_to params[:redirect_to].present? ? params[:redirect_to] : failed_jobs_path
+      redirect_to(params[:redirect_to].presence || failed_jobs_path)
     end
 
     def retry_all

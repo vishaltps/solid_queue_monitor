@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails/generators/base'
 
 module SolidQueueMonitor
@@ -6,17 +8,17 @@ module SolidQueueMonitor
       source_root File.expand_path('templates', __dir__)
 
       def copy_initializer
-        template "initializer.rb", "config/initializers/solid_queue_monitor.rb"
+        template 'initializer.rb', 'config/initializers/solid_queue_monitor.rb'
       end
 
       def add_routes
-        prepend_to_file "config/routes.rb", "require 'solid_queue_monitor'\n\n"
-        
+        prepend_to_file 'config/routes.rb', "require 'solid_queue_monitor'\n\n"
+
         route "mount SolidQueueMonitor::Engine => '/solid_queue'"
       end
 
       def show_readme
-        readme "README.md" if behavior == :invoke
+        readme 'README.md' if behavior == :invoke
       end
     end
   end

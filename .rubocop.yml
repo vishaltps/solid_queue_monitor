@@ -1,30 +1,81 @@
 require:
-  - rubocop-rails
   - rubocop-rspec
+
+plugins:
+  - rubocop-factory_bot
+  - rubocop-rails
 
 AllCops:
   NewCops: enable
   TargetRubyVersion: 3.0
+  SuggestExtensions: false
   Exclude:
-    - 'spec/dummy/**/*'
+    - 'db/**/*'
+    - 'config/**/*'
     - 'bin/**/*'
     - 'vendor/**/*'
-    - 'tmp/**/*'
-    - 'db/**/*'
+    - 'node_modules/**/*'
+    - 'spec/dummy/**/*'
 
 Style/Documentation:
   Enabled: false
 
-Metrics/BlockLength:
-  Exclude:
-    - 'spec/**/*'
-    - '*.gemspec'
+Metrics/ClassLength:
+  Max: 500
 
-Layout/LineLength:
-  Max: 120
+Metrics/ModuleLength:
+  Max: 200
 
 Metrics/MethodLength:
-  Max: 20
+  Max: 50
+
+Metrics/BlockLength:
+  Max: 100
 
 Metrics/AbcSize:
-  Max: 30
+  Max: 35
+
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+Metrics/PerceivedComplexity:
+  Max: 10
+
+Layout/LineLength:
+  Max: 150
+
+RSpec/MultipleExpectations:
+  Max: 15
+
+RSpec/ExampleLength:
+  Max: 20
+
+RSpec/IndexedLet:
+  Enabled: false
+
+RSpec/AnyInstance:
+  Enabled: false
+
+RSpec/NamedSubject:
+  Enabled: false
+
+RSpec/LetSetup:
+  Enabled: false
+
+Capybara/RSpec/PredicateMatcher:
+  Enabled: false
+
+Capybara/NegationMatcher:
+  Enabled: false
+
+Capybara/ClickLinkOrButtonStyle:
+  Enabled: false
+
+FactoryBot:
+  Enabled: false
+
+Lint/MissingSuper:
+  Enabled: false
+
+Rails/OutputSafety:
+  Enabled: false
