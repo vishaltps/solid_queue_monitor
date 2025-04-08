@@ -1,6 +1,8 @@
 require:
   - rubocop-rails
 
+inherit_from: .rubocop_todo.yml
+
 AllCops:
   NewCops: enable
   TargetRubyVersion: 3.0

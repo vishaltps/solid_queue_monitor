@@ -18,8 +18,8 @@ module MockSolidQueue
         send("#{key}=", value) if respond_to?("#{key}=")
       end
 
-      @created_at = Time.now
-      @updated_at = Time.now
+      @created_at = Time.zone.now
+      @updated_at = Time.zone.now
     end
 
     def save

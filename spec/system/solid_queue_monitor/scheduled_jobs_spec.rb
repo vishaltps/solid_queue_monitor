@@ -41,7 +41,7 @@ RSpec.describe 'Scheduled Jobs', type: :system do
       visit '/solid_queue/scheduled_jobs'
 
       # The jobs should be sorted by scheduled_at, so ReportJob should appear first
-      job_elements = all('tr').map { |el| el.text }
+      job_elements = all('tr').map(&:text)
       report_index = job_elements.find_index { |text| text.include?('ReportJob') }
       cleanup_index = job_elements.find_index { |text| text.include?('CleanupJob') }
       email_index = job_elements.find_index { |text| text.include?('EmailJob') }

@@ -35,7 +35,7 @@ RSpec.describe 'Ready Jobs', type: :system do
     it 'sorts jobs by created time by default' do
       visit '/solid_queue/ready_jobs'
 
-      jobs = all('tr.job-row').map { |row| row.text }
+      jobs = all('tr.job-row').map(&:text)
 
       # Verify the most recent job appears first (GenerateReportJob)
       expect(jobs.first).to include('GenerateReportJob')
