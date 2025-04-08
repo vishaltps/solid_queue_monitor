@@ -32,5 +32,10 @@ jobs:
       - name: Run RuboCop
         run: bundle exec rubocop --parallel
 
+      - name: Run Mock Tests
+        run: |
+          chmod +x script/run_mock_tests.sh
+          ./script/run_mock_tests.sh
+
     # - name: Run RSpec
     #   run: bundle exec rspec
