@@ -10,7 +10,7 @@ module SolidQueueMonitor
   end
 
   # Mock SolidQueueMonitor::TestBaseController for testing
-  class TestBaseController < ActionController::Base
+  class TestBaseController < ApplicationController
     def paginate(relation)
       { records: relation, current_page: 1, total_pages: 1 }
     end

@@ -60,7 +60,7 @@ module SolidQueueMonitor
 
     def authenticate_with_http_basic
       auth_header = request.headers['Authorization']
-      if auth_header && auth_header.start_with?('Basic ')
+      if auth_header&.start_with?('Basic ')
         credentials = Base64.decode64(auth_header.sub('Basic ', '')).split(':')
         yield(credentials[0], credentials[1])
       else
