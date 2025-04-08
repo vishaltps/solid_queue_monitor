@@ -1,0 +1,4 @@
+--require spec_helper
+--color
+--format documentation
+--exclude-pattern "spec/controllers/solid_queue_monitor/base_controller_spec.rb,spec/controllers/solid_queue_monitor/overview_controller_spec.rb,spec/controllers/solid_queue_monitor/simple_controller_spec.rb,spec/lib/solid_queue_monitor_spec.rb,spec/services/solid_queue_monitor/html_generator_spec.rb,spec/system/solid_queue_monitor/failed_jobs_spec.rb,spec/system/solid_queue_monitor/overview_spec.rb,spec/system/solid_queue_monitor/ready_jobs_spec.rb,spec/system/solid_queue_monitor/recurring_jobs_spec.rb,spec/system/solid_queue_monitor/scheduled_jobs_spec.rb" 
