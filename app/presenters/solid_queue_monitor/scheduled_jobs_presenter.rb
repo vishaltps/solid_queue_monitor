@@ -32,6 +32,11 @@ module SolidQueueMonitor
               <input type="text" name="queue_name" id="queue_name" value="#{@filters[:queue_name]}" placeholder="Filter by queue">
             </div>
 
+            <div class="filter-group">
+              <label for="arguments">Arguments:</label>
+              <input type="text" name="arguments" id="arguments" value="#{@filters[:arguments]}" placeholder="Filter by arguments">
+            </div>
+
             <div class="filter-actions">
               <button type="submit" class="filter-button">Apply Filters</button>
               <a href="#{scheduled_jobs_path}" class="reset-button">Reset</a>
