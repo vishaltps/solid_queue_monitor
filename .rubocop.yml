@@ -34,6 +34,8 @@ Metrics/BlockLength:
 
 Metrics/AbcSize:
   Max: 35
+  Exclude:
+    - 'app/controllers/solid_queue_monitor/base_controller.rb'
 
 Metrics/CyclomaticComplexity:
   Max: 10
