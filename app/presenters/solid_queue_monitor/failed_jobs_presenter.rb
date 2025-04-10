@@ -33,6 +33,11 @@ module SolidQueueMonitor
               <input type="text" name="queue_name" id="queue_name" value="#{@filters[:queue_name]}" placeholder="Filter by queue">
             </div>
 
+            <div class="filter-group">
+              <label for="arguments">Arguments:</label>
+              <input type="text" name="arguments" id="arguments" value="#{@filters[:arguments]}" placeholder="Filter by arguments">
+            </div>
+
             <div class="filter-actions">
               <button type="submit" class="filter-button">Apply Filters</button>
               <a href="#{failed_jobs_path}" class="reset-button">Reset</a>
@@ -58,6 +63,7 @@ module SolidQueueMonitor
                   <th>Job</th>
                   <th>Queue</th>
                   <th>Error</th>
+                  <th>Arguments</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -263,6 +269,7 @@ module SolidQueueMonitor
               <pre class="error-backtrace">#{error[:backtrace]}</pre>
             </details>
           </td>
+          <td>#{format_arguments(job.arguments)}</td>
           <td class="actions-cell">
             <div class="job-actions">
               <a href="javascript:void(0)"#{' '}

@@ -42,6 +42,11 @@ module SolidQueueMonitor
             </div>
 
             <div class="filter-group">
+              <label for="arguments">Arguments:</label>
+              <input type="text" name="arguments" id="arguments" value="#{@filters[:arguments]}" placeholder="Filter by arguments">
+            </div>
+
+            <div class="filter-group">
               <label for="status">Status:</label>
               <select name="status" id="status">
                 <option value="">All Statuses</option>
@@ -70,6 +75,7 @@ module SolidQueueMonitor
                 <th>ID</th>
                 <th>Job</th>
                 <th>Queue</th>
+                <th>Arguments</th>
                 <th>Status</th>
                 <th>Created At</th>
                 <th>Actions</th>
@@ -92,6 +98,7 @@ module SolidQueueMonitor
           <td>#{job.id}</td>
           <td>#{job.class_name}</td>
           <td>#{job.queue_name}</td>
+          <td>#{format_arguments(job.arguments)}</td>
           <td><span class='status-badge status-#{status}'>#{status}</span></td>
           <td>#{format_datetime(job.created_at)}</td>
       HTML

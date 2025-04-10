@@ -15,10 +15,15 @@ module SolidQueueMonitor
     private
 
     def filter_in_progress_jobs(relation)
-      return relation if params[:class_name].blank?
+      return relation if params[:class_name].blank? && params[:arguments].blank?
 
       if params[:class_name].present?
         job_ids = SolidQueue::Job.where('class_name LIKE ?', "%#{params[:class_name]}%").pluck(:id)
+        relation = relation.where(job_id: job_ids)
+      end
+
+      if params[:arguments].present?
+        job_ids = SolidQueue::Job.where('arguments::text ILIKE ?', "%#{params[:arguments]}%").pluck(:id)
         relation = relation.where(job_id: job_ids)
       end
 
