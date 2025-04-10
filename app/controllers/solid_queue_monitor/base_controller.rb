@@ -75,6 +75,7 @@ module SolidQueueMonitor
     def filter_jobs(relation)
       relation = relation.where('class_name LIKE ?', "%#{params[:class_name]}%") if params[:class_name].present?
       relation = relation.where('queue_name LIKE ?', "%#{params[:queue_name]}%") if params[:queue_name].present?
+      relation = filter_by_arguments(relation) if params[:arguments].present?
 
       if params[:status].present?
         case params[:status]
@@ -98,8 +99,13 @@ module SolidQueueMonitor
       relation
     end
 
+    def filter_by_arguments(relation)
+      # Use ILIKE for case-insensitive search in PostgreSQL
+      relation.where('arguments::text ILIKE ?', "%#{params[:arguments]}%")
+    end
+
     def filter_ready_jobs(relation)
-      return relation unless params[:class_name].present? || params[:queue_name].present?
+      return relation unless params[:class_name].present? || params[:queue_name].present? || params[:arguments].present?
 
       if params[:class_name].present?
         job_ids = SolidQueue::Job.where('class_name LIKE ?', "%#{params[:class_name]}%").pluck(:id)
@@ -107,12 +113,18 @@ module SolidQueueMonitor
       end
 
       relation = relation.where('queue_name LIKE ?', "%#{params[:queue_name]}%") if params[:queue_name].present?
+
+      # Add arguments filtering
+      if params[:arguments].present?
+        job_ids = SolidQueue::Job.where('arguments::text ILIKE ?', "%#{params[:arguments]}%").pluck(:id)
+        relation = relation.where(job_id: job_ids)
+      end
 
       relation
     end
 
     def filter_scheduled_jobs(relation)
-      return relation unless params[:class_name].present? || params[:queue_name].present?
+      return relation unless params[:class_name].present? || params[:queue_name].present? || params[:arguments].present?
 
       if params[:class_name].present?
         job_ids = SolidQueue::Job.where('class_name LIKE ?', "%#{params[:class_name]}%").pluck(:id)
@@ -121,21 +133,32 @@ module SolidQueueMonitor
 
       relation = relation.where('queue_name LIKE ?', "%#{params[:queue_name]}%") if params[:queue_name].present?
 
+      # Add arguments filtering
+      if params[:arguments].present?
+        job_ids = SolidQueue::Job.where('arguments::text ILIKE ?', "%#{params[:arguments]}%").pluck(:id)
+        relation = relation.where(job_id: job_ids)
+      end
+
       relation
     end
 
     def filter_recurring_jobs(relation)
-      return relation unless params[:class_name].present? || params[:queue_name].present?
+      return relation unless params[:class_name].present? || params[:queue_name].present? || params[:arguments].present?
 
       relation = relation.where('class_name LIKE ?', "%#{params[:class_name]}%") if params[:class_name].present?
-
       relation = relation.where('queue_name LIKE ?', "%#{params[:queue_name]}%") if params[:queue_name].present?
+
+      # Add arguments filtering if the model has arguments column
+      if params[:arguments].present? && relation.column_names.include?('arguments')
+        relation = relation.where('arguments::text ILIKE ?',
+                                  "%#{params[:arguments]}%")
+      end
 
       relation
     end
 
     def filter_failed_jobs(relation)
-      return relation unless params[:class_name].present? || params[:queue_name].present?
+      return relation unless params[:class_name].present? || params[:queue_name].present? || params[:arguments].present?
 
       if params[:class_name].present?
         job_ids = SolidQueue::Job.where('class_name LIKE ?', "%#{params[:class_name]}%").pluck(:id)
@@ -153,6 +176,12 @@ module SolidQueueMonitor
         end
       end
 
+      # Add arguments filtering
+      if params[:arguments].present?
+        job_ids = SolidQueue::Job.where('arguments::text ILIKE ?', "%#{params[:arguments]}%").pluck(:id)
+        relation = relation.where(job_id: job_ids)
+      end
+
       relation
     end
 
@@ -160,6 +189,7 @@ module SolidQueueMonitor
       {
         class_name: params[:class_name],
         queue_name: params[:queue_name],
+        arguments: params[:arguments],
         status: params[:status]
       }
     end
