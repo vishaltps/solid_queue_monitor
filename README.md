@@ -33,11 +33,11 @@ A lightweight, zero-dependency web interface for monitoring Solid Queue backgrou
 
 ### Dashboard Overview
 
-![Dashboard Overview](screenshots/dashboard-2.png)
+![Dashboard Overview](screenshots/dashboard-3.png)
 
 ### Failed Jobs
 
-![Failed Jobs](screenshots/failed_jobs.png)
+![Failed Jobs](screenshots/failed-jobs-2.png)
 
 ## Installation
 
