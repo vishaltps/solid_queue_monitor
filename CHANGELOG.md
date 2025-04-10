@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.0] - 2024-05-27
+
+### Added
+
+- Added arguments filtering across all job views (Overview, Ready, Scheduled, In Progress, Failed)
+- Implemented ILIKE search for arguments to allow partial case-insensitive matching
+- Added arguments column to In Progress jobs view
+
+### Changed
+
+- Improved job filtering capabilities for more effective debugging
+- Optimized database queries for arguments filtering
+
 ## [0.2.0] - 2023-03-28
 
 ### Added
