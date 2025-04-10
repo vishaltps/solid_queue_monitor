@@ -27,6 +27,11 @@ module SolidQueueMonitor
               <input type="text" name="class_name" id="class_name" value="#{@filters[:class_name]}" placeholder="Filter by class name">
             </div>
 
+            <div class="filter-group">
+              <label for="arguments">Arguments:</label>
+              <input type="text" name="arguments" id="arguments" value="#{@filters[:arguments]}" placeholder="Filter by arguments">
+            </div>
+
             <div class="filter-actions">
               <button type="submit" class="filter-button">Apply Filters</button>
               <a href="#{in_progress_jobs_path}" class="reset-button">Reset</a>
@@ -43,6 +48,8 @@ module SolidQueueMonitor
             <thead>
               <tr>
                 <th>Job</th>
+                <th>Queue</th>
+                <th>Arguments</th>
                 <th>Started At</th>
                 <th>Process ID</th>
               </tr>
@@ -65,6 +72,7 @@ module SolidQueueMonitor
               <span class="job-timestamp">Queued at: #{format_datetime(job.created_at)}</span>
             </div>
           </td>
+          <td>#{format_arguments(job.arguments)}</td>
           <td>#{format_datetime(execution.created_at)}</td>
           <td>#{execution.process_id}</td>
         </tr>
