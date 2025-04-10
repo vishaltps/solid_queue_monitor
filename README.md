@@ -22,7 +22,7 @@ A lightweight, zero-dependency web interface for monitoring Solid Queue backgrou
 - **Recurring Jobs**: Manage periodic jobs that run on a schedule
 - **Failed Jobs**: Track and debug failed jobs, with the ability to retry or discard them
 - **Queue Management**: View and filter jobs by queue
-- **Job Filtering**: Filter jobs by class name, queue, and status
+- **Advanced Job Filtering**: Filter jobs by class name, queue, status, and job arguments
 - **Quick Actions**: Retry or discard failed jobs directly from any view
 - **Performance Optimized**: Designed for high-volume applications with smart pagination
 - **Optional Authentication**: Secure your dashboard with HTTP Basic Authentication
@@ -44,7 +44,7 @@ A lightweight, zero-dependency web interface for monitoring Solid Queue backgrou
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'solid_queue_monitor', '~> 0.2.0'
+gem 'solid_queue_monitor', '~> 0.3.0'
 ```
 
 Then execute:
@@ -112,6 +112,17 @@ The dashboard provides several views:
 
 For API-only Rails applications, SolidQueueMonitor works out of the box without requiring you to enable the asset pipeline or webpacker. This makes it an ideal choice for monitoring background jobs in modern API-based architectures.
 
+### Job Filtering
+
+You can filter jobs by:
+
+- **Class Name**: Filter by job class name
+- **Queue Name**: Filter by queue name
+- **Job Arguments**: Search within job arguments using case-insensitive partial matching
+- **Status**: Filter by job status (completed, failed, scheduled, pending)
+
+This makes it easy to find specific jobs when debugging issues in your application.
+
 ## Use Cases
 
 - **Production Monitoring**: Keep an eye on your background job processing in production environments
@@ -154,4 +165,4 @@ Everyone interacting in the SolidQueueMonitor project's codebases, issue tracker
 
 - [Solid Queue](https://github.com/rails/solid_queue) - The official Rails background job framework
 - [Rails](https://github.com/rails/rails) - The web application framework
-- [ActiveJob](https://github.com/rails/rails/tree/main/activejob) - Rails job frameworkk
+- [ActiveJob](https://github.com/rails/rails/tree/main/activejob) - Rails job framework
