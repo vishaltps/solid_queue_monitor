@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.3.1] - 2024-03-28
+
+### Improved
+
+- Enhanced job arguments display in tables with better formatting
+- Improved handling of different argument types (keyword args and plain arrays)
+- Added scrollable container for long argument values with styled scrollbar
+- Fixed duplicate argument display issues
+- Optimized space usage in job tables
+
 ## [0.3.0] - 2024-05-27
 
 ### Added
