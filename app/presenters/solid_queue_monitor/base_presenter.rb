@@ -81,15 +81,24 @@ module SolidQueueMonitor
     def format_arguments(arguments)
       return '-' if arguments.blank?
 
-      # For ActiveJob format
-      if arguments.is_a?(Hash) && arguments['arguments'].present?
-        return "<code>#{arguments['arguments'].inspect}</code>"
-      elsif arguments.is_a?(Array) && arguments.length == 1 && arguments[0].is_a?(Hash) && arguments[0]['arguments'].present?
-        return "<code>#{arguments[0]['arguments'].inspect}</code>"
-      end
+      # Extract and format the arguments more cleanly
+      formatted_args = if arguments.is_a?(Hash) && arguments['arguments'].present?
+                         format_job_arguments(arguments)
+                       elsif arguments.is_a?(Array) && arguments.length == 1 && arguments[0].is_a?(Hash) && arguments[0]['arguments'].present?
+                         format_job_arguments(arguments[0])
+                       else
+                         arguments.inspect
+                       end
 
-      # For regular arguments format
-      "<code>#{arguments.inspect}</code>"
+      if formatted_args.length <= 50
+        "<code class='args-single-line'>#{formatted_args}</code>"
+      else
+        <<-HTML
+          <div class="args-container">
+            <code class="args-content">#{formatted_args}</code>
+          </div>
+        HTML
+      end
     end
 
     def format_hash(hash)
@@ -102,18 +111,14 @@ module SolidQueueMonitor
       "<code>#{formatted}</code>"
     end
 
-    # Helper method to get the current request path
     def request_path
-      # Try to get the current path from the controller's request
       if defined?(controller) && controller.respond_to?(:request)
         controller.request.path
       else
-        # Fallback to a default path if we can't get the current path
         '/solid_queue'
       end
     end
 
-    # Helper method to get the mount point of the engine
     def engine_mount_point
       path_parts = request_path.split('/')
       if path_parts.length >= 3
@@ -134,13 +139,24 @@ module SolidQueueMonitor
       params.empty? ? '' : "&#{params.join('&')}"
     end
 
-    # Helper method to get the full path for a route
     def full_path(route_name, *args)
-      # Try to use the engine routes first
       SolidQueueMonitor::Engine.routes.url_helpers.send(route_name, *args)
     rescue NoMethodError
-      # Fall back to main app routes
       Rails.application.routes.url_helpers.send("solid_queue_#{route_name}", *args)
+    end
+
+    def format_job_arguments(job_data)
+      args = if job_data['arguments'].is_a?(Array)
+               if job_data['arguments'].first.is_a?(Hash) && job_data['arguments'].first['_aj_ruby2_keywords'].present?
+                 job_data['arguments'].first.except('_aj_ruby2_keywords')
+               else
+                 job_data['arguments']
+               end
+             else
+               job_data['arguments']
+             end
+
+      args.inspect
     end
   end
 end
