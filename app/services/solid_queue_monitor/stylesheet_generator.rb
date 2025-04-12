@@ -282,6 +282,51 @@ module SolidQueueMonitor
           font-weight: 500;
         }
 
+        /* Arguments styling */
+        .solid_queue_monitor .args-container {
+          position: relative;
+          max-height: 100px;
+          overflow: hidden;
+        }
+
+        .solid_queue_monitor .args-content {
+          display: block;
+          white-space: pre-wrap;
+          word-break: break-word;
+          max-height: 100px;
+          overflow-y: auto;
+          padding: 8px;
+          background: #f5f5f5;
+          border-radius: 4px;
+          font-size: 0.9em;
+        }
+
+        .solid_queue_monitor .args-single-line {
+          display: inline-block;
+          padding: 4px 8px;
+          background: #f5f5f5;
+          border-radius: 4px;
+          font-size: 0.9em;
+        }
+
+        .solid_queue_monitor .args-content::-webkit-scrollbar {
+          width: 8px;
+        }
+
+        .solid_queue_monitor .args-content::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 4px;
+        }
+
+        .solid_queue_monitor .args-content::-webkit-scrollbar-thumb {
+          background: #888;
+          border-radius: 4px;
+        }
+
+        .solid_queue_monitor .args-content::-webkit-scrollbar-thumb:hover {
+          background: #666;
+        }
+
       @media (max-width: 768px) {
         .solid_queue_monitor .container {
           padding: 0.5rem;
@@ -432,7 +477,6 @@ module SolidQueueMonitor
         background: #e5e7eb;
       }
 
-      /* Action buttons for retry/discard */
       .solid_queue_monitor .action-button {
         padding: 0.5rem 1rem;
         border-radius: 0.375rem;
