@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
   spec.metadata['changelog_uri'] = "#{spec.homepage}/blob/main/CHANGELOG.md"
   spec.metadata['rubygems_mfa_required'] = 'true'
 
-  spec.files = Dir['{app,config,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
+  spec.files = Dir['{app,config,lib}/**/*', 'LICENSE', 'Rakefile', 'README.md']
   spec.require_paths = ['lib']
 
   spec.add_dependency 'rails', '>= 7.0'
