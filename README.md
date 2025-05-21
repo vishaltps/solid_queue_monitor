@@ -83,8 +83,18 @@ SolidQueueMonitor.setup do |config|
 
   # Number of jobs to display per page
   config.jobs_per_page = 25
+
+  # Enable or disable auto-refresh for stats (new in 0.3.2+)
+  config.auto_refresh_enabled = true
+
+  # Interval in milliseconds for auto-refreshing stats (default: 5000 = 5 seconds)
+  config.auto_refresh_interval = 5000
 end
 ```
+
+### Auto-Refresh for Stats
+
+By default, the dashboard's statistics section will auto-refresh every 5 seconds. You can control this behavior with the `auto_refresh_enabled` and `auto_refresh_interval` options in your initializer.
 
 ### Authentication
 

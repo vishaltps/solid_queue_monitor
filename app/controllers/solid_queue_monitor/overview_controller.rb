@@ -5,6 +5,8 @@ module SolidQueueMonitor
     def index
       @stats = SolidQueueMonitor::StatsCalculator.calculate
 
+      render html: SolidQueueMonitor::StatsPresenter.new(@stats).render.html_safe and return if params[:stats_only].present?
+
       recent_jobs_query = SolidQueue::Job.order(created_at: :desc).limit(100)
       @recent_jobs = paginate(filter_jobs(recent_jobs_query))
 

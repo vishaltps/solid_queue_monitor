@@ -13,4 +13,9 @@ SolidQueueMonitor.setup do |config|
 
   # Number of jobs to display per page
   # config.jobs_per_page = 25
+
+  # Enable or disable auto-refresh for stats
+  config.auto_refresh_enabled = true
+  # Interval in milliseconds for auto-refresh
+  config.auto_refresh_interval = 5000
 end
