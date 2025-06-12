@@ -18,12 +18,12 @@ A lightweight, zero-dependency web interface for monitoring Solid Queue backgrou
 - **Dashboard Overview**: Get a quick snapshot of your queue's health with statistics on all job types
 - **Ready Jobs**: View jobs that are ready to be executed
 - **In Progress Jobs**: Monitor jobs currently being processed by workers
-- **Scheduled Jobs**: See upcoming jobs scheduled for future execution
+- **Scheduled Jobs**: See upcoming jobs scheduled for future execution with ability to execute immediately or reject permanently
 - **Recurring Jobs**: Manage periodic jobs that run on a schedule
 - **Failed Jobs**: Track and debug failed jobs, with the ability to retry or discard them
 - **Queue Management**: View and filter jobs by queue
 - **Advanced Job Filtering**: Filter jobs by class name, queue, status, and job arguments
-- **Quick Actions**: Retry or discard failed jobs directly from any view
+- **Quick Actions**: Retry or discard failed jobs, execute or reject scheduled jobs directly from any view
 - **Performance Optimized**: Designed for high-volume applications with smart pagination
 - **Optional Authentication**: Secure your dashboard with HTTP Basic Authentication
 - **Responsive Design**: Works on desktop and mobile devices
@@ -44,7 +44,7 @@ A lightweight, zero-dependency web interface for monitoring Solid Queue backgrou
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'solid_queue_monitor', '~> 0.3.1'
+gem 'solid_queue_monitor', '~> 0.3.2'
 ```
 
 Then execute:
@@ -103,9 +103,9 @@ The dashboard provides several views:
 
 - **Overview**: Shows statistics and recent jobs
 - **Ready Jobs**: Jobs that are ready to be executed
-- **Scheduled Jobs**: Jobs scheduled for future execution
+- **Scheduled Jobs**: Jobs scheduled for future execution with execute and reject actions
 - **Recurring Jobs**: Jobs that run on a recurring schedule
-- **Failed Jobs**: Jobs that have failed with error details
+- **Failed Jobs**: Jobs that have failed with error details and retry/discard actions
 - **Queues**: Distribution of jobs across different queues
 
 ### API-only Applications
@@ -127,7 +127,7 @@ This makes it easy to find specific jobs when debugging issues in your applicati
 
 - **Production Monitoring**: Keep an eye on your background job processing in production environments
 - **Debugging**: Quickly identify and troubleshoot failed jobs
-- **Job Management**: Execute scheduled jobs on demand when needed
+- **Job Management**: Execute scheduled jobs on demand or reject unwanted jobs permanently
 - **Performance Analysis**: Track job distribution and identify bottlenecks
 - **DevOps Integration**: Easily integrate with your monitoring stack
 
