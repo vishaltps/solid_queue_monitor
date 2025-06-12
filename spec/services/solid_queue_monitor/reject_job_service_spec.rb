@@ -76,4 +76,4 @@ RSpec.describe SolidQueueMonitor::RejectJobService do
       expect(job.finished_at).to be_present
     end
   end
-end 
+end
