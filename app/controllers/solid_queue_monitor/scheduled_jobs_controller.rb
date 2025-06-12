@@ -21,5 +21,16 @@ module SolidQueueMonitor
       end
       redirect_to scheduled_jobs_path
     end
+
+    def reject_all
+      result = SolidQueueMonitor::RejectJobService.new.reject_many(params[:job_ids])
+
+      if result[:success]
+        set_flash_message(result[:message], 'success')
+      else
+        set_flash_message(result[:message], 'error')
+      end
+      redirect_to scheduled_jobs_path
+    end
   end
 end

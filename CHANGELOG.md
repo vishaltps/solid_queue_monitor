@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.3.2] - 2025-06-12
+
+### Added
+
+- Added reject functionality for scheduled jobs with bulk operations support
+- New "Reject Selected" button in scheduled jobs view alongside "Execute Selected"
+- Added `RejectJobService` for handling job rejection logic
+- Added confirmation dialog for reject operations to prevent accidental job cancellation
+- Added `POST /reject_jobs` route for bulk rejection operations
+
+### Improved
+
+- Enhanced scheduled jobs UI with dual action buttons (Execute/Reject)
+- Improved JavaScript form handling to prevent duplicate job ID submissions
+- Added proper error handling and success messaging for reject operations
+- Optimized button state management for better user experience
+
+### Fixed
+
+- Fixed duplicate job ID issue in form submissions for bulk operations
+- Corrected JavaScript form submission logic to prevent parameter duplication
+
 ## [0.3.1] - 2024-03-28
 
 ### Improved

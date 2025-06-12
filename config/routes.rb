@@ -11,6 +11,7 @@ SolidQueueMonitor::Engine.routes.draw do
   resources :queues, only: [:index]
 
   post 'execute_jobs', to: 'scheduled_jobs#create', as: :execute_jobs
+  post 'reject_jobs', to: 'scheduled_jobs#reject_all', as: :reject_jobs
 
   post 'retry_failed_job/:id', to: 'failed_jobs#retry', as: :retry_failed_job
   post 'discard_failed_job/:id', to: 'failed_jobs#discard', as: :discard_failed_job

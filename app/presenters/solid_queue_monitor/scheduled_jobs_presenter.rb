@@ -46,13 +46,14 @@ module SolidQueueMonitor
 
         <div class="bulk-actions-bar">
           <button type="button" class="action-button execute-button" id="execute-selected-top" disabled>Execute Selected</button>
+          <button type="button" class="action-button discard-button" id="reject-selected-top" disabled>Reject Selected</button>
         </div>
       HTML
     end
 
     def generate_table_with_actions
       <<-HTML
-      <form id="scheduled-jobs-form" action="#{execute_jobs_path}" method="POST">
+      <form id="scheduled-jobs-form" method="POST">
         #{generate_table}
       </form>
       <script>
@@ -60,17 +61,18 @@ module SolidQueueMonitor
           const selectAllCheckbox = document.querySelector('th input[type="checkbox"]');
           const jobCheckboxes = document.getElementsByName('job_ids[]');
           const executeButton = document.getElementById('execute-selected-top');
+          const rejectButton = document.getElementById('reject-selected-top');
           const form = document.getElementById('scheduled-jobs-form');
       #{'    '}
           selectAllCheckbox.addEventListener('change', function() {
             jobCheckboxes.forEach(checkbox => checkbox.checked = this.checked);
-            updateExecuteButton();
+            updateButtonStates();
           });
 
           jobCheckboxes.forEach(checkbox => {
             checkbox.addEventListener('change', function() {
               selectAllCheckbox.checked = Array.from(jobCheckboxes).every(cb => cb.checked);
-              updateExecuteButton();
+              updateButtonStates();
             });
           });
       #{'    '}
@@ -79,6 +81,31 @@ module SolidQueueMonitor
             const selectedIds = Array.from(document.querySelectorAll('input[name="job_ids[]"]:checked')).map(cb => cb.value);
             if (selectedIds.length === 0) return;
       #{'      '}
+            submitForm('#{execute_jobs_path}', selectedIds);
+          });
+      #{'    '}
+          // Add event listener for the reject button
+          rejectButton.addEventListener('click', function() {
+            const selectedIds = Array.from(document.querySelectorAll('input[name="job_ids[]"]:checked')).map(cb => cb.value);
+            if (selectedIds.length === 0) return;
+      #{'      '}
+            if (confirm('Are you sure you want to reject the selected jobs? This action cannot be undone.')) {
+              submitForm('#{reject_jobs_path}', selectedIds);
+            }
+          });
+      #{'    '}
+          function submitForm(actionUrl, selectedIds) {
+            // Uncheck all checkboxes to prevent duplicate submission
+            document.querySelectorAll('input[name="job_ids[]"]').forEach(checkbox => {
+              checkbox.checked = false;
+            });
+
+            // Clear any existing hidden inputs
+            document.querySelectorAll('input[type="hidden"][name="job_ids[]"]').forEach(input => input.remove());
+
+            // Set form action
+            form.action = actionUrl;
+
             // Add selected IDs as hidden inputs
             selectedIds.forEach(id => {
               const input = document.createElement('input');
@@ -87,18 +114,20 @@ module SolidQueueMonitor
               input.value = id;
               form.appendChild(input);
             });
-      #{'      '}
+
+            // Submit the form
             form.submit();
-          });
+          }
       #{'    '}
-          function updateExecuteButton() {
+          function updateButtonStates() {
             const checkboxes = document.getElementsByName('job_ids[]');
             const checked = Array.from(checkboxes).some(cb => cb.checked);
             executeButton.disabled = !checked;
+            rejectButton.disabled = !checked;
           }
       #{'    '}
-          // Initialize button state
-          updateExecuteButton();
+          // Initialize button states
+          updateButtonStates();
         });
       </script>
       HTML
@@ -130,7 +159,7 @@ module SolidQueueMonitor
       <<-HTML
         <tr>
           <td>
-            <input type="checkbox" name="job_ids[]" value="#{execution.id}" onchange="updateExecuteButton()">
+            <input type="checkbox" name="job_ids[]" value="#{execution.id}">
           </td>
           <td>#{execution.job.class_name}</td>
           <td>#{execution.queue_name}</td>
