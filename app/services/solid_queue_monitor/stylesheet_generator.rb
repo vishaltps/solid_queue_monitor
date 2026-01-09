@@ -182,6 +182,30 @@ module SolidQueueMonitor
         .solid_queue_monitor .status-failed { background: #fee2e2; color: #991b1b; }
         .solid_queue_monitor .status-scheduled { background: #dbeafe; color: #1e40af; }
         .solid_queue_monitor .status-pending { background: #f3f4f6; color: #374151; }
+        .solid_queue_monitor .status-active { background: #d1fae5; color: #065f46; }
+        .solid_queue_monitor .status-paused { background: #fef3c7; color: #92400e; }
+
+        .solid_queue_monitor .queue-paused {
+          background-color: #fffbeb;
+        }
+
+        .solid_queue_monitor .pause-button {
+          background: #f59e0b;
+          color: white;
+        }
+
+        .solid_queue_monitor .pause-button:hover {
+          background: #d97706;
+        }
+
+        .solid_queue_monitor .resume-button {
+          background: #10b981;
+          color: white;
+        }
+
+        .solid_queue_monitor .resume-button:hover {
+          background: #059669;
+        }
 
         .solid_queue_monitor .execute-btn {
           background: var(--primary-color);

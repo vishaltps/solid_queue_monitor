@@ -17,4 +17,7 @@ SolidQueueMonitor::Engine.routes.draw do
   post 'discard_failed_job/:id', to: 'failed_jobs#discard', as: :discard_failed_job
   post 'retry_failed_jobs', to: 'failed_jobs#retry_all', as: :retry_failed_jobs
   post 'discard_failed_jobs', to: 'failed_jobs#discard_all', as: :discard_failed_jobs
+
+  post 'pause_queue', to: 'queues#pause', as: :pause_queue
+  post 'resume_queue', to: 'queues#resume', as: :resume_queue
 end
