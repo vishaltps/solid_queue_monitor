@@ -138,89 +138,78 @@ module SolidQueueMonitor
     def generate_auto_refresh_script
       return '' unless SolidQueueMonitor.auto_refresh_enabled
 
+      "<script>#{auto_refresh_javascript}</script>"
+    end
+
+    def auto_refresh_javascript
       interval = SolidQueueMonitor.auto_refresh_interval
-      <<-HTML
-        <script>
-          (function() {
-            var REFRESH_INTERVAL = #{interval};
-            var countdown = REFRESH_INTERVAL;
-            var timerId = null;
-            var isEnabled = localStorage.getItem('sqm_auto_refresh') !== 'false';
+      <<-JS
+        (function() {
+          var REFRESH_INTERVAL = #{interval};
+          var countdown = REFRESH_INTERVAL;
+          var timerId = null;
+          var isEnabled = localStorage.getItem('sqm_auto_refresh') !== 'false';
+          #{auto_refresh_dom_elements}
+          #{auto_refresh_functions}
+          #{auto_refresh_event_listeners}
+          #{auto_refresh_init}
+        })();
+      JS
+    end
 
-            var toggle = document.getElementById('auto-refresh-toggle');
-            var indicator = document.getElementById('auto-refresh-indicator');
-            var countdownEl = document.getElementById('auto-refresh-countdown');
-            var refreshBtn = document.getElementById('refresh-now-btn');
+    def auto_refresh_dom_elements
+      <<-JS
+        var toggle = document.getElementById('auto-refresh-toggle');
+        var indicator = document.getElementById('auto-refresh-indicator');
+        var countdownEl = document.getElementById('auto-refresh-countdown');
+        var refreshBtn = document.getElementById('refresh-now-btn');
+      JS
+    end
 
-            function updateUI() {
-              if (toggle) toggle.checked = isEnabled;
-              if (indicator) indicator.classList.toggle('active', isEnabled);
-              if (countdownEl) {
-                countdownEl.textContent = countdown + 's';
-                countdownEl.style.opacity = isEnabled ? '1' : '0.4';
-              }
-            }
+    def auto_refresh_functions
+      <<-JS
+        function updateUI() {
+          if (toggle) toggle.checked = isEnabled;
+          if (indicator) indicator.classList.toggle('active', isEnabled);
+          if (countdownEl) {
+            countdownEl.textContent = countdown + 's';
+            countdownEl.style.opacity = isEnabled ? '1' : '0.4';
+          }
+        }
+        function tick() {
+          countdown--;
+          if (countdown <= 0) { refresh(); } else { updateUI(); }
+        }
+        function startTimer() {
+          stopTimer();
+          countdown = REFRESH_INTERVAL;
+          updateUI();
+          timerId = setInterval(tick, 1000);
+        }
+        function stopTimer() {
+          if (timerId) { clearInterval(timerId); timerId = null; }
+        }
+        function refresh() { window.location.reload(); }
+        function setEnabled(enabled) {
+          isEnabled = enabled;
+          localStorage.setItem('sqm_auto_refresh', enabled ? 'true' : 'false');
+          if (enabled) { startTimer(); } else { stopTimer(); countdown = REFRESH_INTERVAL; updateUI(); }
+        }
+      JS
+    end
 
-            function tick() {
-              countdown--;
-              if (countdown <= 0) {
-                refresh();
-              } else {
-                updateUI();
-              }
-            }
+    def auto_refresh_event_listeners
+      <<-JS
+        if (toggle) { toggle.addEventListener('change', function() { setEnabled(this.checked); }); }
+        if (refreshBtn) { refreshBtn.addEventListener('click', function() { refresh(); }); }
+      JS
+    end
 
-            function startTimer() {
-              stopTimer();
-              countdown = REFRESH_INTERVAL;
-              updateUI();
-              timerId = setInterval(tick, 1000);
-            }
-
-            function stopTimer() {
-              if (timerId) {
-                clearInterval(timerId);
-                timerId = null;
-              }
-            }
-
-            function refresh() {
-              window.location.reload();
-            }
-
-            function setEnabled(enabled) {
-              isEnabled = enabled;
-              localStorage.setItem('sqm_auto_refresh', enabled ? 'true' : 'false');
-              if (enabled) {
-                startTimer();
-              } else {
-                stopTimer();
-                countdown = REFRESH_INTERVAL;
-                updateUI();
-              }
-            }
-
-            // Event listeners
-            if (toggle) {
-              toggle.addEventListener('change', function() {
-                setEnabled(this.checked);
-              });
-            }
-
-            if (refreshBtn) {
-              refreshBtn.addEventListener('click', function() {
-                refresh();
-              });
-            }
-
-            // Initialize
-            updateUI();
-            if (isEnabled) {
-              startTimer();
-            }
-          })();
-        </script>
-      HTML
+    def auto_refresh_init
+      <<-JS
+        updateUI();
+        if (isEnabled) { startTimer(); }
+      JS
     end
 
     def default_url_options
