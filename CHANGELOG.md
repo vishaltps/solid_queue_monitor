@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.4.0] - 2026-01-09
+
+### Added
+
+- Auto-refresh feature for real-time dashboard monitoring
+- Configurable auto-refresh interval via `config.auto_refresh_interval` (default: 30 seconds)
+- Toggle to enable/disable auto-refresh globally via `config.auto_refresh_enabled`
+- Compact auto-refresh controls integrated into header with:
+  - iOS-style toggle switch to enable/disable auto-refresh
+  - Live countdown timer showing seconds until next refresh
+  - Pulsing green indicator when auto-refresh is active
+  - Icon-based refresh button for immediate page reload
+  - Informative tooltip on hover explaining the feature
+- User preference persistence via localStorage (survives page reloads)
+- Responsive design for auto-refresh controls on mobile devices
+
 ## [0.3.2] - 2025-06-12
 
 ### Added

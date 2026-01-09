@@ -25,6 +25,7 @@ A lightweight, zero-dependency web interface for monitoring Solid Queue backgrou
 - **Advanced Job Filtering**: Filter jobs by class name, queue, status, and job arguments
 - **Quick Actions**: Retry or discard failed jobs, execute or reject scheduled jobs directly from any view
 - **Performance Optimized**: Designed for high-volume applications with smart pagination
+- **Auto-refresh**: Real-time monitoring with configurable auto-refresh interval and toggle
 - **Optional Authentication**: Secure your dashboard with HTTP Basic Authentication
 - **Responsive Design**: Works on desktop and mobile devices
 - **Zero Dependencies**: No additional JavaScript libraries or frameworks required
@@ -44,7 +45,7 @@ A lightweight, zero-dependency web interface for monitoring Solid Queue backgrou
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'solid_queue_monitor', '~> 0.3.2'
+gem 'solid_queue_monitor', '~> 0.4.0'
 ```
 
 Then execute:
@@ -83,6 +84,13 @@ SolidQueueMonitor.setup do |config|
 
   # Number of jobs to display per page
   config.jobs_per_page = 25
+
+  # Auto-refresh settings
+  # Enable or disable auto-refresh globally (users can still toggle it in the UI)
+  config.auto_refresh_enabled = true
+
+  # Auto-refresh interval in seconds (default: 30)
+  config.auto_refresh_interval = 30
 end
 ```
 
