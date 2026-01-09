@@ -22,6 +22,8 @@ Style/Documentation:
 
 Metrics/ClassLength:
   Max: 500
+  Exclude:
+    - 'app/services/solid_queue_monitor/stylesheet_generator.rb'
 
 Metrics/ModuleLength:
   Max: 200
