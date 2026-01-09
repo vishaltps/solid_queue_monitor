@@ -585,6 +585,183 @@ module SolidQueueMonitor
       .solid_queue_monitor .execute-button:hover {
         background: #2563eb;
       }
+
+      /* Header top row with title and auto-refresh */
+      .solid_queue_monitor .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+      }
+
+      /* Auto-refresh styles - compact design */
+      .solid_queue_monitor .auto-refresh-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.375rem 0.625rem;
+        background: white;
+        border-radius: 2rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        font-size: 0.75rem;
+        color: #6b7280;
+        cursor: default;
+      }
+
+      /* Tooltip styles */
+      .solid_queue_monitor .auto-refresh-container::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        background: #1f2937;
+        color: white;
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.375rem;
+        font-size: 0.75rem;
+        line-height: 1.4;
+        white-space: nowrap;
+        max-width: 280px;
+        white-space: normal;
+        text-align: left;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.2s, visibility 0.2s;
+        z-index: 1000;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        pointer-events: none;
+      }
+
+      /* Tooltip arrow */
+      .solid_queue_monitor .auto-refresh-container::before {
+        content: "";
+        position: absolute;
+        top: calc(100% + 2px);
+        right: 16px;
+        border: 6px solid transparent;
+        border-bottom-color: #1f2937;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.2s, visibility 0.2s;
+        z-index: 1001;
+        pointer-events: none;
+      }
+
+      .solid_queue_monitor .auto-refresh-container:hover::after,
+      .solid_queue_monitor .auto-refresh-container:hover::before {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .solid_queue_monitor .auto-refresh-indicator {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #d1d5db;
+        flex-shrink: 0;
+      }
+
+      .solid_queue_monitor .auto-refresh-indicator.active {
+        background: var(--success-color);
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+
+      .solid_queue_monitor .auto-refresh-countdown {
+        font-variant-numeric: tabular-nums;
+        font-weight: 500;
+        min-width: 1.75rem;
+        color: var(--text-color);
+        transition: opacity 0.2s;
+      }
+
+      /* Toggle switch */
+      .solid_queue_monitor .auto-refresh-switch {
+        position: relative;
+        display: inline-block;
+        width: 32px;
+        height: 18px;
+        flex-shrink: 0;
+      }
+
+      .solid_queue_monitor .auto-refresh-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .solid_queue_monitor .switch-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #d1d5db;
+        transition: 0.2s;
+        border-radius: 18px;
+      }
+
+      .solid_queue_monitor .switch-slider:before {
+        position: absolute;
+        content: "";
+        height: 14px;
+        width: 14px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        transition: 0.2s;
+        border-radius: 50%;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+      }
+
+      .solid_queue_monitor .auto-refresh-switch input:checked + .switch-slider {
+        background-color: var(--success-color);
+      }
+
+      .solid_queue_monitor .auto-refresh-switch input:checked + .switch-slider:before {
+        transform: translateX(14px);
+      }
+
+      .solid_queue_monitor .refresh-now-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        padding: 0.25rem;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        color: #9ca3af;
+        transition: all 0.2s;
+      }
+
+      .solid_queue_monitor .refresh-now-btn:hover {
+        color: var(--primary-color);
+        background: rgba(59, 130, 246, 0.1);
+      }
+
+      @media (max-width: 768px) {
+        .solid_queue_monitor .header-top {
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+
+        .solid_queue_monitor .auto-refresh-container {
+          align-self: center;
+        }
+
+        /* Hide tooltip on mobile - use native title instead */
+        .solid_queue_monitor .auto-refresh-container::after,
+        .solid_queue_monitor .auto-refresh-container::before {
+          display: none;
+        }
+      }
       CSS
     end
   end
