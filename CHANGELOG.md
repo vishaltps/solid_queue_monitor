@@ -15,6 +15,12 @@
   - Informative tooltip on hover explaining the feature
 - User preference persistence via localStorage (survives page reloads)
 - Responsive design for auto-refresh controls on mobile devices
+- Pause/Resume queue functionality for incident response
+  - Pause button to stop processing jobs on specific queues
+  - Resume button to restart processing on paused queues
+  - Visual status indicator showing Active/Paused state
+  - Confirmation dialog before pausing to prevent accidents
+  - Paused queues highlighted with amber background
 
 ## [0.3.2] - 2025-06-12
 
