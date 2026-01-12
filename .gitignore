@@ -6,7 +6,7 @@
 /pkg/
 /spec/reports/
 /tmp/
-
+/log/
 
 .DS_Store
 .rspec_status
