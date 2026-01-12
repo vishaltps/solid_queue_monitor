@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 SolidQueueMonitor::Engine.routes.draw do
-  root to: 'overview#index', as: :root
+  root to: 'overview#index'
 
   resources :ready_jobs, only: [:index]
   resources :scheduled_jobs, only: [:index]
