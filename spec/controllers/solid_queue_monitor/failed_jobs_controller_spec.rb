@@ -3,8 +3,7 @@
 require 'spec_helper'
 
 module SolidQueueMonitor
-  RSpec.describe FailedJobsController do
-    routes { SolidQueueMonitor::Engine.routes }
+  RSpec.describe FailedJobsController, type: :controller do
 
     let(:valid_credentials) { ActionController::HttpAuthentication::Basic.encode_credentials('admin', 'password123') }
 

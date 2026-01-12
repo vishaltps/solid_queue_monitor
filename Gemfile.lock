@@ -175,6 +175,10 @@ GEM
       activesupport (= 8.0.2)
       bundler (>= 1.15.0)
       railties (= 8.0.2)
+    rails-controller-testing (1.0.5)
+      actionpack (>= 5.0.1.rc1)
+      actionview (>= 5.0.1.rc1)
+      activesupport (>= 5.0.1.rc1)
     rails-dom-testing (2.2.0)
       activesupport (>= 5.0.0)
       minitest
@@ -255,6 +259,9 @@ GEM
       fugit (~> 1.11.0)
       railties (>= 7.1)
       thor (~> 1.3.1)
+    sqlite3 (2.9.0)
+      mini_portile2 (~> 2.8.0)
+    sqlite3 (2.9.0-arm64-darwin)
     stringio (3.1.5)
     thor (1.3.2)
     timeout (0.4.3)
@@ -277,11 +284,13 @@ PLATFORMS
 
 DEPENDENCIES
   factory_bot_rails
+  rails-controller-testing
   rspec-rails
   rubocop
   rubocop-rails
   rubocop-rspec
   solid_queue_monitor!
+  sqlite3
 
 BUNDLED WITH
    2.6.2
