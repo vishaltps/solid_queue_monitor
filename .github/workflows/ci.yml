@@ -43,4 +43,4 @@ jobs:
           gem install sqlite3 --platform=ruby
 
       - name: Run RSpec
-        run: bundle exec rspec --exclude-pattern "spec/controllers/**/*,spec/features/**/*"
+        run: bundle exec rspec

@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
+# Guard against multiple loads of routes file in test environment
 SolidQueueMonitor::Engine.routes.draw do
+  return if SolidQueueMonitor::Engine.routes.routes.any? { |r| r.name == 'root' }
+
   root to: 'overview#index'
 
   resources :ready_jobs, only: [:index]

@@ -90,98 +90,11 @@ ActiveRecord::Schema.define(version: 1) do
   add_index :solid_queue_pauses, :queue_name, unique: true
 end
 
-# Define SolidQueue models for testing (if not already defined by solid_queue gem)
-unless defined?(SolidQueue)
-  module SolidQueue
-    class ApplicationRecord < ActiveRecord::Base
-      self.abstract_class = true
-    end
-
-    class Job < ApplicationRecord
-      self.table_name = 'solid_queue_jobs'
-
-      has_one :ready_execution, dependent: :destroy
-      has_one :scheduled_execution, dependent: :destroy
-      has_one :failed_execution, dependent: :destroy
-      has_one :claimed_execution, dependent: :destroy
-
-      def failed?
-        failed_execution.present?
-      end
-    end
-
-    class ReadyExecution < ApplicationRecord
-      self.table_name = 'solid_queue_ready_executions'
-      belongs_to :job
-    end
-
-    class ScheduledExecution < ApplicationRecord
-      self.table_name = 'solid_queue_scheduled_executions'
-      belongs_to :job
-    end
-
-    class FailedExecution < ApplicationRecord
-      self.table_name = 'solid_queue_failed_executions'
-      belongs_to :job
-
-      def retry
-        # Stub implementation for testing
-        job.update(finished_at: nil) if job
-        destroy
-        true
-      end
-
-      def discard
-        job&.update(finished_at: Time.current)
-        destroy
-        true
-      end
-    end
-
-    class ClaimedExecution < ApplicationRecord
-      self.table_name = 'solid_queue_claimed_executions'
-      belongs_to :job
-    end
-
-    class Pause < ApplicationRecord
-      self.table_name = 'solid_queue_pauses'
-    end
-
-    class RecurringTask < ApplicationRecord
-      self.table_name = 'solid_queue_recurring_tasks'
-    end
-
-    class Process < ApplicationRecord
-      self.table_name = 'solid_queue_processes'
-    end
-
-    class Queue
-      attr_reader :name
-
-      def initialize(name)
-        @name = name
-      end
-
-      def paused?
-        Pause.exists?(queue_name: @name)
-      end
-
-      def pause
-        Pause.find_or_create_by(queue_name: @name)
-      end
-
-      def resume
-        Pause.where(queue_name: @name).destroy_all
-      end
-    end
-  end
-end
+# Load the SolidQueue model stubs (after schema is created)
+require_relative 'support/solid_queue_stubs'
 
 RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
-
-  # Configure RSpec to find spec files in the correct location
-  config.pattern = 'spec/**/*_spec.rb'
 
   # Use transactional fixtures
   config.use_transactional_fixtures = true
@@ -192,8 +105,19 @@ RSpec.configure do |config|
   # Include FactoryBot methods
   config.include FactoryBot::Syntax::Methods
 
-  # Set up engine routes for controller specs
-  config.before(:each, type: :controller) do
-    @routes = SolidQueueMonitor::Engine.routes
+  # Include engine routes for request specs
+  config.include SolidQueueMonitor::Engine.routes.url_helpers, type: :request
+
+  # For request specs, use a rack app that includes session middleware
+  # This ensures session[:flash_message] works in tests
+  config.before(:each, type: :request) do
+    def app
+      @app ||= Rack::Builder.new do
+        use ActionDispatch::Session::CookieStore,
+            key: '_test_session',
+            secret: 'a' * 64  # 64 byte secret for testing
+        run SolidQueueMonitor::Engine
+      end.to_app
+    end
   end
 end
