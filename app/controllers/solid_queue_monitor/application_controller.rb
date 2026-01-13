@@ -10,8 +10,17 @@ module SolidQueueMonitor
     skip_before_action :verify_authenticity_token
 
     def set_flash_message(message, type)
-      session[:flash_message] = message
-      session[:flash_type] = type
+      # Store in instance variable for access in views
+      @flash_message = message
+      @flash_type = type
+
+      # Try to use Rails flash if available
+      begin
+        flash[:notice] = message if type == :success
+        flash[:alert] = message if type == :error
+      rescue StandardError
+        # Flash not available (e.g., no session middleware)
+      end
     end
 
     private

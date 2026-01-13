@@ -7,13 +7,21 @@ module SolidQueueMonitor
     end
 
     def render_page(title, content)
-      # Get flash message from session
-      message = session[:flash_message]
-      message_type = session[:flash_type]
+      # Get flash message from instance variable (set by set_flash_message) or session
+      message = @flash_message
+      message_type = @flash_type
 
-      # Clear the flash message from session after using it
-      session.delete(:flash_message)
-      session.delete(:flash_type)
+      # Try to get from session as fallback, but don't fail if session unavailable
+      begin
+        message ||= session[:flash_message]
+        message_type ||= session[:flash_type]
+
+        # Clear the flash message from session after using it
+        session.delete(:flash_message) if message
+        session.delete(:flash_type) if message_type
+      rescue StandardError
+        # Session not available (e.g., no session middleware in tests)
+      end
 
       html = SolidQueueMonitor::HtmlGenerator.new(
         title: title,
