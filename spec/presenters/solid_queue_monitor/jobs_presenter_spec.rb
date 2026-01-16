@@ -10,7 +10,7 @@ RSpec.describe SolidQueueMonitor::JobsPresenter do
     let(:job2) { create(:solid_queue_job, :completed, class_name: 'ReportJob') }
     let(:jobs) { [job1, job2] }
 
-    # Note: These tests require routes which cause duplicate route errors in test environment.
+    # NOTE: These tests require routes which cause duplicate route errors in test environment.
     # Skip for now - the presenter functionality is tested through integration/feature tests.
 
     it 'returns HTML string', skip: 'Route loading issues in test environment' do

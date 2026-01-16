@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe 'Failed Jobs', type: :request do
+RSpec.describe 'Failed Jobs' do
   describe 'GET /failed_jobs' do
     let!(:failed_job1) { create(:solid_queue_failed_execution, created_at: 1.hour.ago) }
     let!(:failed_job2) { create(:solid_queue_failed_execution, created_at: 2.hours.ago) }
@@ -49,9 +49,9 @@ RSpec.describe 'Failed Jobs', type: :request do
     end
 
     it 'removes the failed execution after retry' do
-      expect {
+      expect do
         post "/retry_failed_job/#{failed_job.id}"
-      }.to change { SolidQueue::FailedExecution.count }.by(-1)
+      end.to change(SolidQueue::FailedExecution, :count).by(-1)
     end
 
     context 'with custom redirect path' do
@@ -73,9 +73,9 @@ RSpec.describe 'Failed Jobs', type: :request do
     end
 
     it 'removes the failed execution after discard' do
-      expect {
+      expect do
         post "/discard_failed_job/#{failed_job.id}"
-      }.to change { SolidQueue::FailedExecution.count }.by(-1)
+      end.to change(SolidQueue::FailedExecution, :count).by(-1)
     end
   end
 
@@ -115,9 +115,7 @@ RSpec.describe 'Failed Jobs', type: :request do
 
   context 'with authentication enabled' do
     before do
-      allow(SolidQueueMonitor).to receive(:authentication_enabled).and_return(true)
-      allow(SolidQueueMonitor).to receive(:username).and_return('admin')
-      allow(SolidQueueMonitor).to receive(:password).and_return('password123')
+      allow(SolidQueueMonitor).to receive_messages(authentication_enabled: true, username: 'admin', password: 'password123')
     end
 
     let(:valid_credentials) do
