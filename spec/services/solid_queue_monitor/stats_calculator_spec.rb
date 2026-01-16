@@ -6,6 +6,7 @@ RSpec.describe SolidQueueMonitor::StatsCalculator do
   describe '.calculate' do
     before do
       # Create some test data
+      # Note: execution factories also create associated jobs
       create_list(:solid_queue_job, 3)
       create(:solid_queue_job, :completed)
       create(:solid_queue_job, :completed)
@@ -25,19 +26,24 @@ RSpec.describe SolidQueueMonitor::StatsCalculator do
         :scheduled,
         :ready,
         :failed,
-        :completed
+        :completed,
+        :in_progress,
+        :recurring
       )
     end
 
     it 'calculates the correct counts' do
       stats = described_class.calculate
 
-      expect(stats[:total_jobs]).to eq(6)
+      # 6 explicitly created jobs + 3 jobs created by execution factories = 9 total
+      expect(stats[:total_jobs]).to eq(9)
       expect(stats[:unique_queues]).to eq(2)
       expect(stats[:scheduled]).to eq(1)
       expect(stats[:ready]).to eq(1)
       expect(stats[:failed]).to eq(1)
       expect(stats[:completed]).to eq(2)
+      expect(stats[:in_progress]).to eq(0)
+      expect(stats[:recurring]).to eq(0)
     end
   end
 end

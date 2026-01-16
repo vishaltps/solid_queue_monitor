@@ -13,6 +13,9 @@ Rails.application.configure do
   # Turn false under Spring and add config.action_view.cache_template_loading = true.
   config.cache_classes = true
 
+  # Disable route reloading to prevent duplicate route errors in engine tests
+  config.reload_routes = false
+
   # Eager loading loads your whole application. When running a single test locally,
   # this probably isn't necessary. It's a good idea to do in a CI environment,
   # or in some way before running all the tests.

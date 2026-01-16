@@ -21,7 +21,8 @@ A lightweight, zero-dependency web interface for monitoring Solid Queue backgrou
 - **Scheduled Jobs**: See upcoming jobs scheduled for future execution with ability to execute immediately or reject permanently
 - **Recurring Jobs**: Manage periodic jobs that run on a schedule
 - **Failed Jobs**: Track and debug failed jobs, with the ability to retry or discard them
-- **Queue Management**: View and filter jobs by queue
+- **Queue Management**: View and filter jobs by queue with pause/resume controls
+- **Pause/Resume Queues**: Temporarily stop processing jobs on specific queues for incident response
 - **Advanced Job Filtering**: Filter jobs by class name, queue, status, and job arguments
 - **Quick Actions**: Retry or discard failed jobs, execute or reject scheduled jobs directly from any view
 - **Performance Optimized**: Designed for high-volume applications with smart pagination

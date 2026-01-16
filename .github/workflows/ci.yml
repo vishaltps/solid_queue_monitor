@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  test:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,17 +18,29 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.2"
-          bundler-cache: false
-
-      - name: Install dependencies
-        run: |
-          gem install bundler -v '2.4.22'
-          bundle config set --local path 'vendor/bundle'
-          bundle config set --local frozen 'false'
-          bundle install
+          bundler-cache: true
 
       - name: Run RuboCop
         run: bundle exec rubocop --parallel
 
-    # - name: Run RSpec
-    #   run: bundle exec rspec
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby-version: ["3.2", "3.3"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+          bundler-cache: true
+
+      - name: Install sqlite3 from source
+        run: |
+          gem uninstall sqlite3 --all --ignore-dependencies || true
+          gem install sqlite3 --platform=ruby
+
+      - name: Run RSpec
+        run: bundle exec rspec
