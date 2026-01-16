@@ -2,8 +2,8 @@
 
 require 'spec_helper'
 
-RSpec.describe 'Overview', type: :request do
-  # Note: Tests hit the engine directly at '/' instead of the mounted path '/solid_queue'
+RSpec.describe 'Overview' do
+  # NOTE: Tests hit the engine directly at '/' instead of the mounted path '/solid_queue'
   describe 'GET /' do
     before do
       create_list(:solid_queue_job, 3)
@@ -43,9 +43,7 @@ RSpec.describe 'Overview', type: :request do
 
   context 'with authentication enabled' do
     before do
-      allow(SolidQueueMonitor).to receive(:authentication_enabled).and_return(true)
-      allow(SolidQueueMonitor).to receive(:username).and_return('admin')
-      allow(SolidQueueMonitor).to receive(:password).and_return('password123')
+      allow(SolidQueueMonitor).to receive_messages(authentication_enabled: true, username: 'admin', password: 'password123')
     end
 
     it 'requires authentication' do

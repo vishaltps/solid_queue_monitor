@@ -115,7 +115,7 @@ RSpec.configure do |config|
       @app ||= Rack::Builder.new do
         use ActionDispatch::Session::CookieStore,
             key: '_test_session',
-            secret: 'a' * 64  # 64 byte secret for testing
+            secret: 'a' * 64 # 64 byte secret for testing
         run SolidQueueMonitor::Engine
       end.to_app
     end

@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe 'Queues', type: :request do
+RSpec.describe 'Queues' do
   describe 'GET /queues' do
     before do
       create(:solid_queue_job, queue_name: 'default')
@@ -48,9 +48,9 @@ RSpec.describe 'Queues', type: :request do
       end
 
       it 'creates a pause record' do
-        expect {
+        expect do
           post '/pause_queue', params: { queue_name: queue_name }
-        }.to change { SolidQueue::Pause.count }.by(1)
+        end.to change(SolidQueue::Pause, :count).by(1)
       end
     end
 
@@ -60,9 +60,9 @@ RSpec.describe 'Queues', type: :request do
       end
 
       it 'does not create another pause record' do
-        expect {
+        expect do
           post '/pause_queue', params: { queue_name: queue_name }
-        }.not_to change { SolidQueue::Pause.count }
+        end.not_to(change(SolidQueue::Pause, :count))
       end
 
       it 'still redirects to queues' do
@@ -89,17 +89,17 @@ RSpec.describe 'Queues', type: :request do
       end
 
       it 'removes the pause record' do
-        expect {
+        expect do
           post '/resume_queue', params: { queue_name: queue_name }
-        }.to change { SolidQueue::Pause.count }.by(-1)
+        end.to change(SolidQueue::Pause, :count).by(-1)
       end
     end
 
     context 'when queue is not paused' do
       it 'does not change pause count' do
-        expect {
+        expect do
           post '/resume_queue', params: { queue_name: queue_name }
-        }.not_to change { SolidQueue::Pause.count }
+        end.not_to(change(SolidQueue::Pause, :count))
       end
 
       it 'still redirects to queues' do
@@ -112,9 +112,7 @@ RSpec.describe 'Queues', type: :request do
 
   context 'with authentication enabled' do
     before do
-      allow(SolidQueueMonitor).to receive(:authentication_enabled).and_return(true)
-      allow(SolidQueueMonitor).to receive(:username).and_return('admin')
-      allow(SolidQueueMonitor).to receive(:password).and_return('password123')
+      allow(SolidQueueMonitor).to receive_messages(authentication_enabled: true, username: 'admin', password: 'password123')
     end
 
     it 'requires authentication for queues index' do
