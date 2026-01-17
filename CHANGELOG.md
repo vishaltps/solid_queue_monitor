@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.5.0] - 2026-01-16
+
+### Added
+
+- Pause/Resume queue functionality for incident response
+  - Pause button to stop processing jobs on specific queues
+  - Resume button to restart processing on paused queues
+  - Visual status indicator showing Active/Paused state
+  - Confirmation dialog before pausing to prevent accidents
+  - Paused queues highlighted with amber background
+- New `QueuePauseService` for handling pause/resume business logic
+
+### Improved
+
+- Replaced controller specs with request specs for better integration testing
+- Enhanced flash message handling for better compatibility across environments
+- Improved route loading to prevent duplicate route errors in test environments
+
+### Changed
+
+- Updated CI workflow to test on Ruby 3.2 and 3.3 (Rails 8 requires Ruby >= 3.2)
+- Reorganized test support files for better maintainability
+
 ## [0.4.0] - 2026-01-09
 
 ### Added
@@ -15,12 +38,6 @@
   - Informative tooltip on hover explaining the feature
 - User preference persistence via localStorage (survives page reloads)
 - Responsive design for auto-refresh controls on mobile devices
-- Pause/Resume queue functionality for incident response
-  - Pause button to stop processing jobs on specific queues
-  - Resume button to restart processing on paused queues
-  - Visual status indicator showing Active/Paused state
-  - Confirmation dialog before pausing to prevent accidents
-  - Paused queues highlighted with amber background
 
 ## [0.3.2] - 2025-06-12
 
