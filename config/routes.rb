@@ -6,6 +6,8 @@ SolidQueueMonitor::Engine.routes.draw do
 
   root to: 'overview#index'
 
+  get 'chart_data', to: 'overview#chart_data', as: :chart_data
+
   resources :ready_jobs, only: [:index]
   resources :scheduled_jobs, only: [:index]
   resources :recurring_jobs, only: [:index]
