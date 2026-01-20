@@ -51,6 +51,7 @@ module SolidQueueMonitor
           #{generate_footer}
         </div>
         #{generate_auto_refresh_script}
+        #{generate_chart_script}
       HTML
     end
 
@@ -87,20 +88,32 @@ module SolidQueueMonitor
     end
 
     def generate_header
+      nav_items = [
+        { path: root_path, label: 'Overview', match: 'Overview' },
+        { path: ready_jobs_path, label: 'Ready Jobs', match: 'Ready Jobs' },
+        { path: in_progress_jobs_path, label: 'In Progress Jobs', match: 'In Progress' },
+        { path: scheduled_jobs_path, label: 'Scheduled Jobs', match: 'Scheduled Jobs' },
+        { path: recurring_jobs_path, label: 'Recurring Jobs', match: 'Recurring Jobs' },
+        { path: failed_jobs_path, label: 'Failed Jobs', match: 'Failed Jobs' },
+        { path: queues_path, label: 'Queues', match: 'Queues' }
+      ]
+
+      nav_links = nav_items.map do |item|
+        active_class = @title&.include?(item[:match]) ? 'active' : ''
+        "<a href=\"#{item[:path]}\" class=\"nav-link #{active_class}\">#{item[:label]}</a>"
+      end.join("\n            ")
+
       <<-HTML
         <header>
           <div class="header-top">
             <h1>Solid Queue Monitor</h1>
-            #{generate_auto_refresh_controls}
+            <div class="header-controls">
+              #{generate_auto_refresh_controls}
+              #{generate_theme_toggle}
+            </div>
           </div>
           <nav class="navigation">
-            <a href="#{root_path}" class="nav-link">Overview</a>
-            <a href="#{ready_jobs_path}" class="nav-link">Ready Jobs</a>
-            <a href="#{in_progress_jobs_path}" class="nav-link">In Progress Jobs</a>
-            <a href="#{scheduled_jobs_path}" class="nav-link">Scheduled Jobs</a>
-            <a href="#{recurring_jobs_path}" class="nav-link">Recurring Jobs</a>
-            <a href="#{failed_jobs_path}" class="nav-link">Failed Jobs</a>
-            <a href="#{queues_path}" class="nav-link">Queues</a>
+            #{nav_links}
           </nav>
         </header>
       HTML
@@ -132,6 +145,27 @@ module SolidQueueMonitor
             </svg>
           </button>
         </div>
+      HTML
+    end
+
+    def generate_theme_toggle
+      <<-HTML
+        <button class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle dark mode">
+          <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
       HTML
     end
 
@@ -209,6 +243,132 @@ module SolidQueueMonitor
       <<-JS
         updateUI();
         if (isEnabled) { startTimer(); }
+      JS
+    end
+
+    def generate_chart_script
+      <<-HTML
+        <script>
+          #{theme_toggle_javascript}
+          #{chart_tooltip_javascript}
+        </script>
+      HTML
+    end
+
+    def theme_toggle_javascript
+      <<-JS
+        (function() {
+          var body = document.body;
+          var themeBtn = document.getElementById('theme-toggle-btn');
+          var storageKey = 'sqm_dark_theme';
+
+          // Check for saved preference or system preference
+          function getPreferredTheme() {
+            var saved = localStorage.getItem(storageKey);
+            if (saved !== null) {
+              return saved === 'true';
+            }
+            // Check system preference
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          }
+
+          function setTheme(isDark) {
+            if (isDark) {
+              body.classList.add('dark-theme');
+            } else {
+              body.classList.remove('dark-theme');
+            }
+            localStorage.setItem(storageKey, isDark ? 'true' : 'false');
+          }
+
+          // Initialize theme
+          setTheme(getPreferredTheme());
+
+          // Toggle on button click
+          if (themeBtn) {
+            themeBtn.addEventListener('click', function() {
+              var isDark = body.classList.contains('dark-theme');
+              setTheme(!isDark);
+            });
+          }
+
+          // Listen for system preference changes
+          if (window.matchMedia) {
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+              // Only auto-switch if user hasn't manually set a preference
+              if (localStorage.getItem(storageKey) === null) {
+                setTheme(e.matches);
+              }
+            });
+          }
+        })();
+      JS
+    end
+
+    def chart_tooltip_javascript
+      <<-JS
+        (function() {
+          // Chart collapse/expand functionality
+          var chartSection = document.getElementById('chart-section');
+          var toggleBtn = document.getElementById('chart-toggle-btn');
+
+          if (chartSection && toggleBtn) {
+            var isCollapsed = localStorage.getItem('sqm_chart_collapsed') === 'true';
+
+            if (isCollapsed) {
+              chartSection.classList.add('collapsed');
+            }
+
+            toggleBtn.addEventListener('click', function() {
+              chartSection.classList.toggle('collapsed');
+              var collapsed = chartSection.classList.contains('collapsed');
+              localStorage.setItem('sqm_chart_collapsed', collapsed ? 'true' : 'false');
+            });
+          }
+
+          // Chart tooltip functionality
+          var tooltip = document.getElementById('chart-tooltip');
+          if (!tooltip) return;
+
+          var dataPoints = document.querySelectorAll('.data-point');
+          var seriesNames = { created: 'Created', completed: 'Completed', failed: 'Failed' };
+
+          dataPoints.forEach(function(point) {
+            point.addEventListener('mouseenter', function(e) {
+              var series = this.getAttribute('data-series');
+              var label = this.getAttribute('data-label');
+              var value = this.getAttribute('data-value');
+
+              tooltip.querySelector('.tooltip-label').textContent = label;
+              tooltip.querySelector('.tooltip-value').textContent = seriesNames[series] + ': ' + value;
+              tooltip.style.display = 'block';
+              positionTooltip(e);
+            });
+
+            point.addEventListener('mousemove', function(e) {
+              positionTooltip(e);
+            });
+
+            point.addEventListener('mouseleave', function() {
+              tooltip.style.display = 'none';
+            });
+          });
+
+          function positionTooltip(e) {
+            var x = e.clientX + 10;
+            var y = e.clientY - 30;
+
+            if (x + tooltip.offsetWidth > window.innerWidth) {
+              x = e.clientX - tooltip.offsetWidth - 10;
+            }
+            if (y < 0) {
+              y = e.clientY + 10;
+            }
+
+            tooltip.style.left = x + 'px';
+            tooltip.style.top = y + 'px';
+          }
+        })();
       JS
     end
 
