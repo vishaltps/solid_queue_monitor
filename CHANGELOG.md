@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.6.0] - 2026-01-20
+
+### Added
+
+- Job Activity Chart on dashboard showing jobs created, completed, and failed over time
+  - Pure SVG line chart with no external dependencies
+  - 9 configurable time ranges: 15m, 30m, 1h, 3h, 6h, 12h, 1d, 3d, 1w
+  - Collapsible chart section with summary totals visible when collapsed
+  - Interactive tooltips on hover
+  - Smart empty state handling (hides empty series, shows message when no data)
+- Dark theme support with toggle button
+  - Toggle between light and dark themes
+  - Respects system preference (`prefers-color-scheme: dark`)
+  - Persists user preference in localStorage
+  - True black (#000000) background for OLED displays
+- Wider layout (95% width, max 1800px) for better screen utilization
+- Navigation active state highlighting current page
+- New `ChartDataService` for aggregating job metrics into time buckets
+- New `ChartPresenter` for rendering SVG charts
+
+### Improved
+
+- Updated all UI components to use CSS variables for consistent theming
+- Enhanced visual hierarchy with improved color contrast in both themes
+
 ## [0.5.0] - 2026-01-16
 
 ### Added
