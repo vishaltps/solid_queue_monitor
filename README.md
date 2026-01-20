@@ -16,6 +16,8 @@ A lightweight, zero-dependency web interface for monitoring Solid Queue backgrou
 ## Features
 
 - **Dashboard Overview**: Get a quick snapshot of your queue's health with statistics on all job types
+- **Job Activity Chart**: Visual line chart showing jobs created, completed, and failed over time with 9 time range options (15m to 1 week)
+- **Dark Theme**: Toggle between light and dark themes with system preference detection and localStorage persistence
 - **Ready Jobs**: View jobs that are ready to be executed
 - **In Progress Jobs**: Monitor jobs currently being processed by workers
 - **Scheduled Jobs**: See upcoming jobs scheduled for future execution with ability to execute immediately or reject permanently
@@ -33,9 +35,13 @@ A lightweight, zero-dependency web interface for monitoring Solid Queue backgrou
 
 ## Screenshots
 
-### Dashboard Overview
+### Dashboard Overview (Light Theme)
 
-![Dashboard Overview](screenshots/dashboard-3.png)
+![Dashboard Overview - Light Theme](screenshots/dashboard-light.png)
+
+### Dashboard Overview (Dark Theme)
+
+![Dashboard Overview - Dark Theme](screenshots/dashboard-dark.png)
 
 ### Failed Jobs
 
@@ -46,7 +52,7 @@ A lightweight, zero-dependency web interface for monitoring Solid Queue backgrou
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'solid_queue_monitor', '~> 0.4.0'
+gem 'solid_queue_monitor', '~> 0.6.0'
 ```
 
 Then execute:

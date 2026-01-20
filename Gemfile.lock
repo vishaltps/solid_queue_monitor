@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    solid_queue_monitor (0.5.0)
+    solid_queue_monitor (0.6.0)
       rails (>= 7.0)
       solid_queue (>= 0.1.0)
 
