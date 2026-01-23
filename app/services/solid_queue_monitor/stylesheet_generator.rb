@@ -1394,8 +1394,7 @@ module SolidQueueMonitor
 
       /* Job Details Page Styles */
       .solid_queue_monitor .job-details-page {
-        max-width: 900px;
-        margin: 0 auto;
+        width: 100%;
       }
 
       .solid_queue_monitor .job-header {
