@@ -101,6 +101,29 @@ module SolidQueueMonitor
           background: var(--background-color);
         }
 
+        .solid_queue_monitor .section-header-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1.5rem;
+          padding: 1rem;
+          background: var(--card-background);
+          border-radius: 0.5rem;
+          box-shadow: var(--card-shadow);
+        }
+
+        .solid_queue_monitor .section-header-left {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+        }
+
+        .solid_queue_monitor .section-header-right {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
         .solid_queue_monitor .stats-container {
           margin-bottom: 2rem;
         }
