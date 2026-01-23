@@ -21,7 +21,7 @@ module SolidQueueMonitor
     private
 
     def generate_content
-      generate_filter_form + generate_summary + generate_table_or_empty + generate_pagination(@current_page, @total_pages)
+      generate_summary + generate_filter_form + generate_table_or_empty + generate_pagination(@current_page, @total_pages)
     end
 
     def generate_filter_form
