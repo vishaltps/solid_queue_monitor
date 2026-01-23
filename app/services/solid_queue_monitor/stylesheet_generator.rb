@@ -1154,6 +1154,191 @@ module SolidQueueMonitor
         align-items: center;
         gap: 0.75rem;
       }
+
+      /* Workers Page Styles */
+      .solid_queue_monitor .workers-summary {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .solid_queue_monitor .summary-card {
+        background: var(--card-background);
+        border: 1px solid var(--border-color);
+        border-radius: 0.5rem;
+        padding: 1rem 1.25rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
+        border-left: 4px solid var(--border-color);
+        position: relative;
+      }
+
+      .solid_queue_monitor .summary-card .summary-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-muted);
+      }
+
+      .solid_queue_monitor .summary-card .summary-value {
+        font-size: 1.75rem;
+        font-weight: 600;
+        color: var(--text-color);
+      }
+
+      .solid_queue_monitor .summary-healthy {
+        border-left-color: #10b981;
+      }
+
+      .solid_queue_monitor .summary-healthy .summary-value {
+        color: #10b981;
+      }
+
+      .solid_queue_monitor .summary-stale {
+        border-left-color: #f59e0b;
+      }
+
+      .solid_queue_monitor .summary-stale .summary-value {
+        color: #f59e0b;
+      }
+
+      .solid_queue_monitor .summary-dead {
+        border-left-color: #ef4444;
+      }
+
+      .solid_queue_monitor .summary-dead .summary-value {
+        color: #ef4444;
+      }
+
+      .solid_queue_monitor .summary-action {
+        font-size: 0.75rem;
+        color: #f59e0b;
+        text-decoration: none;
+        border: 1px solid #f59e0b;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        margin-top: 0.5rem;
+        transition: all 0.2s;
+      }
+
+      .solid_queue_monitor .summary-action:hover {
+        background: #f59e0b;
+        color: #000;
+      }
+
+      .solid_queue_monitor .kind-badge {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+
+      .solid_queue_monitor .kind-worker {
+        background: rgba(59, 130, 246, 0.15);
+        color: #3b82f6;
+      }
+
+      .solid_queue_monitor .kind-dispatcher {
+        background: rgba(249, 115, 22, 0.15);
+        color: #f97316;
+      }
+
+      .solid_queue_monitor .kind-scheduler {
+        background: rgba(168, 85, 247, 0.15);
+        color: #a855f7;
+      }
+
+      .solid_queue_monitor .kind-other {
+        background: rgba(107, 114, 128, 0.15);
+        color: #6b7280;
+      }
+
+      .solid_queue_monitor .status-healthy {
+        background: rgba(16, 185, 129, 0.15);
+        color: #10b981;
+      }
+
+      .solid_queue_monitor .status-stale {
+        background: rgba(245, 158, 11, 0.15);
+        color: #f59e0b;
+      }
+
+      .solid_queue_monitor .status-dead {
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+      }
+
+      .solid_queue_monitor .queue-tag {
+        display: inline-block;
+        background: var(--card-background);
+        border: 1px solid var(--border-color);
+        padding: 0.125rem 0.375rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        margin-right: 0.25rem;
+      }
+
+      .solid_queue_monitor .queue-more {
+        color: var(--text-muted);
+        font-size: 0.75rem;
+      }
+
+      .solid_queue_monitor .jobs-idle {
+        color: var(--text-muted);
+        font-style: italic;
+      }
+
+      .solid_queue_monitor .jobs-processing {
+        color: #10b981;
+      }
+
+      .solid_queue_monitor .jobs-processing .job-names {
+        color: var(--text-muted);
+        font-size: 0.8em;
+      }
+
+      .solid_queue_monitor .worker-dead {
+        background: rgba(239, 68, 68, 0.05);
+      }
+
+      .solid_queue_monitor .worker-stale {
+        background: rgba(245, 158, 11, 0.05);
+      }
+
+      .solid_queue_monitor .action-placeholder {
+        color: var(--text-muted);
+      }
+
+      .solid_queue_monitor .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--text-muted);
+      }
+
+      .solid_queue_monitor .empty-state p {
+        margin: 0.5rem 0;
+      }
+
+      .solid_queue_monitor .empty-state-hint {
+        font-size: 0.875rem;
+        opacity: 0.7;
+      }
+
+      @media (max-width: 768px) {
+        .solid_queue_monitor .workers-summary {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 480px) {
+        .solid_queue_monitor .workers-summary {
+          grid-template-columns: 1fr;
+        }
+      }
       CSS
     end
   end
