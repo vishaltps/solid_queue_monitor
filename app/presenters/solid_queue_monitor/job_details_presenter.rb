@@ -483,7 +483,7 @@ module SolidQueueMonitor
     end
 
     def render_concurrency_key
-      return '' unless @job.concurrency_key.present?
+      return '' if @job.concurrency_key.blank?
 
       <<-HTML
         <div class="detail-row">

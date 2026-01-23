@@ -21,22 +21,7 @@ module SolidQueueMonitor
       @jobs = paginate(filtered_query)
       preload_job_statuses(@jobs[:records])
 
-      # Get counts for stats cards (unfiltered)
-      total_count = SolidQueue::Job.where(queue_name: @queue_name).count
-      ready_count = SolidQueue::ReadyExecution.where(queue_name: @queue_name).count
-      scheduled_count = SolidQueue::ScheduledExecution.where(queue_name: @queue_name).count
-      in_progress_count = SolidQueue::ClaimedExecution.joins(:job).where(solid_queue_jobs: { queue_name: @queue_name }).count
-      failed_count = SolidQueue::FailedExecution.joins(:job).where(solid_queue_jobs: { queue_name: @queue_name }).count
-      completed_count = SolidQueue::Job.where(queue_name: @queue_name).where.not(finished_at: nil).count
-
-      @counts = {
-        total: total_count,
-        ready: ready_count,
-        scheduled: scheduled_count,
-        in_progress: in_progress_count,
-        failed: failed_count,
-        completed: completed_count
-      }
+      @counts = calculate_queue_counts(@queue_name)
 
       render_page("Queue: #{@queue_name}",
                   SolidQueueMonitor::QueueDetailsPresenter.new(
@@ -67,6 +52,17 @@ module SolidQueueMonitor
     end
 
     private
+
+    def calculate_queue_counts(queue_name)
+      {
+        total: SolidQueue::Job.where(queue_name: queue_name).count,
+        ready: SolidQueue::ReadyExecution.where(queue_name: queue_name).count,
+        scheduled: SolidQueue::ScheduledExecution.where(queue_name: queue_name).count,
+        in_progress: SolidQueue::ClaimedExecution.joins(:job).where(solid_queue_jobs: { queue_name: queue_name }).count,
+        failed: SolidQueue::FailedExecution.joins(:job).where(solid_queue_jobs: { queue_name: queue_name }).count,
+        completed: SolidQueue::Job.where(queue_name: queue_name).where.not(finished_at: nil).count
+      }
+    end
 
     def filter_queue_jobs(relation)
       relation = relation.where('class_name LIKE ?', "%#{params[:class_name]}%") if params[:class_name].present?

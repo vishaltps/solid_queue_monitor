@@ -44,7 +44,9 @@ RSpec.describe SolidQueueMonitor::JobDetailsPresenter do
     end
 
     context 'with a failed execution' do
-      let(:failed_execution) { create(:solid_queue_failed_execution, job: job, error: { 'message' => 'Test error', 'backtrace' => ['line1', 'line2'] }) }
+      let(:failed_execution) do
+        create(:solid_queue_failed_execution, job: job, error: { 'message' => 'Test error', 'backtrace' => %w[line1 line2] })
+      end
       let(:presenter) { described_class.new(job, failed_execution: failed_execution, back_path: '/') }
 
       it 'renders the error section' do
@@ -63,7 +65,7 @@ RSpec.describe SolidQueueMonitor::JobDetailsPresenter do
     end
 
     context 'with a claimed execution (in progress)' do
-      let(:process) { create(:solid_queue_process, kind: 'Worker', hostname: 'worker-1', pid: 12345) }
+      let(:process) { create(:solid_queue_process, kind: 'Worker', hostname: 'worker-1', pid: 12_345) }
       let(:claimed_execution) do
         execution = create(:solid_queue_claimed_execution, job: job, process_id: process.id)
         execution.instance_variable_set(:@process, process)

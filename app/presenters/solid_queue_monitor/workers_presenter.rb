@@ -266,7 +266,7 @@ module SolidQueueMonitor
         jobs = @claimed_jobs[process.id] || []
         job_names = jobs.map(&:class_name).uniq.first(3)
 
-        tooltip = jobs.first(10).map { |j| "#{j.class_name} (ID: #{j.id})" }.join("&#10;")
+        tooltip = jobs.first(10).map { |j| "#{j.class_name} (ID: #{j.id})" }.join('&#10;')
 
         <<-HTML
           <span class="jobs-processing" title="#{tooltip}">
