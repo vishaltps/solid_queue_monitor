@@ -1392,7 +1392,504 @@ module SolidQueueMonitor
         opacity: 0.7;
       }
 
+      /* Job Details Page Styles */
+      .solid_queue_monitor .job-details-page {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      .solid_queue_monitor .job-header {
+        background: var(--card-background);
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: var(--card-shadow);
+      }
+
+      .solid_queue_monitor .job-header-main {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 0.75rem;
+        flex-wrap: wrap;
+      }
+
+      .solid_queue_monitor .job-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin: 0;
+      }
+
+      .solid_queue_monitor .job-status-badge {
+        padding: 0.375rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .solid_queue_monitor .job-header-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-muted);
+        font-size: 0.875rem;
+        flex-wrap: wrap;
+      }
+
+      .solid_queue_monitor .job-separator {
+        color: var(--border-color);
+      }
+
+      .solid_queue_monitor .job-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+      }
+
+      .solid_queue_monitor .job-section {
+        background: var(--card-background);
+        border-radius: 0.5rem;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        box-shadow: var(--card-shadow);
+      }
+
+      .solid_queue_monitor .job-section .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+
+      .solid_queue_monitor .job-section .section-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin: 0;
+      }
+
+      .solid_queue_monitor .section-subtitle {
+        color: var(--text-muted);
+        font-size: 0.875rem;
+      }
+
+      /* Timing Cards */
+      .solid_queue_monitor .timing-cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .solid_queue_monitor .timing-card {
+        background: var(--card-background);
+        border-radius: 0.5rem;
+        padding: 1.25rem;
+        text-align: center;
+        box-shadow: var(--card-shadow);
+        border: 1px solid var(--border-color);
+      }
+
+      .solid_queue_monitor .timing-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 0.25rem;
+      }
+
+      .solid_queue_monitor .timing-label {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .solid_queue_monitor .timing-indicator {
+        display: inline-block;
+        padding: 0.125rem 0.5rem;
+        border-radius: 9999px;
+        font-size: 0.625rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        margin-top: 0.5rem;
+      }
+
+      .solid_queue_monitor .indicator-good {
+        background: rgba(16, 185, 129, 0.15);
+        color: #10b981;
+      }
+
+      .solid_queue_monitor .indicator-normal {
+        background: rgba(59, 130, 246, 0.15);
+        color: #3b82f6;
+      }
+
+      .solid_queue_monitor .indicator-warning {
+        background: rgba(245, 158, 11, 0.15);
+        color: #f59e0b;
+      }
+
+      /* Timeline */
+      .solid_queue_monitor .job-timeline {
+        padding: 0.5rem 0;
+      }
+
+      .solid_queue_monitor .timeline-track {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+      }
+
+      .solid_queue_monitor .timeline-event {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        flex: 1;
+      }
+
+      .solid_queue_monitor .timeline-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--border-color);
+        border: 2px solid var(--card-background);
+        z-index: 1;
+      }
+
+      .solid_queue_monitor .timeline-line {
+        position: absolute;
+        top: 5px;
+        left: calc(50% + 6px);
+        right: calc(-50% + 6px);
+        height: 2px;
+        background: var(--border-color);
+      }
+
+      .solid_queue_monitor .timeline-content {
+        text-align: center;
+        margin-top: 0.5rem;
+      }
+
+      .solid_queue_monitor .timeline-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-color);
+      }
+
+      .solid_queue_monitor .timeline-time {
+        font-size: 0.625rem;
+        color: var(--text-muted);
+        margin-top: 0.125rem;
+      }
+
+      .solid_queue_monitor .timeline-done .timeline-dot {
+        background: #10b981;
+      }
+
+      .solid_queue_monitor .timeline-done .timeline-line {
+        background: #10b981;
+      }
+
+      .solid_queue_monitor .timeline-success .timeline-dot {
+        background: #10b981;
+        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+      }
+
+      .solid_queue_monitor .timeline-failed .timeline-dot {
+        background: #ef4444;
+        box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.2);
+      }
+
+      .solid_queue_monitor .timeline-active .timeline-dot {
+        background: #3b82f6;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2); }
+        50% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.1); }
+      }
+
+      /* Error Section */
+      .solid_queue_monitor .error-section {
+        border-left: 4px solid #ef4444;
+      }
+
+      .solid_queue_monitor .error-type {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #ef4444;
+        margin-bottom: 0.5rem;
+      }
+
+      .solid_queue_monitor .error-message-box {
+        background: rgba(239, 68, 68, 0.1);
+        border-radius: 0.375rem;
+        padding: 0.75rem 1rem;
+        color: var(--text-color);
+        font-size: 0.875rem;
+        line-height: 1.5;
+      }
+
+      /* Backtrace */
+      .solid_queue_monitor .backtrace-section {
+        margin-top: 1rem;
+      }
+
+      .solid_queue_monitor .backtrace-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+      }
+
+      .solid_queue_monitor .backtrace-title {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .solid_queue_monitor .backtrace-toggle {
+        display: flex;
+        gap: 0.25rem;
+      }
+
+      .solid_queue_monitor .toggle-btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.625rem;
+        border: 1px solid var(--border-color);
+        background: transparent;
+        color: var(--text-muted);
+        border-radius: 0.25rem;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .solid_queue_monitor .toggle-btn:hover {
+        border-color: var(--text-muted);
+      }
+
+      .solid_queue_monitor .toggle-btn.active {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+      }
+
+      .solid_queue_monitor .backtrace-content {
+        background: var(--code-background);
+        border-radius: 0.375rem;
+        padding: 0.75rem;
+        font-size: 0.75rem;
+        line-height: 1.6;
+        overflow-x: auto;
+        margin: 0;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+
+      .solid_queue_monitor .backtrace-line {
+        display: block;
+        color: var(--text-color);
+      }
+
+      .solid_queue_monitor .backtrace-line .line-number {
+        color: var(--text-muted);
+        margin-right: 0.5rem;
+        user-select: none;
+      }
+
+      /* Details Grid */
+      .solid_queue_monitor .details-grid {
+        display: grid;
+        gap: 0.75rem;
+      }
+
+      .solid_queue_monitor .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .solid_queue_monitor .detail-row:last-child {
+        border-bottom: none;
+      }
+
+      .solid_queue_monitor .detail-label {
+        font-size: 0.875rem;
+        color: var(--text-muted);
+      }
+
+      .solid_queue_monitor .detail-value {
+        font-size: 0.875rem;
+        color: var(--text-color);
+        text-align: right;
+      }
+
+      .solid_queue_monitor .detail-mono {
+        font-family: ui-monospace, monospace;
+        font-size: 0.8rem;
+      }
+
+      /* Arguments Content */
+      .solid_queue_monitor .arguments-content {
+        background: var(--code-background);
+        border-radius: 0.375rem;
+        padding: 1rem;
+        font-size: 0.8rem;
+        line-height: 1.5;
+        overflow-x: auto;
+        margin: 0;
+        font-family: ui-monospace, monospace;
+      }
+
+      /* Copy Button */
+      .solid_queue_monitor .copy-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.375rem 0.625rem;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        background: transparent;
+        border: 1px solid var(--border-color);
+        border-radius: 0.25rem;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .solid_queue_monitor .copy-button:hover {
+        color: var(--text-color);
+        border-color: var(--text-muted);
+      }
+
+      /* Collapsible Section */
+      .solid_queue_monitor .collapsible-header {
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .solid_queue_monitor .collapsible-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .solid_queue_monitor .collapse-icon {
+        transition: transform 0.2s;
+        color: var(--text-muted);
+      }
+
+      .solid_queue_monitor .collapsible-content {
+        margin-top: 1rem;
+      }
+
+      .solid_queue_monitor .raw-data-content {
+        background: var(--code-background);
+        border-radius: 0.375rem;
+        padding: 1rem;
+        font-size: 0.75rem;
+        line-height: 1.5;
+        overflow-x: auto;
+        margin: 0;
+        font-family: ui-monospace, monospace;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      /* Recent Executions Table */
+      .solid_queue_monitor .recent-executions-table {
+        width: 100%;
+      }
+
+      .solid_queue_monitor .mini-status-badge {
+        display: inline-block;
+        padding: 0.125rem 0.375rem;
+        border-radius: 0.25rem;
+        font-size: 0.625rem;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      .solid_queue_monitor .args-preview {
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .solid_queue_monitor .args-preview a {
+        color: var(--text-color);
+        text-decoration: none;
+      }
+
+      .solid_queue_monitor .args-preview a:hover {
+        color: #3b82f6;
+        text-decoration: underline;
+      }
+
+      /* Queue Badge in Job Details */
+      .solid_queue_monitor .queue-badge {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        background: var(--code-background);
+        border-radius: 0.25rem;
+        font-size: 0.875rem;
+        color: var(--text-color);
+        text-decoration: none;
+      }
+
+      .solid_queue_monitor .queue-badge:hover {
+        color: #3b82f6;
+      }
+
       @media (max-width: 768px) {
+        .solid_queue_monitor .timing-cards {
+          grid-template-columns: 1fr;
+        }
+
+        .solid_queue_monitor .timeline-track {
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .solid_queue_monitor .timeline-line {
+          display: none;
+        }
+
+        .solid_queue_monitor .timeline-event {
+          flex-direction: row;
+          gap: 1rem;
+        }
+
+        .solid_queue_monitor .timeline-content {
+          text-align: left;
+          margin-top: 0;
+        }
+
+        .solid_queue_monitor .detail-row {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.25rem;
+        }
+
+        .solid_queue_monitor .detail-value {
+          text-align: left;
+        }
+
+        .solid_queue_monitor .job-header-main {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
         .solid_queue_monitor .workers-summary {
           grid-template-columns: repeat(2, 1fr);
         }
