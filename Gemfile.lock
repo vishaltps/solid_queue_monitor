@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    solid_queue_monitor (1.0.0)
+    solid_queue_monitor (1.0.1)
       rails (>= 7.0)
       solid_queue (>= 0.1.0)
 
@@ -113,7 +113,7 @@ GEM
       pp (>= 0.6.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
-    json (2.10.2)
+    json (2.18.0)
     language_server-protocol (3.17.0.4)
     lint_roller (1.1.0)
     logger (1.7.0)

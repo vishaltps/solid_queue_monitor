@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1] - 2026-01-23
+
+### Fixed
+
+- Added missing CSS styles for job details page
+- Job details page now uses full width layout consistent with other pages
+
 ## [1.0.0] - 2026-01-23
 
 ### Added
