@@ -111,6 +111,13 @@ module SolidQueueMonitor
       "<code>#{formatted}</code>"
     end
 
+    def queue_link(queue_name, css_class: nil)
+      return '-' if queue_name.blank?
+
+      classes = ['queue-link', css_class].compact.join(' ')
+      "<a href=\"#{queue_details_path(queue_name: queue_name)}\" class=\"#{classes}\">#{queue_name}</a>"
+    end
+
     def request_path
       if defined?(controller) && controller.respond_to?(:request)
         controller.request.path

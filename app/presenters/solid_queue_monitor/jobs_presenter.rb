@@ -95,9 +95,9 @@ module SolidQueueMonitor
       # Build the row HTML
       row_html = <<-HTML
         <tr>
-          <td>#{job.id}</td>
-          <td>#{job.class_name}</td>
-          <td>#{job.queue_name}</td>
+          <td><a href="#{job_path(job)}" class="job-class-link">#{job.id}</a></td>
+          <td><a href="#{job_path(job)}" class="job-class-link">#{job.class_name}</a></td>
+          <td>#{queue_link(job.queue_name)}</td>
           <td>#{format_arguments(job.arguments)}</td>
           <td><span class='status-badge status-#{status}'>#{status}</span></td>
           <td>#{format_datetime(job.created_at)}</td>

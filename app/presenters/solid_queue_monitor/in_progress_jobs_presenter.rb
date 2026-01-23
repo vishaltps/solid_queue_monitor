@@ -67,11 +67,12 @@ module SolidQueueMonitor
       <<-HTML
         <tr>
           <td>
-            <div class="job-class">#{job.class_name}</div>
+            <div class="job-class"><a href="#{job_path(job)}" class="job-class-link">#{job.class_name}</a></div>
             <div class="job-meta">
               <span class="job-timestamp">Queued at: #{format_datetime(job.created_at)}</span>
             </div>
           </td>
+          <td>#{queue_link(job.queue_name)}</td>
           <td>#{format_arguments(job.arguments)}</td>
           <td>#{format_datetime(execution.created_at)}</td>
           <td>#{execution.process_id}</td>

@@ -68,8 +68,8 @@ module SolidQueueMonitor
     def generate_row(execution)
       <<-HTML
         <tr>
-          <td>#{execution.job.class_name}</td>
-          <td>#{execution.queue_name}</td>
+          <td><a href="#{job_path(execution.job)}" class="job-class-link">#{execution.job.class_name}</a></td>
+          <td>#{queue_link(execution.queue_name)}</td>
           <td>#{execution.priority}</td>
           <td>#{format_arguments(execution.job.arguments)}</td>
           <td>#{format_datetime(execution.created_at)}</td>

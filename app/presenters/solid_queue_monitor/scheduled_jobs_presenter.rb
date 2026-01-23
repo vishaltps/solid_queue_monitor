@@ -161,8 +161,8 @@ module SolidQueueMonitor
           <td>
             <input type="checkbox" name="job_ids[]" value="#{execution.id}">
           </td>
-          <td>#{execution.job.class_name}</td>
-          <td>#{execution.queue_name}</td>
+          <td><a href="#{job_path(execution.job)}" class="job-class-link">#{execution.job.class_name}</a></td>
+          <td>#{queue_link(execution.queue_name)}</td>
           <td>#{format_datetime(execution.scheduled_at)}</td>
           <td>#{format_arguments(execution.job.arguments)}</td>
         </tr>

@@ -18,6 +18,16 @@ A lightweight, zero-dependency web interface for monitoring Solid Queue backgrou
 - **Dashboard Overview**: Get a quick snapshot of your queue's health with statistics on all job types
 - **Job Activity Chart**: Visual line chart showing jobs created, completed, and failed over time with 9 time range options (15m to 1 week)
 - **Dark Theme**: Toggle between light and dark themes with system preference detection and localStorage persistence
+- **Worker Monitoring**: Real-time view of all Solid Queue processes (workers, dispatchers, schedulers)
+  - Health status indicators (healthy, stale, dead) based on heartbeat
+  - Shows queues each worker is processing and jobs currently being executed
+  - Prune dead processes with one click
+- **Job Details Page**: Dedicated page for viewing complete job information
+  - Full job timeline showing created, scheduled, started, and finished states
+  - Timing breakdown with queue wait time and execution duration
+  - Complete error details with backtrace for failed jobs
+  - Job arguments displayed in formatted JSON
+- **Queue Details Page**: Detailed view for individual queues with job counts and filtering
 - **Ready Jobs**: View jobs that are ready to be executed
 - **In Progress Jobs**: Monitor jobs currently being processed by workers
 - **Scheduled Jobs**: See upcoming jobs scheduled for future execution with ability to execute immediately or reject permanently
@@ -43,16 +53,24 @@ A lightweight, zero-dependency web interface for monitoring Solid Queue backgrou
 
 ![Dashboard Overview - Dark Theme](screenshots/dashboard-dark.png)
 
+### Worker Monitoring
+
+![Worker Monitoring](screenshots/workers.png)
+
+### Queue Management
+
+![Queue Management](screenshots/queues.png)
+
 ### Failed Jobs
 
-![Failed Jobs](screenshots/failed-jobs-2.png)
+![Failed Jobs](screenshots/failed-jobs.png)
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'solid_queue_monitor', '~> 0.6.0'
+gem 'solid_queue_monitor', '~> 1.0'
 ```
 
 Then execute:
@@ -116,12 +134,15 @@ After installation, visit `/solid_queue` in your browser to access the dashboard
 
 The dashboard provides several views:
 
-- **Overview**: Shows statistics and recent jobs
+- **Overview**: Shows statistics, recent jobs, and job activity chart
 - **Ready Jobs**: Jobs that are ready to be executed
 - **Scheduled Jobs**: Jobs scheduled for future execution with execute and reject actions
 - **Recurring Jobs**: Jobs that run on a recurring schedule
 - **Failed Jobs**: Jobs that have failed with error details and retry/discard actions
-- **Queues**: Distribution of jobs across different queues
+- **Queues**: Distribution of jobs across different queues with pause/resume controls
+- **Workers**: Real-time monitoring of all Solid Queue processes with health status
+
+Click on any job class name to view detailed information including timeline, timing breakdown, arguments, and error details (for failed jobs).
 
 ### API-only Applications
 
@@ -141,9 +162,11 @@ This makes it easy to find specific jobs when debugging issues in your applicati
 ## Use Cases
 
 - **Production Monitoring**: Keep an eye on your background job processing in production environments
-- **Debugging**: Quickly identify and troubleshoot failed jobs
+- **Worker Health Monitoring**: Track the health of your Solid Queue processes and identify dead workers
+- **Debugging**: Quickly identify and troubleshoot failed jobs with detailed error information and backtraces
 - **Job Management**: Execute scheduled jobs on demand or reject unwanted jobs permanently
-- **Performance Analysis**: Track job distribution and identify bottlenecks
+- **Incident Response**: Pause queues during incidents to prevent job processing while investigating issues
+- **Performance Analysis**: Track job distribution, timing metrics, and identify bottlenecks
 - **DevOps Integration**: Easily integrate with your monitoring stack
 
 ## Compatibility

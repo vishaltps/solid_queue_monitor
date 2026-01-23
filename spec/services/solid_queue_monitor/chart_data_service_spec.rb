@@ -95,7 +95,7 @@ RSpec.describe SolidQueueMonitor::ChartDataService do
       end
     end
 
-    context 'with job data' do # rubocop:disable RSpec/MultipleMemoizedHelpers
+    context 'with job data' do
       let(:now) { Time.current }
       let(:created_timestamps) { [now - 30.minutes, now - 45.minutes] }
       let(:completed_timestamps) { [now - 20.minutes] }

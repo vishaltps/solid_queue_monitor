@@ -95,7 +95,8 @@ module SolidQueueMonitor
         { path: scheduled_jobs_path, label: 'Scheduled Jobs', match: 'Scheduled Jobs' },
         { path: recurring_jobs_path, label: 'Recurring Jobs', match: 'Recurring Jobs' },
         { path: failed_jobs_path, label: 'Failed Jobs', match: 'Failed Jobs' },
-        { path: queues_path, label: 'Queues', match: 'Queues' }
+        { path: queues_path, label: 'Queues', match: 'Queues' },
+        { path: workers_path, label: 'Workers', match: 'Workers' }
       ]
 
       nav_links = nav_items.map do |item|
