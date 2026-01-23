@@ -1,5 +1,36 @@
 # Changelog
 
+## [1.0.0] - 2026-01-23
+
+### Added
+
+- **Worker Monitoring** - New dedicated workers page showing all Solid Queue processes
+  - Real-time view of workers, dispatchers, and schedulers
+  - Health status indicators (healthy, stale, dead) based on heartbeat
+  - Shows queues each worker is processing
+  - Displays jobs currently being processed by each worker
+  - Summary cards showing total, healthy, stale, and dead process counts
+- **Dead Process Detection** - Identify and clean up zombie processes
+  - Visual highlighting for stale (>5 min) and dead (>10 min) processes
+  - "Prune Dead Processes" button to remove defunct process records
+  - Automatic detection based on last heartbeat timestamp
+- **Job Details Page** - Dedicated page for viewing complete job information
+  - Full job timeline showing created, scheduled, started, and finished states
+  - Timing breakdown with wait time and execution duration
+  - Complete error details with backtrace for failed jobs
+  - Job arguments displayed in formatted JSON
+  - Quick actions (retry/discard) for failed jobs
+  - Clickable job class names throughout the UI link to details page
+- **Queue Details Page** - Detailed view for individual queues
+  - Shows all jobs in a specific queue
+  - Displays queue status (active/paused) with pause/resume controls
+  - Job counts and filtering options
+
+### Changed
+
+- Updated ROADMAP to reflect v1.0.0 milestone completion
+- All high-priority features from roadmap are now complete
+
 ## [0.6.0] - 2026-01-20
 
 ### Added

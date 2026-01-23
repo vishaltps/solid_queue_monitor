@@ -251,23 +251,19 @@ module SolidQueueMonitor
         <tr>
           <td><input type="checkbox" class="job-checkbox" value="#{failed_execution.id}"></td>
           <td>
-            <div class="job-class">#{job.class_name}</div>
+            <div class="job-class"><a href="#{job_path(job)}" class="job-class-link">#{job.class_name}</a></div>
             <div class="job-meta">
               <span class="job-timestamp">Queued at: #{format_datetime(job.created_at)}</span>
             </div>
           </td>
           <td>
-            <div class="job-queue">#{job.queue_name}</div>
+            <div class="job-queue">#{queue_link(job.queue_name)}</div>
           </td>
           <td>
-            <div class="error-message">#{error[:message]}</div>
+            <div class="error-message">#{error[:message].to_s.truncate(100)}</div>
             <div class="job-meta">
               <span class="job-timestamp">Failed at: #{format_datetime(failed_execution.created_at)}</span>
             </div>
-            <details>
-              <summary>Backtrace</summary>
-              <pre class="error-backtrace">#{error[:backtrace]}</pre>
-            </details>
           </td>
           <td>#{format_arguments(job.arguments)}</td>
           <td class="actions-cell">

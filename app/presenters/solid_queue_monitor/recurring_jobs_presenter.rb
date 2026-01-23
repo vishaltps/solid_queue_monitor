@@ -70,7 +70,7 @@ module SolidQueueMonitor
           <td>#{task.key}</td>
           <td>#{task.class_name}</td>
           <td>#{task.schedule}</td>
-          <td>#{task.queue_name}</td>
+          <td>#{queue_link(task.queue_name)}</td>
           <td>#{task.priority || 'Default'}</td>
           <td>#{format_datetime(task.updated_at)}</td>
         </tr>

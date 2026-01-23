@@ -22,6 +22,15 @@ module SolidQueueMonitor
       redirect_to scheduled_jobs_path
     end
 
+    def execute
+      SolidQueueMonitor::ExecuteJobService.new.call(params[:id])
+      set_flash_message('Job moved to ready queue', 'success')
+      redirect_to params[:redirect_to] || scheduled_jobs_path
+    rescue ActiveRecord::RecordNotFound
+      set_flash_message('Job not found', 'error')
+      redirect_to scheduled_jobs_path
+    end
+
     def reject_all
       result = SolidQueueMonitor::RejectJobService.new.reject_many(params[:job_ids])
 

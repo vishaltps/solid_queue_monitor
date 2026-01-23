@@ -42,7 +42,7 @@ module SolidQueueMonitor
 
       <<-HTML
         <tr class="#{paused ? 'queue-paused' : ''}">
-          <td>#{queue_name}</td>
+          <td>#{queue_link(queue_name)}</td>
           <td>#{status_badge(paused)}</td>
           <td>#{queue.job_count}</td>
           <td>#{ready_jobs_count(queue_name)}</td>
