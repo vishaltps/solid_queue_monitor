@@ -30,7 +30,7 @@ module SolidQueueMonitor
 
     def prune
       dead_threshold = 10.minutes.ago
-      dead_processes = SolidQueue::Process.where('last_heartbeat_at <= ?', dead_threshold)
+      dead_processes = SolidQueue::Process.where(last_heartbeat_at: ..dead_threshold)
       count = dead_processes.count
 
       if count.positive?
@@ -56,7 +56,7 @@ module SolidQueueMonitor
         when 'stale'
           relation = relation.where('last_heartbeat_at <= ? AND last_heartbeat_at > ?', 5.minutes.ago, 10.minutes.ago)
         when 'dead'
-          relation = relation.where('last_heartbeat_at <= ?', 10.minutes.ago)
+          relation = relation.where(last_heartbeat_at: ..10.minutes.ago)
         end
       end
 

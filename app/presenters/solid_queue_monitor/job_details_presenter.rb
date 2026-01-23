@@ -243,18 +243,12 @@ module SolidQueueMonitor
 
     def timing_unavailable_reason(timing_type)
       return nil if @claimed_execution # In-progress jobs have all timing data
+      return nil unless %i[queue_wait execution].include?(timing_type)
 
-      case timing_type
-      when :queue_wait, :execution
-        return nil if @claimed_execution
-
-        if @failed_execution || @job.finished_at
-          "Not available - execution record deleted after job completed"
-        else
-          "Available once job starts processing"
-        end
+      if @failed_execution || @job.finished_at
+        'Not available - execution record deleted after job completed'
       else
-        nil
+        'Available once job starts processing'
       end
     end
 

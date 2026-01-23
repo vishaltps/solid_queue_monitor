@@ -249,14 +249,12 @@ module SolidQueueMonitor
     end
 
     def status_badge(status)
-      case status
-      when :healthy
-        '<span class="status-badge status-healthy">Healthy</span>'
-      when :stale
-        '<span class="status-badge status-stale">Stale</span>'
-      when :dead
-        '<span class="status-badge status-dead">Dead</span>'
-      end
+      badges = {
+        healthy: '<span class="status-badge status-healthy">Healthy</span>',
+        stale: '<span class="status-badge status-stale">Stale</span>',
+        dead: '<span class="status-badge status-dead">Dead</span>'
+      }
+      badges[status]
     end
 
     def jobs_processing(process)
@@ -303,17 +301,19 @@ module SolidQueueMonitor
 
     def parse_metadata(process)
       @parsed_metadata ||= {}
-      @parsed_metadata[process.id] ||= begin
-        return {} unless process.metadata
+      @parsed_metadata[process.id] ||= parse_process_metadata(process)
+    end
 
-        if process.metadata.is_a?(String)
-          JSON.parse(process.metadata)
-        else
-          process.metadata
-        end
-      rescue JSON::ParserError
-        {}
+    def parse_process_metadata(process)
+      return {} unless process.metadata
+
+      if process.metadata.is_a?(String)
+        JSON.parse(process.metadata)
+      else
+        process.metadata
       end
+    rescue JSON::ParserError
+      {}
     end
   end
 end
