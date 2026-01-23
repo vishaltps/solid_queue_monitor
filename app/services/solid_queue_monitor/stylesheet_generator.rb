@@ -1313,6 +1313,47 @@ module SolidQueueMonitor
         color: var(--text-muted);
       }
 
+      /* Table Link Styles */
+      .solid_queue_monitor .job-class-link {
+        color: var(--text-color);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+
+      .solid_queue_monitor .job-class-link:hover {
+        color: #3b82f6;
+        text-decoration: underline;
+      }
+
+      .solid_queue_monitor .queue-link {
+        color: var(--text-color);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+
+      .solid_queue_monitor .queue-link:hover {
+        color: #3b82f6;
+        text-decoration: underline;
+      }
+
+      .solid_queue_monitor .back-link {
+        color: var(--text-muted);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.875rem;
+        transition: color 0.2s;
+      }
+
+      .solid_queue_monitor .back-link:hover {
+        color: var(--text-color);
+      }
+
+      .solid_queue_monitor .job-back-link {
+        margin-bottom: 1rem;
+      }
+
       .solid_queue_monitor .empty-state {
         text-align: center;
         padding: 3rem 1rem;
