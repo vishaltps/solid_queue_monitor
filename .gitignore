@@ -12,3 +12,6 @@
 .rspec_status
 
 *.gem
+
+# Git worktrees for parallel development
+.worktrees/
