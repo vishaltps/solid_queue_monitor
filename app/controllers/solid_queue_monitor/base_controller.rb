@@ -6,7 +6,7 @@ module SolidQueueMonitor
       PaginationService.new(relation, current_page, per_page).paginate
     end
 
-    def render_page(title, content)
+    def render_page(title, content, search_query: nil)
       # Get flash message from instance variable (set by set_flash_message) or session
       message = @flash_message
       message_type = @flash_type
@@ -27,7 +27,8 @@ module SolidQueueMonitor
         title: title,
         content: content,
         message: message,
-        message_type: message_type
+        message_type: message_type,
+        search_query: search_query
       ).generate
 
       render html: html.html_safe
