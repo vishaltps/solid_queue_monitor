@@ -2,9 +2,10 @@
 
 module SolidQueueMonitor
   class QueuesPresenter < BasePresenter
-    def initialize(records, paused_queues = [])
+    def initialize(records, paused_queues = [], sort: {})
       @records = records
       @paused_queues = paused_queues
+      @sort = sort
     end
 
     def render
@@ -19,9 +20,9 @@ module SolidQueueMonitor
           <table>
             <thead>
               <tr>
-                <th>Queue Name</th>
+                #{sortable_header('queue_name', 'Queue Name')}
                 <th>Status</th>
-                <th>Total Jobs</th>
+                #{sortable_header('job_count', 'Total Jobs')}
                 <th>Ready Jobs</th>
                 <th>Scheduled Jobs</th>
                 <th>Failed Jobs</th>

@@ -4,11 +4,12 @@ module SolidQueueMonitor
   class InProgressJobsPresenter < BasePresenter
     include SolidQueueMonitor::Engine.routes.url_helpers
 
-    def initialize(jobs, current_page: 1, total_pages: 1, filters: {})
+    def initialize(jobs, current_page: 1, total_pages: 1, filters: {}, sort: {})
       @jobs = jobs
       @current_page = current_page
       @total_pages = total_pages
       @filters = filters
+      @sort = sort
     end
 
     def render
@@ -47,10 +48,10 @@ module SolidQueueMonitor
           <table>
             <thead>
               <tr>
-                <th>Job</th>
-                <th>Queue</th>
+                #{sortable_header('class_name', 'Job')}
+                #{sortable_header('queue_name', 'Queue')}
                 <th>Arguments</th>
-                <th>Started At</th>
+                #{sortable_header('created_at', 'Started At')}
                 <th>Process ID</th>
               </tr>
             </thead>

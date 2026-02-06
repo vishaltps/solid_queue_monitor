@@ -205,6 +205,22 @@ module SolidQueueMonitor
           color: var(--text-muted);
         }
 
+        .solid_queue_monitor .sortable-header {
+          color: var(--text-muted);
+          text-decoration: none;
+          cursor: pointer;
+          transition: color 0.2s;
+        }
+
+        .solid_queue_monitor .sortable-header:hover {
+          color: var(--primary-color);
+        }
+
+        .solid_queue_monitor .sortable-header.active {
+          color: var(--primary-color);
+          font-weight: 600;
+        }
+
         .solid_queue_monitor .status-badge {
           display: inline-block;
           padding: 0.25rem 0.5rem;
