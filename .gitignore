@@ -15,3 +15,6 @@
 
 # Git worktrees for parallel development
 .worktrees/
+# Claude Code personal workflows (local only)
+.claude/
+CLAUDE.md
