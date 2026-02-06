@@ -95,7 +95,7 @@ module SolidQueueMonitor
       end
     end
 
-    def generate_section(title, items)
+    def generate_section(title, items, &block)
       <<-HTML
         <div class="search-results-section">
           <h3>#{title} (#{items.size})</h3>
@@ -107,7 +107,7 @@ module SolidQueueMonitor
                 </tr>
               </thead>
               <tbody>
-                #{items.map { |item| yield(item) }.join}
+                #{items.map(&block).join}
               </tbody>
             </table>
           </div>

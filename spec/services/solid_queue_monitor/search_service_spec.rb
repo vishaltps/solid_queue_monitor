@@ -11,13 +11,13 @@ RSpec.describe SolidQueueMonitor::SearchService do
 
       it 'returns empty results for all categories' do
         expect(subject).to eq({
-          ready: [],
-          scheduled: [],
-          failed: [],
-          in_progress: [],
-          completed: [],
-          recurring: []
-        })
+                                ready: [],
+                                scheduled: [],
+                                failed: [],
+                                in_progress: [],
+                                completed: [],
+                                recurring: []
+                              })
       end
     end
 
@@ -26,17 +26,17 @@ RSpec.describe SolidQueueMonitor::SearchService do
 
       it 'returns empty results for all categories' do
         expect(subject).to eq({
-          ready: [],
-          scheduled: [],
-          failed: [],
-          in_progress: [],
-          completed: [],
-          recurring: []
-        })
+                                ready: [],
+                                scheduled: [],
+                                failed: [],
+                                in_progress: [],
+                                completed: [],
+                                recurring: []
+                              })
       end
     end
 
-    context 'searching by class_name' do
+    context 'when searching by class_name' do
       let(:query) { 'UserMailer' }
       let!(:matching_job) { create(:solid_queue_job, class_name: 'UserMailerJob') }
       let!(:non_matching_job) { create(:solid_queue_job, class_name: 'OrderProcessor') }
@@ -48,7 +48,7 @@ RSpec.describe SolidQueueMonitor::SearchService do
       end
     end
 
-    context 'searching by queue_name' do
+    context 'when searching by queue_name' do
       let(:query) { 'mailers' }
       let!(:matching_job) { create(:solid_queue_job, queue_name: 'mailers') }
       let!(:non_matching_job) { create(:solid_queue_job, queue_name: 'default') }
@@ -60,7 +60,7 @@ RSpec.describe SolidQueueMonitor::SearchService do
       end
     end
 
-    context 'searching by arguments' do
+    context 'when searching by arguments' do
       let(:query) { 'user@example.com' }
       let!(:matching_job) { create(:solid_queue_job, arguments: '["user@example.com"]') }
       let!(:non_matching_job) { create(:solid_queue_job, arguments: '["other@test.com"]') }
@@ -72,7 +72,7 @@ RSpec.describe SolidQueueMonitor::SearchService do
       end
     end
 
-    context 'searching by active_job_id' do
+    context 'when searching by active_job_id' do
       let(:job_id) { 'abc-123-def-456' }
       let(:query) { 'abc-123' }
       let!(:matching_job) { create(:solid_queue_job, active_job_id: job_id) }
@@ -85,7 +85,7 @@ RSpec.describe SolidQueueMonitor::SearchService do
       end
     end
 
-    context 'searching scheduled jobs' do
+    context 'when searching scheduled jobs' do
       let(:query) { 'ScheduledTask' }
       let!(:job) { create(:solid_queue_job, class_name: 'ScheduledTaskJob') }
       let!(:scheduled_execution) { create(:solid_queue_scheduled_execution, job: job) }
@@ -95,7 +95,7 @@ RSpec.describe SolidQueueMonitor::SearchService do
       end
     end
 
-    context 'searching failed jobs by error message' do
+    context 'when searching failed jobs by error message' do
       let(:query) { 'Connection refused' }
       let!(:job) { create(:solid_queue_job, class_name: 'SomeJob') }
       let!(:failed_execution) { create(:solid_queue_failed_execution, job: job, error: 'Error: Connection refused to host') }
@@ -105,7 +105,7 @@ RSpec.describe SolidQueueMonitor::SearchService do
       end
     end
 
-    context 'searching failed jobs by class_name' do
+    context 'when searching failed jobs by class_name' do
       let(:query) { 'FailingJob' }
       let!(:job) { create(:solid_queue_job, class_name: 'FailingJobProcessor') }
       let!(:failed_execution) { create(:solid_queue_failed_execution, job: job) }
@@ -115,7 +115,7 @@ RSpec.describe SolidQueueMonitor::SearchService do
       end
     end
 
-    context 'searching in_progress jobs' do
+    context 'when searching in_progress jobs' do
       let(:query) { 'ProcessingJob' }
       let!(:job) { create(:solid_queue_job, class_name: 'ProcessingJobWorker') }
       let!(:claimed_execution) { create(:solid_queue_claimed_execution, job: job) }
@@ -125,7 +125,7 @@ RSpec.describe SolidQueueMonitor::SearchService do
       end
     end
 
-    context 'searching completed jobs' do
+    context 'when searching completed jobs' do
       let(:query) { 'CompletedTask' }
       let!(:completed_job) { create(:solid_queue_job, :completed, class_name: 'CompletedTaskJob') }
       let!(:non_completed_job) { create(:solid_queue_job, class_name: 'CompletedTaskPending') }
@@ -139,7 +139,7 @@ RSpec.describe SolidQueueMonitor::SearchService do
       end
     end
 
-    context 'searching completed jobs by active_job_id' do
+    context 'when searching completed jobs by active_job_id' do
       let(:job_id) { '9b00ebba-0448-438d-8af2-79c5aae3d204' }
       let(:query) { job_id }
       let!(:completed_job) { create(:solid_queue_job, :completed, active_job_id: job_id) }
@@ -149,7 +149,7 @@ RSpec.describe SolidQueueMonitor::SearchService do
       end
     end
 
-    context 'searching completed jobs by arguments' do
+    context 'when searching completed jobs by arguments' do
       let(:query) { 'order_123' }
       let!(:completed_job) { create(:solid_queue_job, :completed, arguments: '{"order_id":"order_123"}') }
 
@@ -158,7 +158,7 @@ RSpec.describe SolidQueueMonitor::SearchService do
       end
     end
 
-    context 'searching recurring tasks by key' do
+    context 'when searching recurring tasks by key' do
       let(:query) { 'daily_cleanup' }
       let!(:recurring_task) { create(:solid_queue_recurring_task, key: 'daily_cleanup_task') }
 
@@ -167,7 +167,7 @@ RSpec.describe SolidQueueMonitor::SearchService do
       end
     end
 
-    context 'searching recurring tasks by class_name' do
+    context 'when searching recurring tasks by class_name' do
       let(:query) { 'CleanupJob' }
       let!(:recurring_task) { create(:solid_queue_recurring_task, class_name: 'CleanupJobWorker') }
 
@@ -176,7 +176,7 @@ RSpec.describe SolidQueueMonitor::SearchService do
       end
     end
 
-    context 'case insensitive search' do
+    context 'with case insensitive search' do
       let(:query) { 'usermailer' }
       let!(:job) { create(:solid_queue_job, class_name: 'UserMailerJob') }
       let!(:ready_execution) { create(:solid_queue_ready_execution, job: job) }
@@ -202,7 +202,7 @@ RSpec.describe SolidQueueMonitor::SearchService do
       end
     end
 
-    context 'result limits' do
+    context 'with result limits' do
       let(:query) { 'BulkJob' }
 
       before do
@@ -232,7 +232,7 @@ RSpec.describe SolidQueueMonitor::SearchService do
       end
     end
 
-    context 'SQL injection prevention' do
+    context 'with SQL injection attempt' do
       let(:query) { "'; DROP TABLE solid_queue_jobs; --" }
 
       it 'safely handles malicious input' do

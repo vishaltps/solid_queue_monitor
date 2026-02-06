@@ -3,6 +3,8 @@
 require 'spec_helper'
 
 RSpec.describe SolidQueueMonitor::SearchResultsPresenter do
+  subject { described_class.new(query, results) }
+
   let(:query) { 'TestJob' }
   let(:results) do
     {
@@ -14,8 +16,6 @@ RSpec.describe SolidQueueMonitor::SearchResultsPresenter do
       recurring: []
     }
   end
-
-  subject { described_class.new(query, results) }
 
   describe '#render' do
     it 'returns HTML content' do

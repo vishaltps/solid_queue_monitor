@@ -58,7 +58,7 @@ RSpec.describe 'Search' do
       end
     end
 
-    context 'searching across different job types' do
+    context 'when searching across different job types' do
       let!(:ready_job) { create(:solid_queue_job, class_name: 'TestSearchJob') }
       let!(:scheduled_job) { create(:solid_queue_job, class_name: 'TestSearchScheduled') }
       let!(:failed_job) { create(:solid_queue_job, class_name: 'TestSearchFailed') }
@@ -88,7 +88,7 @@ RSpec.describe 'Search' do
       end
     end
 
-    context 'searching by error message' do
+    context 'when searching by error message' do
       let!(:job) { create(:solid_queue_job, class_name: 'SomeJob') }
       let!(:failed_execution) { create(:solid_queue_failed_execution, job: job, error: 'Connection refused to host') }
 
@@ -100,7 +100,7 @@ RSpec.describe 'Search' do
       end
     end
 
-    context 'searching recurring tasks' do
+    context 'when searching recurring tasks' do
       let!(:recurring_task) { create(:solid_queue_recurring_task, key: 'daily_report_task', class_name: 'DailyReportJob') }
 
       it 'finds recurring tasks by key' do
