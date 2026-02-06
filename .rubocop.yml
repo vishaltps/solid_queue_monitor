@@ -27,7 +27,7 @@ Metrics/ClassLength:
     - 'app/presenters/solid_queue_monitor/job_details_presenter.rb'
 
 Metrics/ParameterLists:
-  Max: 7
+  Max: 8
 
 Metrics/ModuleLength:
   Max: 200

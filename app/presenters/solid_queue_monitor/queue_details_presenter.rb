@@ -2,7 +2,7 @@
 
 module SolidQueueMonitor
   class QueueDetailsPresenter < BasePresenter
-    def initialize(queue_name:, paused:, jobs:, counts:, current_page: 1, total_pages: 1, filters: {})
+    def initialize(queue_name:, paused:, jobs:, counts:, current_page: 1, total_pages: 1, filters: {}, sort: {})
       @queue_name = queue_name
       @paused = paused
       @jobs = jobs
@@ -10,6 +10,7 @@ module SolidQueueMonitor
       @current_page = current_page
       @total_pages = total_pages
       @filters = filters
+      @sort = sort
     end
 
     def render
@@ -129,10 +130,10 @@ module SolidQueueMonitor
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Job</th>
+                #{sortable_header('class_name', 'Job')}
                 <th>Arguments</th>
                 <th>Status</th>
-                <th>Created At</th>
+                #{sortable_header('created_at', 'Created At')}
                 <th>Actions</th>
               </tr>
             </thead>

@@ -5,11 +5,12 @@ module SolidQueueMonitor
     HEARTBEAT_STALE_THRESHOLD = 5.minutes
     HEARTBEAT_DEAD_THRESHOLD = 10.minutes
 
-    def initialize(processes, current_page: 1, total_pages: 1, filters: {})
+    def initialize(processes, current_page: 1, total_pages: 1, filters: {}, sort: {})
       @processes = processes.to_a # Load records once to avoid multiple queries
       @current_page = current_page
       @total_pages = total_pages
       @filters = filters
+      @sort = sort
       preload_claimed_data
       calculate_summary_stats
     end
@@ -140,10 +141,10 @@ module SolidQueueMonitor
             <thead>
               <tr>
                 <th>Kind</th>
-                <th>Hostname</th>
+                #{sortable_header('hostname', 'Hostname')}
                 <th>PID</th>
                 <th>Queues</th>
-                <th>Last Heartbeat</th>
+                #{sortable_header('last_heartbeat_at', 'Last Heartbeat')}
                 <th>Status</th>
                 <th>Jobs Processing</th>
                 <th>Actions</th>

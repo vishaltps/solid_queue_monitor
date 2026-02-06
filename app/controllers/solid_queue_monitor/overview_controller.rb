@@ -2,12 +2,15 @@
 
 module SolidQueueMonitor
   class OverviewController < BaseController
+    SORTABLE_COLUMNS = %w[class_name queue_name created_at].freeze
+
     def index
       @stats = SolidQueueMonitor::StatsCalculator.calculate
       @chart_data = SolidQueueMonitor::ChartDataService.new(time_range: time_range_param).calculate
 
-      recent_jobs_query = SolidQueue::Job.order(created_at: :desc).limit(100)
-      @recent_jobs = paginate(filter_jobs(recent_jobs_query))
+      recent_jobs_query = SolidQueue::Job.limit(100)
+      sorted_query = apply_sorting(filter_jobs(recent_jobs_query), SORTABLE_COLUMNS, 'created_at', :desc)
+      @recent_jobs = paginate(sorted_query)
 
       preload_job_statuses(@recent_jobs[:records])
 
@@ -31,7 +34,8 @@ module SolidQueueMonitor
         SolidQueueMonitor::JobsPresenter.new(@recent_jobs[:records],
                                              current_page: @recent_jobs[:current_page],
                                              total_pages: @recent_jobs[:total_pages],
-                                             filters: filter_params).render
+                                             filters: filter_params,
+                                             sort: sort_params).render
     end
   end
 end

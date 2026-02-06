@@ -2,13 +2,16 @@
 
 module SolidQueueMonitor
   class QueuesController < BaseController
+    SORTABLE_COLUMNS = %w[queue_name job_count].freeze
+    QUEUE_DETAILS_SORTABLE_COLUMNS = %w[class_name created_at].freeze
+
     def index
-      @queues = SolidQueue::Job.group(:queue_name)
-                               .select('queue_name, COUNT(*) as job_count')
-                               .order('job_count DESC')
+      base_query = SolidQueue::Job.group(:queue_name)
+                                  .select('queue_name, COUNT(*) as job_count')
+      @queues = apply_queue_sorting(base_query)
       @paused_queues = QueuePauseService.paused_queues
 
-      render_page('Queues', SolidQueueMonitor::QueuesPresenter.new(@queues, @paused_queues).render)
+      render_page('Queues', SolidQueueMonitor::QueuesPresenter.new(@queues, @paused_queues, sort: sort_params).render)
     end
 
     def show
@@ -16,9 +19,9 @@ module SolidQueueMonitor
       @paused = QueuePauseService.paused_queues.include?(@queue_name)
 
       # Get all jobs for this queue with filtering and pagination
-      base_query = SolidQueue::Job.where(queue_name: @queue_name).order(created_at: :desc)
-      filtered_query = filter_queue_jobs(base_query)
-      @jobs = paginate(filtered_query)
+      base_query = SolidQueue::Job.where(queue_name: @queue_name)
+      sorted_query = apply_sorting(filter_queue_jobs(base_query), QUEUE_DETAILS_SORTABLE_COLUMNS, 'created_at', :desc)
+      @jobs = paginate(sorted_query)
       preload_job_statuses(@jobs[:records])
 
       @counts = calculate_queue_counts(@queue_name)
@@ -31,7 +34,8 @@ module SolidQueueMonitor
                     counts: @counts,
                     current_page: @jobs[:current_page],
                     total_pages: @jobs[:total_pages],
-                    filters: queue_filter_params
+                    filters: queue_filter_params,
+                    sort: sort_params
                   ).render)
     end
 
@@ -96,6 +100,15 @@ module SolidQueueMonitor
         arguments: params[:arguments],
         status: params[:status]
       }
+    end
+
+    def apply_queue_sorting(relation)
+      column = sort_params[:sort_by]
+      direction = sort_params[:sort_direction]
+      column = 'job_count' unless SORTABLE_COLUMNS.include?(column)
+      direction = 'desc' unless %w[asc desc].include?(direction)
+
+      relation.order("#{column} #{direction}")
     end
   end
 end

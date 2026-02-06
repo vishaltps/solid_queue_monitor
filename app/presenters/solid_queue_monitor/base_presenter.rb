@@ -118,6 +118,34 @@ module SolidQueueMonitor
       "<a href=\"#{queue_details_path(queue_name: queue_name)}\" class=\"#{classes}\">#{queue_name}</a>"
     end
 
+    def sortable_header(column, label)
+      return "<th>#{label}</th>" unless @sort
+
+      column_str = column.to_s
+      is_active = @sort[:sort_by] == column_str
+      next_direction = is_active && @sort[:sort_direction] == 'asc' ? 'desc' : 'asc'
+      arrow = sort_arrow(is_active)
+      css_class = is_active ? 'sortable-header active' : 'sortable-header'
+
+      "<th><a href=\"?sort_by=#{column}&sort_direction=#{next_direction}#{filter_query_string}\" class=\"#{css_class}\">#{label}#{arrow}</a></th>"
+    end
+
+    def sort_arrow(is_active)
+      return ' &udarr;' unless is_active
+
+      @sort[:sort_direction] == 'asc' ? ' &uarr;' : ' &darr;'
+    end
+
+    def filter_query_string
+      params = []
+      params << "class_name=#{@filters[:class_name]}" if @filters && @filters[:class_name].present?
+      params << "queue_name=#{@filters[:queue_name]}" if @filters && @filters[:queue_name].present?
+      params << "arguments=#{@filters[:arguments]}" if @filters && @filters[:arguments].present?
+      params << "status=#{@filters[:status]}" if @filters && @filters[:status].present?
+
+      params.empty? ? '' : "&#{params.join('&')}"
+    end
+
     def request_path
       if defined?(controller) && controller.respond_to?(:request)
         controller.request.path
@@ -138,12 +166,26 @@ module SolidQueueMonitor
     private
 
     def query_params
-      params = []
-      params << "class_name=#{@filters[:class_name]}" if @filters && @filters[:class_name].present?
-      params << "queue_name=#{@filters[:queue_name]}" if @filters && @filters[:queue_name].present?
-      params << "status=#{@filters[:status]}" if @filters && @filters[:status].present?
-
+      params = build_filter_params + build_sort_params
       params.empty? ? '' : "&#{params.join('&')}"
+    end
+
+    def build_filter_params
+      return [] unless @filters
+
+      filter_keys = %i[class_name queue_name status]
+      filter_keys.filter_map do |key|
+        "#{key}=#{@filters[key]}" if @filters[key].present?
+      end
+    end
+
+    def build_sort_params
+      return [] unless @sort
+
+      sort_keys = %i[sort_by sort_direction]
+      sort_keys.filter_map do |key|
+        "#{key}=#{@sort[key]}" if @sort[key].present?
+      end
     end
 
     def full_path(route_name, *args)
