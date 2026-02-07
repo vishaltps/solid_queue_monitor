@@ -20,9 +20,8 @@ This document tracks planned features for solid_queue_monitor, comparing with ot
 | Feature | Description | Status |
 |---------|-------------|:------:|
 | Job Details Page | Dedicated page for single job with full context | ✅ Done |
-| Search/Full-text Search | Better search across all job data | ⬚ Planned |
-| Sorting Options | Sort by various columns | ⬚ Planned |
-| Sensitive Argument Masking | Filter passwords/tokens from job arguments display | ⬚ Planned |
+| Search/Full-text Search | Better search across all job data | ✅ Done |
+| Sorting Options | Sort by various columns | ✅ Done |
 | Backtrace Cleaner | Remove framework noise from error backtraces | ⬚ Planned |
 | Manual Job Triggering | Enqueue a job directly from the dashboard | ⬚ Planned |
 | Cancel Running Jobs | Stop long-running jobs | ⬚ Planned |
@@ -49,8 +48,9 @@ For a stable 1.0.0 release, all high-priority features have been completed:
 2. ~~**Worker Monitoring** - See which workers are processing what~~ ✅
 3. ~~**Charts/Visualizations** - Visual trends for job activity~~ ✅
 
-Optional but valuable for 1.0.0:
-- **Sorting Options** - Click column headers to sort
+Also completed post-1.0.0:
+- ~~**Search/Full-text Search** - Search across all job data~~ ✅
+- ~~**Sorting Options** - Click column headers to sort~~ ✅
 
 ---
 
