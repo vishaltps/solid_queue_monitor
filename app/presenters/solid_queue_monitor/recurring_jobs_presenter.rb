@@ -5,11 +5,12 @@ module SolidQueueMonitor
     include Rails.application.routes.url_helpers
     include SolidQueueMonitor::Engine.routes.url_helpers
 
-    def initialize(jobs, current_page: 1, total_pages: 1, filters: {})
+    def initialize(jobs, current_page: 1, total_pages: 1, filters: {}, sort: {})
       @jobs = jobs
       @current_page = current_page
       @total_pages = total_pages
       @filters = filters
+      @sort = sort
     end
 
     def render
@@ -48,11 +49,11 @@ module SolidQueueMonitor
           <table>
             <thead>
               <tr>
-                <th>Key</th>
-                <th>Job</th>
+                #{sortable_header('key', 'Key')}
+                #{sortable_header('class_name', 'Job')}
                 <th>Schedule</th>
-                <th>Queue</th>
-                <th>Priority</th>
+                #{sortable_header('queue_name', 'Queue')}
+                #{sortable_header('priority', 'Priority')}
                 <th>Last Updated</th>
               </tr>
             </thead>

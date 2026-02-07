@@ -5,11 +5,12 @@ module SolidQueueMonitor
     include Rails.application.routes.url_helpers
     include SolidQueueMonitor::Engine.routes.url_helpers
 
-    def initialize(title:, content:, message: nil, message_type: nil)
+    def initialize(title:, content:, message: nil, message_type: nil, search_query: nil)
       @title = title
       @content = content
       @message = message
       @message_type = message_type
+      @search_query = search_query
     end
 
     def generate
@@ -107,7 +108,8 @@ module SolidQueueMonitor
       <<-HTML
         <header>
           <div class="header-top">
-            <h1>Solid Queue Monitor</h1>
+            <h1><a href="#{root_path}" class="header-title-link">Solid Queue Monitor</a></h1>
+            #{generate_search_box}
             <div class="header-controls">
               #{generate_auto_refresh_controls}
               #{generate_theme_toggle}
@@ -126,6 +128,25 @@ module SolidQueueMonitor
           <p>Powered by Solid Queue Monitor</p>
         </footer>
       HTML
+    end
+
+    def generate_search_box
+      search_value = @search_query ? escape_html(@search_query) : ''
+      <<-HTML
+        <form method="get" action="#{search_path}" class="header-search-form">
+          <input type="text" name="q" value="#{search_value}" placeholder="Search by class, queue, job ID, or error..." class="header-search-input">
+          <button type="submit" class="header-search-button" title="Search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </button>
+        </form>
+      HTML
+    end
+
+    def escape_html(text)
+      text.to_s.gsub('&', '&amp;').gsub('<', '&lt;').gsub('>', '&gt;').gsub('"', '&quot;')
     end
 
     def generate_auto_refresh_controls

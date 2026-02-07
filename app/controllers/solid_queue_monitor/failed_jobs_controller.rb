@@ -2,14 +2,18 @@
 
 module SolidQueueMonitor
   class FailedJobsController < BaseController
+    SORTABLE_COLUMNS = %w[class_name queue_name created_at].freeze
+
     def index
-      base_query = SolidQueue::FailedExecution.includes(:job).order(created_at: :desc)
-      @failed_jobs = paginate(filter_failed_jobs(base_query))
+      base_query = SolidQueue::FailedExecution.includes(:job)
+      sorted_query = apply_execution_sorting(filter_failed_jobs(base_query), SORTABLE_COLUMNS, 'created_at', :desc)
+      @failed_jobs = paginate(sorted_query)
 
       render_page('Failed Jobs', SolidQueueMonitor::FailedJobsPresenter.new(@failed_jobs[:records],
                                                                             current_page: @failed_jobs[:current_page],
                                                                             total_pages: @failed_jobs[:total_pages],
-                                                                            filters: filter_params).render)
+                                                                            filters: filter_params,
+                                                                            sort: sort_params).render)
     end
 
     def retry

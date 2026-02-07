@@ -2,11 +2,12 @@
 
 module SolidQueueMonitor
   class ReadyJobsPresenter < BasePresenter
-    def initialize(jobs, current_page: 1, total_pages: 1, filters: {})
+    def initialize(jobs, current_page: 1, total_pages: 1, filters: {}, sort: {})
       @jobs = jobs
       @current_page = current_page
       @total_pages = total_pages
       @filters = filters
+      @sort = sort
     end
 
     def render
@@ -50,11 +51,11 @@ module SolidQueueMonitor
           <table>
             <thead>
               <tr>
-                <th>Job</th>
-                <th>Queue</th>
-                <th>Priority</th>
+                #{sortable_header('class_name', 'Job')}
+                #{sortable_header('queue_name', 'Queue')}
+                #{sortable_header('priority', 'Priority')}
                 <th>Arguments</th>
-                <th>Created At</th>
+                #{sortable_header('created_at', 'Created At')}
               </tr>
             </thead>
             <tbody>

@@ -2,16 +2,19 @@
 
 module SolidQueueMonitor
   class WorkersController < BaseController
+    SORTABLE_COLUMNS = %w[hostname last_heartbeat_at].freeze
+
     def index
-      base_query = SolidQueue::Process.order(created_at: :desc)
-      filtered_query = filter_workers(base_query)
-      @processes = paginate(filtered_query)
+      base_query = SolidQueue::Process.all
+      sorted_query = apply_sorting(filter_workers(base_query), SORTABLE_COLUMNS, 'last_heartbeat_at', :desc)
+      @processes = paginate(sorted_query)
 
       render_page('Workers', SolidQueueMonitor::WorkersPresenter.new(
         @processes[:records],
         current_page: @processes[:current_page],
         total_pages: @processes[:total_pages],
-        filters: worker_filter_params
+        filters: worker_filter_params,
+        sort: sort_params
       ).render)
     end
 

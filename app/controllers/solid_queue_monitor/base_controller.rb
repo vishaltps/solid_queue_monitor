@@ -6,7 +6,7 @@ module SolidQueueMonitor
       PaginationService.new(relation, current_page, per_page).paginate
     end
 
-    def render_page(title, content)
+    def render_page(title, content, search_query: nil)
       # Get flash message from instance variable (set by set_flash_message) or session
       message = @flash_message
       message_type = @flash_type
@@ -27,7 +27,8 @@ module SolidQueueMonitor
         title: title,
         content: content,
         message: message,
-        message_type: message_type
+        message_type: message_type,
+        search_query: search_query
       ).generate
 
       render html: html.html_safe
@@ -200,6 +201,37 @@ module SolidQueueMonitor
         arguments: params[:arguments],
         status: params[:status]
       }
+    end
+
+    def sort_params
+      {
+        sort_by: params[:sort_by],
+        sort_direction: params[:sort_direction]
+      }
+    end
+
+    def apply_sorting(relation, allowed_columns, default_column, default_direction = :desc)
+      column = sort_params[:sort_by]
+      direction = sort_params[:sort_direction]
+      column = default_column unless allowed_columns.include?(column)
+      direction = %w[asc desc].include?(direction) ? direction.to_sym : default_direction
+      relation.order(column => direction)
+    end
+
+    def apply_execution_sorting(relation, allowed_columns, default_column, default_direction = :desc)
+      column = sort_params[:sort_by]
+      direction = sort_params[:sort_direction]
+      column = default_column unless allowed_columns.include?(column)
+      direction = %w[asc desc].include?(direction) ? direction.to_sym : default_direction
+
+      # Columns that exist on the jobs table, not on execution tables
+      job_table_columns = %w[class_name queue_name]
+
+      if job_table_columns.include?(column)
+        relation.joins(:job).order("solid_queue_jobs.#{column}" => direction)
+      else
+        relation.order(column => direction)
+      end
     end
   end
 end
