@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.0] - 2026-02-07
+
+### Added
+
+- **Global Search** — Search across all job types (ready, scheduled, failed, in-progress, completed) and recurring tasks
+  - Search by class name, queue name, arguments, active job ID, and error messages
+  - Results grouped by category with counts
+  - Accessible from the header on every page
+- **Sortable Column Headers** — Click column headers to sort job tables
+  - Sort by any column (class name, queue, created at, priority, etc.)
+  - Toggle ascending/descending with visual indicators
+  - Available on all job list views
+
 ## [1.0.1] - 2026-01-23
 
 ### Fixed

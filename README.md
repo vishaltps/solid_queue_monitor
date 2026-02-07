@@ -35,6 +35,8 @@ A lightweight, zero-dependency web interface for monitoring Solid Queue backgrou
 - **Failed Jobs**: Track and debug failed jobs, with the ability to retry or discard them
 - **Queue Management**: View and filter jobs by queue with pause/resume controls
 - **Pause/Resume Queues**: Temporarily stop processing jobs on specific queues for incident response
+- **Global Search**: Search across all job types by class name, queue, arguments, job ID, and error messages
+- **Sortable Columns**: Click column headers to sort job tables by any column with ascending/descending toggle
 - **Advanced Job Filtering**: Filter jobs by class name, queue, status, and job arguments
 - **Quick Actions**: Retry or discard failed jobs, execute or reject scheduled jobs directly from any view
 - **Performance Optimized**: Designed for high-volume applications with smart pagination
@@ -70,7 +72,7 @@ A lightweight, zero-dependency web interface for monitoring Solid Queue backgrou
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'solid_queue_monitor', '~> 1.0.1'
+gem 'solid_queue_monitor', '~> 1.1'
 ```
 
 Then execute:
