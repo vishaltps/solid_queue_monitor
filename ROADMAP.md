@@ -22,6 +22,7 @@ This document tracks planned features for solid_queue_monitor, comparing with ot
 | Job Details Page | Dedicated page for single job with full context | ✅ Done |
 | Search/Full-text Search | Better search across all job data | ✅ Done |
 | Sorting Options | Sort by various columns | ✅ Done |
+| Large Dataset Performance | Optimized for millions of rows — no jobs table scans | ✅ Done |
 | Backtrace Cleaner | Remove framework noise from error backtraces | ⬚ Planned |
 | Manual Job Triggering | Enqueue a job directly from the dashboard | ⬚ Planned |
 | Cancel Running Jobs | Stop long-running jobs | ⬚ Planned |
