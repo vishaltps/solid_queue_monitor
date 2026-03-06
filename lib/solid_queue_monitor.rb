@@ -7,7 +7,7 @@ module SolidQueueMonitor
   class Error < StandardError; end
   class << self
     attr_accessor :username, :password, :jobs_per_page, :authentication_enabled,
-                  :auto_refresh_enabled, :auto_refresh_interval
+                  :auto_refresh_enabled, :auto_refresh_interval, :show_chart
   end
 
   @username = 'admin'
@@ -16,6 +16,7 @@ module SolidQueueMonitor
   @authentication_enabled = false
   @auto_refresh_enabled = true
   @auto_refresh_interval = 30 # seconds
+  @show_chart = true
 
   def self.setup
     yield self
