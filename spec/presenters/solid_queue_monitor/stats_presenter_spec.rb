@@ -8,13 +8,12 @@ RSpec.describe SolidQueueMonitor::StatsPresenter do
 
     let(:stats) do
       {
-        total_jobs: 100,
+        active_jobs: 75,
         scheduled: 20,
         ready: 30,
         in_progress: 15,
         recurring: 5,
-        failed: 10,
-        completed: 40
+        failed: 10
       }
     end
 
@@ -27,8 +26,8 @@ RSpec.describe SolidQueueMonitor::StatsPresenter do
       html = subject.render
 
       expect(html).to include('Queue Statistics')
-      expect(html).to include('Total Jobs')
-      expect(html).to include('100')
+      expect(html).to include('Active Jobs')
+      expect(html).to include('75')
       expect(html).to include('Scheduled')
       expect(html).to include('20')
       expect(html).to include('Ready')
@@ -39,8 +38,6 @@ RSpec.describe SolidQueueMonitor::StatsPresenter do
       expect(html).to include('5')
       expect(html).to include('Failed')
       expect(html).to include('10')
-      expect(html).to include('Completed')
-      expect(html).to include('40')
     end
   end
 end
