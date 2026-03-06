@@ -91,17 +91,13 @@ module SolidQueueMonitor
         when 'completed'
           relation = relation.where.not(finished_at: nil)
         when 'failed'
-          failed_job_ids = SolidQueue::FailedExecution.pluck(:job_id)
-          relation = relation.where(id: failed_job_ids)
+          relation = relation.where(id: SolidQueue::FailedExecution.select(:job_id))
         when 'scheduled'
-          scheduled_job_ids = SolidQueue::ScheduledExecution.pluck(:job_id)
-          relation = relation.where(id: scheduled_job_ids)
+          relation = relation.where(id: SolidQueue::ScheduledExecution.select(:job_id))
         when 'pending'
-          # Pending jobs are those that are not completed, failed, or scheduled
-          failed_job_ids = SolidQueue::FailedExecution.pluck(:job_id)
-          scheduled_job_ids = SolidQueue::ScheduledExecution.pluck(:job_id)
           relation = relation.where(finished_at: nil)
-                             .where.not(id: failed_job_ids + scheduled_job_ids)
+                             .where.not(id: SolidQueue::FailedExecution.select(:job_id))
+                             .where.not(id: SolidQueue::ScheduledExecution.select(:job_id))
         end
       end
 
@@ -117,16 +113,13 @@ module SolidQueueMonitor
       return relation unless params[:class_name].present? || params[:queue_name].present? || params[:arguments].present?
 
       if params[:class_name].present?
-        job_ids = SolidQueue::Job.where('class_name LIKE ?', "%#{params[:class_name]}%").pluck(:id)
-        relation = relation.where(job_id: job_ids)
+        relation = relation.where(job_id: SolidQueue::Job.where('class_name LIKE ?', "%#{params[:class_name]}%").select(:id))
       end
 
       relation = relation.where('queue_name LIKE ?', "%#{params[:queue_name]}%") if params[:queue_name].present?
 
-      # Add arguments filtering
       if params[:arguments].present?
-        job_ids = SolidQueue::Job.where('arguments::text ILIKE ?', "%#{params[:arguments]}%").pluck(:id)
-        relation = relation.where(job_id: job_ids)
+        relation = relation.where(job_id: SolidQueue::Job.where('arguments::text ILIKE ?', "%#{params[:arguments]}%").select(:id))
       end
 
       relation
@@ -136,16 +129,13 @@ module SolidQueueMonitor
       return relation unless params[:class_name].present? || params[:queue_name].present? || params[:arguments].present?
 
       if params[:class_name].present?
-        job_ids = SolidQueue::Job.where('class_name LIKE ?', "%#{params[:class_name]}%").pluck(:id)
-        relation = relation.where(job_id: job_ids)
+        relation = relation.where(job_id: SolidQueue::Job.where('class_name LIKE ?', "%#{params[:class_name]}%").select(:id))
       end
 
       relation = relation.where('queue_name LIKE ?', "%#{params[:queue_name]}%") if params[:queue_name].present?
 
-      # Add arguments filtering
       if params[:arguments].present?
-        job_ids = SolidQueue::Job.where('arguments::text ILIKE ?', "%#{params[:arguments]}%").pluck(:id)
-        relation = relation.where(job_id: job_ids)
+        relation = relation.where(job_id: SolidQueue::Job.where('arguments::text ILIKE ?', "%#{params[:arguments]}%").select(:id))
       end
 
       relation
@@ -170,25 +160,19 @@ module SolidQueueMonitor
       return relation unless params[:class_name].present? || params[:queue_name].present? || params[:arguments].present?
 
       if params[:class_name].present?
-        job_ids = SolidQueue::Job.where('class_name LIKE ?', "%#{params[:class_name]}%").pluck(:id)
-        relation = relation.where(job_id: job_ids)
+        relation = relation.where(job_id: SolidQueue::Job.where('class_name LIKE ?', "%#{params[:class_name]}%").select(:id))
       end
 
       if params[:queue_name].present?
-        # Check if FailedExecution has queue_name column
         if relation.column_names.include?('queue_name')
           relation = relation.where('queue_name LIKE ?', "%#{params[:queue_name]}%")
         else
-          # If not, filter by job's queue_name
-          job_ids = SolidQueue::Job.where('queue_name LIKE ?', "%#{params[:queue_name]}%").pluck(:id)
-          relation = relation.where(job_id: job_ids)
+          relation = relation.where(job_id: SolidQueue::Job.where('queue_name LIKE ?', "%#{params[:queue_name]}%").select(:id))
         end
       end
 
-      # Add arguments filtering
       if params[:arguments].present?
-        job_ids = SolidQueue::Job.where('arguments::text ILIKE ?', "%#{params[:arguments]}%").pluck(:id)
-        relation = relation.where(job_id: job_ids)
+        relation = relation.where(job_id: SolidQueue::Job.where('arguments::text ILIKE ?', "%#{params[:arguments]}%").select(:id))
       end
 
       relation
