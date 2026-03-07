@@ -22,13 +22,11 @@ module SolidQueueMonitor
       return relation if params[:class_name].blank? && params[:arguments].blank?
 
       if params[:class_name].present?
-        job_ids = SolidQueue::Job.where('class_name LIKE ?', "%#{params[:class_name]}%").pluck(:id)
-        relation = relation.where(job_id: job_ids)
+        relation = relation.where(job_id: SolidQueue::Job.where('class_name LIKE ?', "%#{params[:class_name]}%").select(:id))
       end
 
       if params[:arguments].present?
-        job_ids = SolidQueue::Job.where('arguments::text ILIKE ?', "%#{params[:arguments]}%").pluck(:id)
-        relation = relation.where(job_id: job_ids)
+        relation = relation.where(job_id: SolidQueue::Job.where('arguments::text ILIKE ?', "%#{params[:arguments]}%").select(:id))
       end
 
       relation

@@ -20,4 +20,7 @@ SolidQueueMonitor.setup do |config|
 
   # Auto-refresh interval in seconds (default: 30)
   # config.auto_refresh_interval = 30
+
+  # Disable the chart on the overview page to skip chart queries entirely.
+  # config.show_chart = true
 end

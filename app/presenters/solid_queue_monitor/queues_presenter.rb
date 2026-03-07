@@ -2,10 +2,11 @@
 
 module SolidQueueMonitor
   class QueuesPresenter < BasePresenter
-    def initialize(records, paused_queues = [], sort: {})
-      @records = records
+    def initialize(records, paused_queues = [], sort: {}, queue_stats: {})
+      @records       = records
       @paused_queues = paused_queues
-      @sort = sort
+      @sort          = sort
+      @queue_stats   = queue_stats
     end
 
     def render
@@ -39,16 +40,16 @@ module SolidQueueMonitor
 
     def generate_row(queue)
       queue_name = queue.queue_name || 'default'
-      paused = @paused_queues.include?(queue_name)
+      paused     = @paused_queues.include?(queue_name)
 
       <<-HTML
         <tr class="#{paused ? 'queue-paused' : ''}">
           <td>#{queue_link(queue_name)}</td>
           <td>#{status_badge(paused)}</td>
           <td>#{queue.job_count}</td>
-          <td>#{ready_jobs_count(queue_name)}</td>
-          <td>#{scheduled_jobs_count(queue_name)}</td>
-          <td>#{failed_jobs_count(queue_name)}</td>
+          <td>#{@queue_stats.dig(:ready, queue_name) || 0}</td>
+          <td>#{@queue_stats.dig(:scheduled, queue_name) || 0}</td>
+          <td>#{@queue_stats.dig(:failed, queue_name) || 0}</td>
           <td class="actions-cell">#{action_button(queue_name, paused)}</td>
         </tr>
       HTML
@@ -83,20 +84,6 @@ module SolidQueueMonitor
           </form>
         HTML
       end
-    end
-
-    def ready_jobs_count(queue_name)
-      SolidQueue::ReadyExecution.where(queue_name: queue_name).count
-    end
-
-    def scheduled_jobs_count(queue_name)
-      SolidQueue::ScheduledExecution.where(queue_name: queue_name).count
-    end
-
-    def failed_jobs_count(queue_name)
-      SolidQueue::FailedExecution.joins(:job)
-                                 .where(solid_queue_jobs: { queue_name: queue_name })
-                                 .count
     end
   end
 end

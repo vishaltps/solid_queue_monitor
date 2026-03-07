@@ -6,7 +6,7 @@ module SolidQueueMonitor
 
     def index
       @stats = SolidQueueMonitor::StatsCalculator.calculate
-      @chart_data = SolidQueueMonitor::ChartDataService.new(time_range: time_range_param).calculate
+      @chart_data = SolidQueueMonitor.show_chart ? SolidQueueMonitor::ChartDataService.new(time_range: time_range_param).calculate : nil
 
       recent_jobs_query = SolidQueue::Job.limit(100)
       sorted_query = apply_sorting(filter_jobs(recent_jobs_query), SORTABLE_COLUMNS, 'created_at', :desc)
@@ -29,13 +29,13 @@ module SolidQueueMonitor
     end
 
     def generate_overview_content
-      SolidQueueMonitor::StatsPresenter.new(@stats).render +
-        SolidQueueMonitor::ChartPresenter.new(@chart_data).render +
-        SolidQueueMonitor::JobsPresenter.new(@recent_jobs[:records],
-                                             current_page: @recent_jobs[:current_page],
-                                             total_pages: @recent_jobs[:total_pages],
-                                             filters: filter_params,
-                                             sort: sort_params).render
+      html = SolidQueueMonitor::StatsPresenter.new(@stats).render
+      html += SolidQueueMonitor::ChartPresenter.new(@chart_data).render if @chart_data
+      html + SolidQueueMonitor::JobsPresenter.new(@recent_jobs[:records],
+                                                  current_page: @recent_jobs[:current_page],
+                                                  total_pages: @recent_jobs[:total_pages],
+                                                  filters: filter_params,
+                                                  sort: sort_params).render
     end
   end
 end

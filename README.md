@@ -72,7 +72,7 @@ A lightweight, zero-dependency web interface for monitoring Solid Queue backgrou
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'solid_queue_monitor', '~> 1.1'
+gem 'solid_queue_monitor', '~> 1.2'
 ```
 
 Then execute:
@@ -118,7 +118,25 @@ SolidQueueMonitor.setup do |config|
 
   # Auto-refresh interval in seconds (default: 30)
   config.auto_refresh_interval = 30
+
+  # Disable the chart on the overview page to skip chart queries entirely
+  # config.show_chart = true
 end
+```
+
+### Performance at Scale
+
+SolidQueueMonitor is optimized for large datasets (millions of rows in `solid_queue_jobs`):
+
+- **Overview stats** are derived entirely from execution tables (`ready_executions`, `scheduled_executions`, `claimed_executions`, `failed_executions`), avoiding expensive `COUNT(*)` queries on the jobs table.
+- **Chart data** uses SQL `GROUP BY` bucketing instead of loading timestamps into Ruby memory.
+- **Filters** use subqueries (`.select(:job_id)`) instead of loading ID arrays into memory.
+- **Queue stats** are pre-aggregated with `GROUP BY` to avoid N+1 queries.
+
+If you don't need the job activity chart, disable it to skip chart queries entirely:
+
+```ruby
+config.show_chart = false
 ```
 
 ### Authentication

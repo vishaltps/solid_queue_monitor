@@ -10,8 +10,13 @@ module SolidQueueMonitor
                                   .select('queue_name, COUNT(*) as job_count')
       @queues = apply_queue_sorting(base_query)
       @paused_queues = QueuePauseService.paused_queues
+      @queue_stats = aggregate_queue_stats
 
-      render_page('Queues', SolidQueueMonitor::QueuesPresenter.new(@queues, @paused_queues, sort: sort_params).render)
+      render_page('Queues', SolidQueueMonitor::QueuesPresenter.new(
+        @queues, @paused_queues,
+        queue_stats: @queue_stats,
+        sort: sort_params
+      ).render)
     end
 
     def show
@@ -57,6 +62,15 @@ module SolidQueueMonitor
 
     private
 
+    def aggregate_queue_stats
+      {
+        ready: SolidQueue::ReadyExecution.group(:queue_name).count,
+        scheduled: SolidQueue::ScheduledExecution.group(:queue_name).count,
+        failed: SolidQueue::FailedExecution.joins(:job)
+                                           .group('solid_queue_jobs.queue_name').count
+      }
+    end
+
     def calculate_queue_counts(queue_name)
       {
         total: SolidQueue::Job.where(queue_name: queue_name).count,
@@ -77,17 +91,13 @@ module SolidQueueMonitor
         when 'completed'
           relation = relation.where.not(finished_at: nil)
         when 'failed'
-          failed_job_ids = SolidQueue::FailedExecution.pluck(:job_id)
-          relation = relation.where(id: failed_job_ids)
+          relation = relation.where(id: SolidQueue::FailedExecution.select(:job_id))
         when 'scheduled'
-          scheduled_job_ids = SolidQueue::ScheduledExecution.pluck(:job_id)
-          relation = relation.where(id: scheduled_job_ids)
+          relation = relation.where(id: SolidQueue::ScheduledExecution.select(:job_id))
         when 'pending'
-          ready_job_ids = SolidQueue::ReadyExecution.pluck(:job_id)
-          relation = relation.where(id: ready_job_ids)
+          relation = relation.where(id: SolidQueue::ReadyExecution.select(:job_id))
         when 'in_progress'
-          claimed_job_ids = SolidQueue::ClaimedExecution.pluck(:job_id)
-          relation = relation.where(id: claimed_job_ids)
+          relation = relation.where(id: SolidQueue::ClaimedExecution.select(:job_id))
         end
       end
 

@@ -5,45 +5,46 @@ require 'spec_helper'
 RSpec.describe SolidQueueMonitor::StatsCalculator do
   describe '.calculate' do
     before do
-      # Create some test data
-      # Note: execution factories also create associated jobs
-      create_list(:solid_queue_job, 3)
-      create(:solid_queue_job, :completed)
-      create(:solid_queue_job, :completed)
-      create(:solid_queue_job, queue_name: 'high_priority')
       create(:solid_queue_failed_execution)
       create(:solid_queue_scheduled_execution)
       create(:solid_queue_ready_execution)
+      create(:solid_queue_claimed_execution)
     end
 
     it 'returns a hash with all required statistics' do
       stats = described_class.calculate
 
-      expect(stats).to be_a(Hash)
       expect(stats).to include(
-        :total_jobs,
-        :unique_queues,
+        :active_jobs,
         :scheduled,
         :ready,
         :failed,
-        :completed,
         :in_progress,
         :recurring
       )
     end
 
-    it 'calculates the correct counts' do
+    it 'calculates the correct counts from execution tables' do
       stats = described_class.calculate
 
-      # 6 explicitly created jobs + 3 jobs created by execution factories = 9 total
-      expect(stats[:total_jobs]).to eq(9)
-      expect(stats[:unique_queues]).to eq(2)
       expect(stats[:scheduled]).to eq(1)
       expect(stats[:ready]).to eq(1)
       expect(stats[:failed]).to eq(1)
-      expect(stats[:completed]).to eq(2)
-      expect(stats[:in_progress]).to eq(0)
+      expect(stats[:in_progress]).to eq(1)
       expect(stats[:recurring]).to eq(0)
+    end
+
+    it 'derives active_jobs from execution table counts' do
+      stats = described_class.calculate
+
+      expected_active = stats[:ready] + stats[:scheduled] + stats[:in_progress] + stats[:failed]
+      expect(stats[:active_jobs]).to eq(expected_active)
+    end
+
+    it 'does not query the jobs table for counts' do
+      allow(SolidQueue::Job).to receive(:count).and_call_original
+      described_class.calculate
+      expect(SolidQueue::Job).not_to have_received(:count)
     end
   end
 end

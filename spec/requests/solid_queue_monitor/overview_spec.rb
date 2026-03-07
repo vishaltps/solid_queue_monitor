@@ -29,7 +29,7 @@ RSpec.describe 'Overview' do
       get '/'
 
       expect(response.body).to include('Queue Statistics')
-      expect(response.body).to include('Total Jobs')
+      expect(response.body).to include('Active Jobs')
     end
 
     it 'displays navigation links' do
@@ -38,6 +38,27 @@ RSpec.describe 'Overview' do
       expect(response.body).to include('Overview')
       expect(response.body).to include('Queues')
       expect(response.body).to include('Failed')
+    end
+  end
+
+  context 'with chart disabled' do
+    around do |example|
+      original = SolidQueueMonitor.show_chart
+      SolidQueueMonitor.show_chart = false
+      example.run
+      SolidQueueMonitor.show_chart = original
+    end
+
+    it 'does not call ChartDataService' do
+      allow(SolidQueueMonitor::ChartDataService).to receive(:new).and_call_original
+      get '/'
+      expect(response).to have_http_status(:ok)
+      expect(SolidQueueMonitor::ChartDataService).not_to have_received(:new)
+    end
+
+    it 'does not render chart section' do
+      get '/'
+      expect(response.body).not_to include('id="chart-section"')
     end
   end
 

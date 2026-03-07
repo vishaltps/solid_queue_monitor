@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.2.0] - 2026-03-07
+
+### Changed
+
+- **BREAKING**: Dashboard "Total Jobs" and "Completed" stats replaced with "Active Jobs" (sum of ready + scheduled + in-progress + failed). This avoids expensive `COUNT(*)` on the jobs table at scale.
+
+### Fixed
+
+- **Performance**: Overview page no longer queries `solid_queue_jobs` for stats — all counts derived from execution tables (resolves gateway timeouts with millions of rows) ([#27](https://github.com/vishaltps/solid_queue_monitor/issues/27))
+- **Performance**: Chart data service uses SQL `GROUP BY` bucketing instead of loading all timestamps into Ruby memory
+- **Performance**: All filter methods use `.select(:job_id)` subqueries instead of unbounded `.pluck(:job_id)`
+- **Performance**: Queue stats pre-aggregated with 3 `GROUP BY` queries, eliminating N+1 per-queue COUNT queries
+
+### Added
+
+- `config.show_chart` option to disable the job activity chart and skip chart queries entirely
+
 ## [1.1.0] - 2026-02-07
 
 ### Added
