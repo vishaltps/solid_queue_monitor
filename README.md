@@ -126,12 +126,7 @@ end
 
 ### Performance at Scale
 
-SolidQueueMonitor is optimized for large datasets (millions of rows in `solid_queue_jobs`):
-
-- **Overview stats** are derived entirely from execution tables (`ready_executions`, `scheduled_executions`, `claimed_executions`, `failed_executions`), avoiding expensive `COUNT(*)` queries on the jobs table.
-- **Chart data** uses SQL `GROUP BY` bucketing instead of loading timestamps into Ruby memory.
-- **Filters** use subqueries (`.select(:job_id)`) instead of loading ID arrays into memory.
-- **Queue stats** are pre-aggregated with `GROUP BY` to avoid N+1 queries.
+SolidQueueMonitor is optimized for large datasets (millions of rows in `solid_queue_jobs`). All dashboard queries are designed to stay fast regardless of table size.
 
 If you don't need the job activity chart, disable it to skip chart queries entirely:
 
