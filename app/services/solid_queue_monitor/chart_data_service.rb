@@ -5,13 +5,13 @@ module SolidQueueMonitor
     TIME_RANGES = {
       '15m' => { duration: 15.minutes, buckets: 15, label_format: '%H:%M', label: 'Last 15 minutes' },
       '30m' => { duration: 30.minutes, buckets: 15, label_format: '%H:%M', label: 'Last 30 minutes' },
-      '1h'  => { duration: 1.hour,     buckets: 12, label_format: '%H:%M', label: 'Last 1 hour' },
-      '3h'  => { duration: 3.hours,    buckets: 18, label_format: '%H:%M', label: 'Last 3 hours' },
-      '6h'  => { duration: 6.hours,    buckets: 24, label_format: '%H:%M', label: 'Last 6 hours' },
-      '12h' => { duration: 12.hours,   buckets: 24, label_format: '%H:%M', label: 'Last 12 hours' },
-      '1d'  => { duration: 1.day,      buckets: 24, label_format: '%H:%M', label: 'Last 24 hours' },
-      '3d'  => { duration: 3.days,     buckets: 36, label_format: '%m/%d %H:%M', label: 'Last 3 days' },
-      '1w'  => { duration: 7.days,     buckets: 28, label_format: '%m/%d', label: 'Last 7 days' }
+      '1h' => { duration: 1.hour,     buckets: 12, label_format: '%H:%M', label: 'Last 1 hour' },
+      '3h' => { duration: 3.hours,    buckets: 18, label_format: '%H:%M', label: 'Last 3 hours' },
+      '6h' => { duration: 6.hours,    buckets: 24, label_format: '%H:%M', label: 'Last 6 hours' },
+      '12h' => { duration: 12.hours, buckets: 24, label_format: '%H:%M', label: 'Last 12 hours' },
+      '1d' => { duration: 1.day,      buckets: 24, label_format: '%H:%M', label: 'Last 24 hours' },
+      '3d' => { duration: 3.days,     buckets: 36, label_format: '%m/%d %H:%M', label: 'Last 3 days' },
+      '1w' => { duration: 7.days,     buckets: 28, label_format: '%m/%d', label: 'Last 7 days' }
     }.freeze
 
     DEFAULT_TIME_RANGE = '1d'
@@ -36,12 +36,12 @@ module SolidQueueMonitor
       failed_arr    = fill_buckets(buckets, failed_data)
 
       {
-        labels:           buckets.map { |b| b[:label] }, # rubocop:disable Rails/Pluck
-        created:          created_arr,
-        completed:        completed_arr,
-        failed:           failed_arr,
-        totals:           { created: created_arr.sum, completed: completed_arr.sum, failed: failed_arr.sum },
-        time_range:       @time_range,
+        labels: buckets.map { |b| b[:label] }, # rubocop:disable Rails/Pluck
+        created: created_arr,
+        completed: completed_arr,
+        failed: failed_arr,
+        totals: { created: created_arr.sum, completed: completed_arr.sum, failed: failed_arr.sum },
+        time_range: @time_range,
         time_range_label: @config[:label],
         available_ranges: TIME_RANGES.transform_values { |v| v[:label] }
       }
@@ -66,10 +66,12 @@ module SolidQueueMonitor
       scope = model.where(column => start_time..end_time)
       scope = scope.where.not(column => nil) if exclude_nil
 
+      # rubocop:disable Style/HashTransformKeys -- pluck returns Array<Array>, not Hash
       scope
         .group(Arel.sql(expr))
         .pluck(Arel.sql("#{expr} AS bucket_idx, COUNT(*) AS cnt"))
         .to_h { |idx, cnt| [idx.to_i, cnt] }
+      # rubocop:enable Style/HashTransformKeys
     end
 
     def fill_buckets(buckets, index_counts)

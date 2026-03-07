@@ -38,11 +38,13 @@ RSpec.describe SolidQueueMonitor::ChartDataService do
 
     context 'with 1h time range' do
       let(:time_range) { '1h' }
+
       it('returns 12 buckets') { expect(service.calculate[:labels].size).to eq(12) }
     end
 
     context 'with 1w time range' do
       let(:time_range) { '1w' }
+
       it('returns 28 buckets') { expect(service.calculate[:labels].size).to eq(28) }
     end
 
@@ -91,6 +93,7 @@ RSpec.describe SolidQueueMonitor::ChartDataService do
 
     context 'with jobs outside the window' do
       let(:time_range) { '1h' }
+
       before { create(:solid_queue_job, created_at: 2.hours.ago) }
 
       it 'excludes them' do

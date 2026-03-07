@@ -32,10 +32,10 @@ module SolidQueueMonitor
       html = SolidQueueMonitor::StatsPresenter.new(@stats).render
       html += SolidQueueMonitor::ChartPresenter.new(@chart_data).render if @chart_data
       html + SolidQueueMonitor::JobsPresenter.new(@recent_jobs[:records],
-                                                   current_page: @recent_jobs[:current_page],
-                                                   total_pages: @recent_jobs[:total_pages],
-                                                   filters: filter_params,
-                                                   sort: sort_params).render
+                                                  current_page: @recent_jobs[:current_page],
+                                                  total_pages: @recent_jobs[:total_pages],
+                                                  filters: filter_params,
+                                                  sort: sort_params).render
     end
   end
 end

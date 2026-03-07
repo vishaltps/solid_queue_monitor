@@ -11,11 +11,11 @@ module SolidQueueMonitor
 
       {
         active_jobs: ready + scheduled + in_progress + failed,
-        scheduled:   scheduled,
-        ready:       ready,
-        failed:      failed,
+        scheduled: scheduled,
+        ready: ready,
+        failed: failed,
         in_progress: in_progress,
-        recurring:   recurring
+        recurring: recurring
       }
     end
   end

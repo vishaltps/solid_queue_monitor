@@ -164,11 +164,11 @@ module SolidQueueMonitor
       end
 
       if params[:queue_name].present?
-        if relation.column_names.include?('queue_name')
-          relation = relation.where('queue_name LIKE ?', "%#{params[:queue_name]}%")
-        else
-          relation = relation.where(job_id: SolidQueue::Job.where('queue_name LIKE ?', "%#{params[:queue_name]}%").select(:id))
-        end
+        relation = if relation.column_names.include?('queue_name')
+                     relation.where('queue_name LIKE ?', "%#{params[:queue_name]}%")
+                   else
+                     relation.where(job_id: SolidQueue::Job.where('queue_name LIKE ?', "%#{params[:queue_name]}%").select(:id))
+                   end
       end
 
       if params[:arguments].present?

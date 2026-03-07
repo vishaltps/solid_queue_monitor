@@ -42,8 +42,9 @@ RSpec.describe SolidQueueMonitor::StatsCalculator do
     end
 
     it 'does not query the jobs table for counts' do
-      expect(SolidQueue::Job).not_to receive(:count)
+      allow(SolidQueue::Job).to receive(:count).and_call_original
       described_class.calculate
+      expect(SolidQueue::Job).not_to have_received(:count)
     end
   end
 end

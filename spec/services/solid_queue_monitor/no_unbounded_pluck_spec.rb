@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe 'No unbounded pluck calls in controllers' do
+RSpec.describe 'No unbounded pluck calls in controllers' do # rubocop:disable RSpec/DescribeClass
   root = File.expand_path('../../..', __dir__)
   controller_files = Dir[File.join(root, 'app', 'controllers', '**', '*.rb')]
 
@@ -27,9 +27,9 @@ RSpec.describe 'No unbounded pluck calls in controllers' do
       end
 
       expect(pluck_filter_lines).to be_empty,
-        "Found unbounded pluck calls used for filtering in #{relative}:\n" \
-        "#{pluck_filter_lines.map(&:strip).join("\n")}\n" \
-        "Use .select(:job_id) or .select(:id) for subqueries instead."
+                                    "Found unbounded pluck calls used for filtering in #{relative}:\n" \
+                                    "#{pluck_filter_lines.map(&:strip).join("\n")}\n" \
+                                    'Use .select(:job_id) or .select(:id) for subqueries instead.'
     end
   end
 end

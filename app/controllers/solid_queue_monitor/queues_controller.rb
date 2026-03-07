@@ -64,10 +64,10 @@ module SolidQueueMonitor
 
     def aggregate_queue_stats
       {
-        ready:     SolidQueue::ReadyExecution.group(:queue_name).count,
+        ready: SolidQueue::ReadyExecution.group(:queue_name).count,
         scheduled: SolidQueue::ScheduledExecution.group(:queue_name).count,
-        failed:    SolidQueue::FailedExecution.joins(:job)
-                                              .group('solid_queue_jobs.queue_name').count
+        failed: SolidQueue::FailedExecution.joins(:job)
+                                           .group('solid_queue_jobs.queue_name').count
       }
     end
 

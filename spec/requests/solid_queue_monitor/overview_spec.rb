@@ -50,9 +50,10 @@ RSpec.describe 'Overview' do
     end
 
     it 'does not call ChartDataService' do
-      expect(SolidQueueMonitor::ChartDataService).not_to receive(:new)
+      allow(SolidQueueMonitor::ChartDataService).to receive(:new).and_call_original
       get '/'
       expect(response).to have_http_status(:ok)
+      expect(SolidQueueMonitor::ChartDataService).not_to have_received(:new)
     end
 
     it 'does not render chart section' do
