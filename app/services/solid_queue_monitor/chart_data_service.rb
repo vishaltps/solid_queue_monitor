@@ -83,10 +83,9 @@ module SolidQueueMonitor
     # SQLite:     CAST((CAST(strftime('%s', col) AS INTEGER) - start) / interval AS INTEGER)
     # MySQL:      CAST((UNIX_TIMESTAMP(col) - start) / interval AS SIGNED)
     def bucket_index_expr(column, start_epoch, interval_seconds)
-      case
-      when adapter?('sqlite')
+      if adapter?('sqlite')
         "CAST((CAST(strftime('%s', #{column}) AS INTEGER) - #{start_epoch}) / #{interval_seconds} AS INTEGER)"
-      when adapter?('mysql')
+      elsif adapter?('mysql')
         "CAST((UNIX_TIMESTAMP(#{column}) - #{start_epoch}) / #{interval_seconds} AS SIGNED)"
       else
         "CAST((EXTRACT(EPOCH FROM #{column}) - #{start_epoch}) / #{interval_seconds} AS INTEGER)"
@@ -96,6 +95,5 @@ module SolidQueueMonitor
     def adapter?(name)
       ActiveRecord::Base.connection.adapter_name.downcase.include?(name)
     end
-
   end
 end
