@@ -7,9 +7,13 @@ SolidQueueMonitor.setup do |config|
 
   # Set the username for HTTP Basic Authentication (only used if authentication is enabled)
   # config.username = 'admin'
+  # config.username = ENV['SOLID_QUEUE_MONITOR_USERNAME']
+  # config.username = -> { Rails.application.credentials.dig(:solid_queue_monitor, :username) }
 
   # Set the password for HTTP Basic Authentication (only used if authentication is enabled)
   # config.password = 'password'
+  # config.password = ENV['SOLID_QUEUE_MONITOR_PASSWORD']
+  # config.password = -> { Rails.application.credentials.dig(:solid_queue_monitor, :password) }
 
   # Number of jobs to display per page
   # config.jobs_per_page = 25

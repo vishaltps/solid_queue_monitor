@@ -37,6 +37,28 @@ RSpec.describe SolidQueueMonitor::AuthenticationService do
         expect(described_class.authenticate('wrong', 'wrong')).to be false
       end
     end
+
+    context 'when credentials are configured with callables' do
+      before do
+        SolidQueueMonitor.authentication_enabled = true
+        SolidQueueMonitor.username = -> { 'lambda_user' }
+        SolidQueueMonitor.password = -> { 'lambda_pass' }
+      end
+
+      after do
+        SolidQueueMonitor.authentication_enabled = false
+        SolidQueueMonitor.username = 'admin'
+        SolidQueueMonitor.password = 'password'
+      end
+
+      it 'resolves callable values for authentication' do
+        expect(described_class.authenticate('lambda_user', 'lambda_pass')).to be true
+      end
+
+      it 'rejects incorrect credentials with callable values' do
+        expect(described_class.authenticate('wrong', 'wrong')).to be false
+      end
+    end
   end
 
   describe '.authentication_required?' do
