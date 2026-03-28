@@ -104,9 +104,11 @@ SolidQueueMonitor.setup do |config|
   config.authentication_enabled = false
 
   # Set the username for HTTP Basic Authentication (only used if authentication is enabled)
+  # Supports static values, ENV variables, or callables (Proc/Lambda)
   config.username = 'admin'
 
   # Set the password for HTTP Basic Authentication (only used if authentication is enabled)
+  # Supports static values, ENV variables, or callables (Proc/Lambda)
   config.password = 'password'
 
   # Number of jobs to display per page
@@ -141,7 +143,21 @@ By default, Solid Queue Monitor does not require authentication to access the da
 For production environments, it's strongly recommended to enable authentication:
 
 1. **Enable authentication**: Set `config.authentication_enabled = true` in the initializer
-2. **Configure secure credentials**: Set `username` and `password` to strong values in the initializer
+2. **Configure secure credentials** using any of these approaches:
+
+```ruby
+# Static values
+config.username = 'admin'
+config.password = 'secure_password'
+
+# Environment variables
+config.username = ENV['SOLID_QUEUE_MONITOR_USERNAME']
+config.password = ENV['SOLID_QUEUE_MONITOR_PASSWORD']
+
+# Rails credentials (use a lambda for deferred evaluation)
+config.username = -> { Rails.application.credentials.dig(:solid_queue_monitor, :username) }
+config.password = -> { Rails.application.credentials.dig(:solid_queue_monitor, :password) }
+```
 
 ## Usage
 

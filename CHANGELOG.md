@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1] - 2026-03-17
+
+### Added
+
+- Support for callable values (Proc/Lambda) in `username` and `password` configuration, enabling use with `Rails.application.credentials` and other deferred sources ([#31](https://github.com/vishaltps/solid_queue_monitor/issues/31))
+- Initializer template now shows ENV variable and Lambda examples for credentials
+
 ## [1.2.0] - 2026-03-07
 
 ### Changed
