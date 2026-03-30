@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.2] - 2026-03-30
+
+### Added
+
+- Support for MySQL Trilogy adapter, enabling use with `trilogy` gem alongside the default `mysql2` adapter ([#34](https://github.com/vishaltps/solid_queue_monitor/pull/34))
+
 ## [1.2.1] - 2026-03-17
 
 ### Added
