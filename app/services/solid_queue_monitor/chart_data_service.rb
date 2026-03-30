@@ -85,7 +85,7 @@ module SolidQueueMonitor
     def bucket_index_expr(column, start_epoch, interval_seconds)
       if adapter?('sqlite')
         "CAST((CAST(strftime('%s', #{column}) AS INTEGER) - #{start_epoch}) / #{interval_seconds} AS INTEGER)"
-      elsif adapter?('mysql')
+      elsif adapter?('mysql') || adapter?('trilogy')
         "CAST((UNIX_TIMESTAMP(#{column}) - #{start_epoch}) / #{interval_seconds} AS SIGNED)"
       else
         "CAST((EXTRACT(EPOCH FROM #{column}) - #{start_epoch}) / #{interval_seconds} AS INTEGER)"
