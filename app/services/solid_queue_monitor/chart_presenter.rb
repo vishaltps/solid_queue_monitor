@@ -229,7 +229,7 @@ module SolidQueueMonitor
 
     def render_tooltip
       <<-HTML
-        <div id="chart-tooltip" class="chart-tooltip" style="display: none;">
+        <div id="chart-tooltip" class="chart-tooltip">
           <div class="tooltip-label"></div>
           <div class="tooltip-value"></div>
         </div>
