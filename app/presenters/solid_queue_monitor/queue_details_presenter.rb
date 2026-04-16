@@ -53,7 +53,7 @@ module SolidQueueMonitor
       else
         <<-HTML
           <form action="#{pause_queue_path}" method="post" class="inline-form"
-                onsubmit="return confirm('Are you sure you want to pause this queue?');">
+                data-confirm="Are you sure you want to pause this queue?">
             <input type="hidden" name="queue_name" value="#{@queue_name}">
             <input type="hidden" name="redirect_to" value="#{queue_details_path(queue_name: @queue_name)}">
             <button type="submit" class="action-button pause-button">Pause Queue</button>
@@ -170,7 +170,7 @@ module SolidQueueMonitor
                 <button type="submit" class="action-button retry-button">Retry</button>
               </form>
               <form method="post" action="#{discard_failed_job_path(id: failed_execution.id)}" class="inline-form"
-                    onsubmit="return confirm('Are you sure you want to discard this job?');">
+                    data-confirm="Are you sure you want to discard this job?">
                 <input type="hidden" name="redirect_to" value="#{queue_details_path(queue_name: @queue_name)}">
                 <button type="submit" class="action-button discard-button">Discard</button>
               </form>

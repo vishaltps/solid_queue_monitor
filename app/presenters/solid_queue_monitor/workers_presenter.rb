@@ -185,7 +185,7 @@ module SolidQueueMonitor
 
       <<-HTML
         <form action="#{remove_worker_path(id: process.id)}" method="post" class="inline-form"
-              onsubmit="return confirm('Remove this dead process from the registry?');">
+              data-confirm="Remove this dead process from the registry?">
           <button type="submit" class="action-button discard-button" title="Remove dead process">
             Remove
           </button>
