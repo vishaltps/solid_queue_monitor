@@ -2017,6 +2017,51 @@ module SolidQueueMonitor
           grid-template-columns: 1fr;
         }
       }
+
+      /* ===== CSP Phase 1 utility classes (replace runtime style mutations) ===== */
+
+      .is-hidden {
+        display: none !important;
+      }
+
+      .countdown-paused {
+        opacity: 0.4;
+      }
+
+      .is-expanded .collapse-icon {
+        transform: rotate(90deg);
+      }
+
+      .collapse-icon {
+        transition: transform 150ms ease;
+      }
+
+      .collapsible-content {
+        display: none;
+      }
+
+      .is-expanded .collapsible-content {
+        display: block;
+      }
+
+      .chart-tooltip {
+        display: none;
+        position: fixed;
+        pointer-events: none;
+      }
+
+      .chart-tooltip.tooltip-visible {
+        display: block;
+      }
+
+      #flash-message {
+        opacity: 1;
+        transition: opacity 500ms ease;
+      }
+
+      #flash-message.is-fading {
+        opacity: 0;
+      }
       CSS
     end
   end
