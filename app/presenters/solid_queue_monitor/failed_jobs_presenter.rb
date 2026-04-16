@@ -5,12 +5,13 @@ module SolidQueueMonitor
     include Rails.application.routes.url_helpers
     include SolidQueueMonitor::Engine.routes.url_helpers
 
-    def initialize(jobs, current_page: 1, total_pages: 1, filters: {}, sort: {})
+    def initialize(jobs, current_page: 1, total_pages: 1, filters: {}, sort: {}, nonce: nil)
       @jobs = jobs
       @current_page = current_page
       @total_pages = total_pages
       @filters = filters
       @sort = sort
+      @nonce = nonce
     end
 
     def render
@@ -19,6 +20,10 @@ module SolidQueueMonitor
     end
 
     private
+
+    def script_tag_open
+      @nonce ? %(<script nonce="#{@nonce}">) : '<script>'
+    end
 
     def generate_filter_form
       <<-HTML
@@ -76,7 +81,7 @@ module SolidQueueMonitor
           </div>
         </form>
 
-        <script>
+        #{script_tag_open}
           document.addEventListener('DOMContentLoaded', function() {
             // Handle select all checkboxes
             const selectAllHeader = document.getElementById('select-all');

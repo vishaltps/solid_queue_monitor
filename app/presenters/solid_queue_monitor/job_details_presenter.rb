@@ -3,13 +3,14 @@
 module SolidQueueMonitor
   class JobDetailsPresenter < BasePresenter
     def initialize(job, failed_execution: nil, claimed_execution: nil, scheduled_execution: nil,
-                   recent_executions: [], back_path: nil)
+                   recent_executions: [], back_path: nil, nonce: nil)
       @job = job
       @failed_execution = failed_execution
       @claimed_execution = claimed_execution
       @scheduled_execution = scheduled_execution
       @recent_executions = recent_executions
       @back_path = back_path
+      @nonce = nonce
       calculate_timing
     end
 
@@ -31,6 +32,10 @@ module SolidQueueMonitor
     end
 
     private
+
+    def script_tag_open
+      @nonce ? %(<script nonce="#{@nonce}">) : '<script>'
+    end
 
     def calculate_timing
       @created_at = @job.created_at
@@ -336,7 +341,7 @@ module SolidQueueMonitor
           <pre class="backtrace-content" id="app-backtrace">#{format_backtrace_lines(app_lines.presence || lines.first(5))}</pre>
           <pre class="backtrace-content" id="full-backtrace" style="display: none;">#{format_backtrace_lines(lines)}</pre>
         </div>
-        <script>
+        #{script_tag_open}
           function showBacktrace(type) {
             document.getElementById('app-backtrace').style.display = type === 'app' ? 'block' : 'none';
             document.getElementById('full-backtrace').style.display = type === 'full' ? 'block' : 'none';
@@ -666,7 +671,7 @@ module SolidQueueMonitor
             <pre class="raw-data-content" id="raw-data-content">#{CGI.escapeHTML(JSON.pretty_generate(@job.attributes))}</pre>
           </div>
         </div>
-        <script>
+        #{script_tag_open}
           function toggleSection(header) {
             const content = header.nextElementSibling;
             const icon = header.querySelector('.collapse-icon');
