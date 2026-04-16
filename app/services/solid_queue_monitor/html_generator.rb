@@ -5,12 +5,13 @@ module SolidQueueMonitor
     include Rails.application.routes.url_helpers
     include SolidQueueMonitor::Engine.routes.url_helpers
 
-    def initialize(title:, content:, message: nil, message_type: nil, search_query: nil)
+    def initialize(title:, content:, message: nil, message_type: nil, search_query: nil, nonce: nil)
       @title = title
       @content = content
       @message = message
       @message_type = message_type
       @search_query = search_query
+      @nonce = nonce
     end
 
     def generate
@@ -34,7 +35,7 @@ module SolidQueueMonitor
       <<-HTML
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
+        #{style_tag_open}
           #{SolidQueueMonitor::StylesheetGenerator.new.generate}
         </style>
       HTML
@@ -62,7 +63,7 @@ module SolidQueueMonitor
       class_name = @message_type == 'success' ? 'message-success' : 'message-error'
       <<-HTML
         <div id="flash-message" class="message #{class_name}">#{@message}</div>
-        <script>
+        #{script_tag_open}
           // Automatically hide the flash message after 5 seconds
           document.addEventListener('DOMContentLoaded', function() {
             var flashMessage = document.getElementById('flash-message');
@@ -149,6 +150,14 @@ module SolidQueueMonitor
       text.to_s.gsub('&', '&amp;').gsub('<', '&lt;').gsub('>', '&gt;').gsub('"', '&quot;')
     end
 
+    def style_tag_open
+      @nonce ? %(<style nonce="#{@nonce}">) : '<style>'
+    end
+
+    def script_tag_open
+      @nonce ? %(<script nonce="#{@nonce}">) : '<script>'
+    end
+
     def generate_auto_refresh_controls
       return '' unless SolidQueueMonitor.auto_refresh_enabled
 
@@ -194,7 +203,7 @@ module SolidQueueMonitor
     def generate_auto_refresh_script
       return '' unless SolidQueueMonitor.auto_refresh_enabled
 
-      "<script>#{auto_refresh_javascript}</script>"
+      "#{script_tag_open}#{auto_refresh_javascript}</script>"
     end
 
     def auto_refresh_javascript
@@ -270,7 +279,7 @@ module SolidQueueMonitor
 
     def generate_chart_script
       <<-HTML
-        <script>
+        #{script_tag_open}
           #{theme_toggle_javascript}
           #{chart_tooltip_javascript}
         </script>
