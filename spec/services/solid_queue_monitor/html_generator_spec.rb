@@ -60,7 +60,7 @@ RSpec.describe SolidQueueMonitor::FailedJobsPresenter do
   let(:failed_execution) { create(:solid_queue_failed_execution, job: job) }
   let(:jobs) { [failed_execution] }
 
-  it 'stamps nonce on its inline <script>', skip: 'Route loading issues in test environment' do
+  it 'stamps nonce on its inline <script>' do
     presenter = described_class.new(jobs, nonce: 'pnonce')
     html = presenter.render
     script_tags = html.scan(/<script[^>]*>/)
@@ -68,7 +68,7 @@ RSpec.describe SolidQueueMonitor::FailedJobsPresenter do
     script_tags.each { |tag| expect(tag).to include('nonce="pnonce"') }
   end
 
-  it 'omits nonce when not supplied', skip: 'Route loading issues in test environment' do
+  it 'omits nonce when not supplied' do
     presenter = described_class.new(jobs)
     html = presenter.render
     html.scan(/<script[^>]*>/).each { |tag| expect(tag).not_to include('nonce=') }
@@ -80,7 +80,7 @@ RSpec.describe SolidQueueMonitor::ScheduledJobsPresenter do
   let(:scheduled_execution) { create(:solid_queue_scheduled_execution, job: job) }
   let(:jobs) { [scheduled_execution] }
 
-  it 'stamps nonce on its inline <script>', skip: 'Route loading issues in test environment' do
+  it 'stamps nonce on its inline <script>' do
     presenter = described_class.new(jobs, nonce: 'snonce')
     html = presenter.render
     script_tags = html.scan(/<script[^>]*>/)
@@ -88,7 +88,7 @@ RSpec.describe SolidQueueMonitor::ScheduledJobsPresenter do
     script_tags.each { |tag| expect(tag).to include('nonce="snonce"') }
   end
 
-  it 'omits nonce when not supplied', skip: 'Route loading issues in test environment' do
+  it 'omits nonce when not supplied' do
     presenter = described_class.new(jobs)
     html = presenter.render
     html.scan(/<script[^>]*>/).each { |tag| expect(tag).not_to include('nonce=') }
@@ -98,7 +98,7 @@ end
 RSpec.describe SolidQueueMonitor::JobDetailsPresenter do
   let(:job) { create(:solid_queue_job) }
 
-  it 'stamps nonce on all inline <script> tags', skip: 'Route loading issues in test environment' do
+  it 'stamps nonce on all inline <script> tags' do
     presenter = described_class.new(job, nonce: 'jnonce')
     html = presenter.render
     script_tags = html.scan(/<script[^>]*>/)
@@ -106,7 +106,7 @@ RSpec.describe SolidQueueMonitor::JobDetailsPresenter do
     script_tags.each { |tag| expect(tag).to include('nonce="jnonce"') }
   end
 
-  it 'omits nonce when not supplied', skip: 'Route loading issues in test environment' do
+  it 'omits nonce when not supplied' do
     presenter = described_class.new(job)
     html = presenter.render
     html.scan(/<script[^>]*>/).each { |tag| expect(tag).not_to include('nonce=') }
