@@ -83,168 +83,81 @@ module SolidQueueMonitor
 
         #{script_tag_open}
           document.addEventListener('DOMContentLoaded', function() {
-            // Handle select all checkboxes
-            const selectAllHeader = document.getElementById('select-all');
-            const checkboxes = document.querySelectorAll('.job-checkbox');
-            const retrySelectedBtn = document.getElementById('retry-selected-top');
-            const discardSelectedBtn = document.getElementById('discard-selected-top');
-            const form = document.getElementById('failed-jobs-form');
-        #{'    '}
+            var selectAllHeader = document.getElementById('select-all');
+            var checkboxes = document.querySelectorAll('.job-checkbox');
+            var retrySelectedBtn = document.getElementById('retry-selected-top');
+            var discardSelectedBtn = document.getElementById('discard-selected-top');
+            var form = document.getElementById('failed-jobs-form');
+
             function updateButtonState() {
-              const checkedBoxes = document.querySelectorAll('.job-checkbox:checked');
+              var checkedBoxes = document.querySelectorAll('.job-checkbox:checked');
               retrySelectedBtn.disabled = checkedBoxes.length === 0;
               discardSelectedBtn.disabled = checkedBoxes.length === 0;
             }
-        #{'    '}
-            function toggleAll(checked) {
-              checkboxes.forEach(checkbox => {
-                checkbox.checked = checked;
-              });
-              selectAllHeader.checked = checked;
-              updateButtonState();
-            }
-        #{'    '}
+
             selectAllHeader.addEventListener('change', function() {
-              toggleAll(this.checked);
+              checkboxes.forEach(function(cb) { cb.checked = selectAllHeader.checked; });
+              updateButtonState();
             });
-        #{'    '}
-            checkboxes.forEach(checkbox => {
-              checkbox.addEventListener('change', function() {
+
+            checkboxes.forEach(function(cb) {
+              cb.addEventListener('change', function() {
                 updateButtonState();
-        #{'        '}
-                // Update select all checkboxes if needed
-                const allChecked = document.querySelectorAll('.job-checkbox:checked').length === checkboxes.length;
+                var allChecked = document.querySelectorAll('.job-checkbox:checked').length === checkboxes.length;
                 selectAllHeader.checked = allChecked;
               });
             });
-        #{'    '}
-            // Handle bulk actions
-            retrySelectedBtn.addEventListener('click', function() {
-              const selectedIds = Array.from(document.querySelectorAll('.job-checkbox:checked')).map(cb => cb.value);
-              if (selectedIds.length === 0) return;
-        #{'      '}
-              if (confirm('Are you sure you want to retry the selected jobs?')) {
-                form.action = '#{retry_failed_jobs_path}';
-        #{'        '}
-                // Add a special flag to indicate this should redirect properly
-                const redirectInput = document.createElement('input');
-                redirectInput.type = 'hidden';
-                redirectInput.name = 'redirect_cleanly';
-                redirectInput.value = 'true';
-                form.appendChild(redirectInput);
-        #{'        '}
-                // Add selected IDs as hidden inputs
-                selectedIds.forEach(id => {
-                  const input = document.createElement('input');
-                  input.type = 'hidden';
-                  input.name = 'job_ids[]';
-                  input.value = id;
-                  form.appendChild(input);
-                });
-        #{'        '}
-                // Submit the form and then replace the URL location immediately after
-                form.submit();
-        #{'        '}
-                // Delay the redirect to give the form time to submit
-                setTimeout(function() {
-                  // Reset to the clean URL without query parameters
-                  window.history.replaceState({}, '', window.location.pathname);
-                }, 100);
-              }
-            });
-        #{'    '}
-            discardSelectedBtn.addEventListener('click', function() {
-              const selectedIds = Array.from(document.querySelectorAll('.job-checkbox:checked')).map(cb => cb.value);
-              if (selectedIds.length === 0) return;
-        #{'      '}
-              if (confirm('Are you sure you want to discard the selected jobs?')) {
-                form.action = '#{discard_failed_jobs_path}';
-        #{'        '}
-                // Add a special flag to indicate this should redirect properly
-                const redirectInput = document.createElement('input');
-                redirectInput.type = 'hidden';
-                redirectInput.name = 'redirect_cleanly';
-                redirectInput.value = 'true';
-                form.appendChild(redirectInput);
-        #{'        '}
-                // Add selected IDs as hidden inputs
-                selectedIds.forEach(id => {
-                  const input = document.createElement('input');
-                  input.type = 'hidden';
-                  input.name = 'job_ids[]';
-                  input.value = id;
-                  form.appendChild(input);
-                });
-        #{'        '}
-                // Submit the form and then replace the URL location immediately after
-                form.submit();
-        #{'        '}
-                // Delay the redirect to give the form time to submit
-                setTimeout(function() {
-                  // Reset to the clean URL without query parameters
-                  window.history.replaceState({}, '', window.location.pathname);
-                }, 100);
-              }
-            });
-        #{'    '}
-            // Initialize button state
-            updateButtonState();
-        #{'    '}
-            // Global function for retry action
-            window.submitRetryForm = function(id) {
-              const form = document.createElement('form');
-              form.method = 'post';
-              form.action = '#{retry_failed_job_path(id: 'PLACEHOLDER')}';
-              form.action = form.action.replace('PLACEHOLDER', id);
-              form.style.display = 'none';
-        #{'      '}
-              // Add a special flag to indicate this should redirect properly
-              const redirectInput = document.createElement('input');
-              redirectInput.type = 'hidden';
-              redirectInput.name = 'redirect_cleanly';
-              redirectInput.value = 'true';
-              form.appendChild(redirectInput);
-        #{'      '}
-              document.body.appendChild(form);
-        #{'      '}
-              // Submit the form and then replace the URL location immediately after
+
+            function bulkSubmit(action, promptMsg) {
+              var ids = Array.from(document.querySelectorAll('.job-checkbox:checked')).map(function(cb) { return cb.value; });
+              if (ids.length === 0) return;
+              if (!confirm(promptMsg)) return;
+              form.action = action;
+              appendHidden(form, 'redirect_cleanly', 'true');
+              ids.forEach(function(id) { appendHidden(form, 'job_ids[]', id); });
               form.submit();
-        #{'      '}
-              // Delay the redirect to give the form time to submit
-              setTimeout(function() {
-                // Reset to the clean URL without query parameters
-                window.history.replaceState({}, '', window.location.pathname);
-              }, 100);
-            };
-        #{'    '}
-            // Global function for discard action
-            window.submitDiscardForm = function(id) {
-              if (confirm('Are you sure you want to discard this job?')) {
-                const form = document.createElement('form');
-                form.method = 'post';
-                form.action = '#{discard_failed_job_path(id: 'PLACEHOLDER')}';
-                form.action = form.action.replace('PLACEHOLDER', id);
-                form.style.display = 'none';
-        #{'        '}
-                // Add a special flag to indicate this should redirect properly
-                const redirectInput = document.createElement('input');
-                redirectInput.type = 'hidden';
-                redirectInput.name = 'redirect_cleanly';
-                redirectInput.value = 'true';
-                form.appendChild(redirectInput);
-        #{'        '}
-                document.body.appendChild(form);
-        #{'        '}
-                // Submit the form and then replace the URL location immediately after
-                form.submit();
-        #{'        '}
-                // Delay the redirect to give the form time to submit
-                setTimeout(function() {
-                  // Reset to the clean URL without query parameters
-                  window.history.replaceState({}, '', window.location.pathname);
-                }, 100);
+              setTimeout(function() { window.history.replaceState({}, '', window.location.pathname); }, 100);
+            }
+
+            function appendHidden(f, name, value) {
+              var input = document.createElement('input');
+              input.type = 'hidden';
+              input.name = name;
+              input.value = value;
+              f.appendChild(input);
+            }
+
+            retrySelectedBtn.addEventListener('click', function() {
+              bulkSubmit('#{retry_failed_jobs_path}', 'Are you sure you want to retry the selected jobs?');
+            });
+            discardSelectedBtn.addEventListener('click', function() {
+              bulkSubmit('#{discard_failed_jobs_path}', 'Are you sure you want to discard the selected jobs?');
+            });
+
+            function submitRowAction(action, id) {
+              var f = document.createElement('form');
+              f.method = 'post';
+              f.action = action.replace('PLACEHOLDER', id);
+              appendHidden(f, 'redirect_cleanly', 'true');
+              document.body.appendChild(f);
+              f.submit();
+              setTimeout(function() { window.history.replaceState({}, '', window.location.pathname); }, 100);
+            }
+
+            document.addEventListener('click', function(e) {
+              var btn = e.target.closest('[data-action]');
+              if (!btn) return;
+              var id = btn.dataset.jobId;
+              if (btn.dataset.action === 'retry-failed-job') {
+                submitRowAction('#{retry_failed_job_path(id: 'PLACEHOLDER')}', id);
+              } else if (btn.dataset.action === 'discard-failed-job') {
+                if (confirm('Are you sure you want to discard this job?')) {
+                  submitRowAction('#{discard_failed_job_path(id: 'PLACEHOLDER')}', id);
+                }
               }
-            };
+            });
+
+            updateButtonState();
           });
         </script>
       HTML
@@ -273,13 +186,8 @@ module SolidQueueMonitor
           <td>#{format_datetime(failed_execution.created_at)}</td>
           <td class="actions-cell">
             <div class="job-actions">
-              <a href="javascript:void(0)"#{' '}
-                 onclick="submitRetryForm(#{failed_execution.id})"#{' '}
-                 class="action-button retry-button">Retry</a>
-        #{'      '}
-              <a href="javascript:void(0)"#{' '}
-                 onclick="submitDiscardForm(#{failed_execution.id})"#{' '}
-                 class="action-button discard-button">Discard</a>
+              <button type="button" data-action="retry-failed-job" data-job-id="#{failed_execution.id}" class="action-button retry-button">Retry</button>
+              <button type="button" data-action="discard-failed-job" data-job-id="#{failed_execution.id}" class="action-button discard-button">Discard</button>
             </div>
           </td>
         </tr>
