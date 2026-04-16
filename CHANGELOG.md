@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.3.0] - 2026-04-16
+
+### Added
+
+- Content Security Policy compatibility for nonce-based strict CSP. The monitor now reads `content_security_policy_nonce` from the host controller and stamps it onto every inline `<style>` and `<script>` tag emitted by the engine. When no nonce is configured, HTML is byte-identical to prior versions. ([#36](https://github.com/vishaltps/solid_queue_monitor/issues/36))
+
+### Changed
+
+- Removed all inline `onclick`, `onchange`, and `onsubmit` attributes. Behavior is now wired via `addEventListener` and `data-*` attributes.
+- Replaced runtime `element.style.display|opacity|transform` mutations with CSS class toggles (`.is-hidden`, `.is-fading`, `.is-expanded`, `.tooltip-visible`, `.countdown-paused`). Tooltip cursor-tracking position is unchanged.
+- Consolidated confirm-on-submit dialogs into a single `data-confirm="…"` pattern.
+
+### Notes
+
+No host-app changes required. Apps already using nonce-based CSP will see the UI start working once they upgrade. Apps without CSP continue to receive identical output.
+
 ## [1.2.2] - 2026-03-30
 
 ### Added
