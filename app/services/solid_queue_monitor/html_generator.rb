@@ -64,26 +64,13 @@ module SolidQueueMonitor
       <<-HTML
         <div id="flash-message" class="message #{class_name}">#{@message}</div>
         #{script_tag_open}
-          // Automatically hide the flash message after 5 seconds
           document.addEventListener('DOMContentLoaded', function() {
-            var flashMessage = document.getElementById('flash-message');
-            if (flashMessage) {
-              setTimeout(function() {
-                flashMessage.style.opacity = '1';
-                // Fade out animation
-                var fadeEffect = setInterval(function() {
-                  if (!flashMessage.style.opacity) {
-                    flashMessage.style.opacity = 1;
-                  }
-                  if (flashMessage.style.opacity > 0) {
-                    flashMessage.style.opacity -= 0.1;
-                  } else {
-                    clearInterval(fadeEffect);
-                    flashMessage.style.display = 'none';
-                  }
-                }, 50);
-              }, 5000); // 5 seconds
-            }
+            var el = document.getElementById('flash-message');
+            if (!el) return;
+            setTimeout(function() {
+              el.classList.add('is-fading');
+              setTimeout(function() { el.classList.add('is-hidden'); }, 500);
+            }, 5000);
           });
         </script>
       HTML
@@ -238,7 +225,7 @@ module SolidQueueMonitor
           if (indicator) indicator.classList.toggle('active', isEnabled);
           if (countdownEl) {
             countdownEl.textContent = countdown + 's';
-            countdownEl.style.opacity = isEnabled ? '1' : '0.4';
+            countdownEl.classList.toggle('countdown-paused', !isEnabled);
           }
         }
         function tick() {
@@ -282,6 +269,7 @@ module SolidQueueMonitor
         #{script_tag_open}
           #{theme_toggle_javascript}
           #{chart_tooltip_javascript}
+          #{global_behaviors_javascript}
         </script>
       HTML
     end
@@ -372,7 +360,7 @@ module SolidQueueMonitor
 
               tooltip.querySelector('.tooltip-label').textContent = label;
               tooltip.querySelector('.tooltip-value').textContent = seriesNames[series] + ': ' + value;
-              tooltip.style.display = 'block';
+              tooltip.classList.add('tooltip-visible');
               positionTooltip(e);
             });
 
@@ -381,7 +369,7 @@ module SolidQueueMonitor
             });
 
             point.addEventListener('mouseleave', function() {
-              tooltip.style.display = 'none';
+              tooltip.classList.remove('tooltip-visible');
             });
           });
 
@@ -396,10 +384,39 @@ module SolidQueueMonitor
               y = e.clientY + 10;
             }
 
+            // Dynamic cursor-tracked position, not CSP-restricted.
             tooltip.style.left = x + 'px';
             tooltip.style.top = y + 'px';
           }
         })();
+      JS
+    end
+
+    def global_behaviors_javascript
+      <<-JS
+        document.addEventListener('submit', function(e) {
+          var form = e.target;
+          var msg = form.dataset && form.dataset.confirm;
+          if (msg && !window.confirm(msg)) { e.preventDefault(); }
+        }, true);
+
+        document.addEventListener('click', function(e) {
+          var el = e.target.closest('[data-confirm-submit]');
+          if (!el) return;
+          e.preventDefault();
+          var msg = el.dataset.confirm || 'Are you sure?';
+          if (!window.confirm(msg)) return;
+          var formId = el.dataset.confirmSubmit;
+          var form = document.getElementById(formId);
+          if (form) form.submit();
+        });
+
+        var timeRangeSelect = document.getElementById('chart-time-select');
+        if (timeRangeSelect) {
+          timeRangeSelect.addEventListener('change', function() {
+            window.location.href = '?time_range=' + this.value;
+          });
+        }
       JS
     end
 
