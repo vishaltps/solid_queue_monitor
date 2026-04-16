@@ -66,7 +66,7 @@ module SolidQueueMonitor
 
       <<-HTML
         <div class="chart-time-select-wrapper">
-          <select class="chart-time-select" id="chart-time-select" onchange="window.location.href='?time_range=' + this.value">
+          <select class="chart-time-select" id="chart-time-select">
             #{options}
           </select>
         </div>
