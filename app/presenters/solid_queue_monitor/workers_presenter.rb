@@ -104,7 +104,9 @@ module SolidQueueMonitor
     def prune_all_link
       return '' if @dead_count.zero?
 
-      message = "Remove all #{@dead_count} dead process#{@dead_count > 1 ? 'es' : ''}? This will clean up processes that have stopped sending heartbeats."
+      suffix = @dead_count > 1 ? 'es' : ''
+      message = "Remove all #{@dead_count} dead process#{suffix}? " \
+                'This will clean up processes that have stopped sending heartbeats.'
 
       <<-HTML
         <a href="#" class="summary-action"

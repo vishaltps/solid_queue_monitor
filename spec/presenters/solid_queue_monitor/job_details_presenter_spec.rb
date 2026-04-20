@@ -156,4 +156,20 @@ RSpec.describe SolidQueueMonitor::JobDetailsPresenter do
       expect(rendered_html).to include('timeline-track')
     end
   end
+
+  describe 'CSP nonce propagation' do
+    it 'stamps nonce on all inline <script> tags' do
+      presenter = described_class.new(job, nonce: 'jnonce')
+      html = presenter.render
+      script_tags = html.scan(/<script[^>]*>/)
+      expect(script_tags).not_to be_empty
+      expect(script_tags).to all(include('nonce="jnonce"'))
+    end
+
+    it 'omits nonce when not supplied' do
+      presenter = described_class.new(job)
+      html = presenter.render
+      expect(html.scan(/<script[^>]*>/).join).not_to include('nonce=')
+    end
+  end
 end

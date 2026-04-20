@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe 'CSP compatibility', type: :request do
+RSpec.describe 'CSP compatibility' do
   let(:inline_handler_pattern) { /\s(onclick|onchange|onsubmit|onfocus|onblur|oninput|onkeyup|onkeydown)=/ }
 
   before do
@@ -72,7 +72,7 @@ RSpec.describe 'CSP compatibility', type: :request do
       get '/'
       scripts = response.body.scan(/<script[^>]*>/)
       expect(scripts).not_to be_empty
-      scripts.each { |tag| expect(tag).to include('nonce="test-nonce-123"') }
+      expect(scripts).to all(include('nonce="test-nonce-123"'))
     end
   end
 end
