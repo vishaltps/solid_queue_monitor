@@ -28,7 +28,8 @@ module SolidQueueMonitor
         content: content,
         message: message,
         message_type: message_type,
-        search_query: search_query
+        search_query: search_query,
+        nonce: content_security_policy_nonce
       ).generate
 
       render html: html.html_safe

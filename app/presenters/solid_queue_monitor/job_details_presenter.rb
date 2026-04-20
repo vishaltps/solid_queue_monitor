@@ -3,13 +3,14 @@
 module SolidQueueMonitor
   class JobDetailsPresenter < BasePresenter
     def initialize(job, failed_execution: nil, claimed_execution: nil, scheduled_execution: nil,
-                   recent_executions: [], back_path: nil)
+                   recent_executions: [], back_path: nil, nonce: nil)
       @job = job
       @failed_execution = failed_execution
       @claimed_execution = claimed_execution
       @scheduled_execution = scheduled_execution
       @recent_executions = recent_executions
       @back_path = back_path
+      @nonce = nonce
       calculate_timing
     end
 
@@ -31,6 +32,10 @@ module SolidQueueMonitor
     end
 
     private
+
+    def script_tag_open
+      @nonce ? %(<script nonce="#{@nonce}">) : '<script>'
+    end
 
     def calculate_timing
       @created_at = @job.created_at
@@ -139,7 +144,7 @@ module SolidQueueMonitor
 
         actions << <<-HTML
           <form action="#{discard_failed_job_path(id: @failed_execution.id)}" method="post" class="inline-form"
-                onsubmit="return confirm('Are you sure you want to discard this job?');">
+                data-confirm="Are you sure you want to discard this job?">
             <input type="hidden" name="redirect_to" value="#{failed_jobs_path}">
             <button type="submit" class="action-button discard-button">Discard</button>
           </form>
@@ -301,7 +306,7 @@ module SolidQueueMonitor
         <div class="job-section error-section">
           <div class="section-header">
             <h3 class="section-title">Error</h3>
-            <button class="copy-button" onclick="copyToClipboard('error-content')">
+            <button class="copy-button" data-action="copy" data-target="error-content">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -329,22 +334,13 @@ module SolidQueueMonitor
           <div class="backtrace-header">
             <span class="backtrace-title">Backtrace</span>
             <div class="backtrace-toggle">
-              <button class="toggle-btn active" data-target="app-backtrace" onclick="showBacktrace('app')">App Only</button>
-              <button class="toggle-btn" data-target="full-backtrace" onclick="showBacktrace('full')">Full</button>
+              <button class="toggle-btn active" data-action="show-backtrace" data-backtrace="app">App Only</button>
+              <button class="toggle-btn" data-action="show-backtrace" data-backtrace="full">Full</button>
             </div>
           </div>
           <pre class="backtrace-content" id="app-backtrace">#{format_backtrace_lines(app_lines.presence || lines.first(5))}</pre>
-          <pre class="backtrace-content" id="full-backtrace" style="display: none;">#{format_backtrace_lines(lines)}</pre>
+          <pre class="backtrace-content is-hidden" id="full-backtrace">#{format_backtrace_lines(lines)}</pre>
         </div>
-        <script>
-          function showBacktrace(type) {
-            document.getElementById('app-backtrace').style.display = type === 'app' ? 'block' : 'none';
-            document.getElementById('full-backtrace').style.display = type === 'full' ? 'block' : 'none';
-            document.querySelectorAll('.backtrace-toggle .toggle-btn').forEach(btn => {
-              btn.classList.toggle('active', btn.dataset.target === type + '-backtrace');
-            });
-          }
-        </script>
       HTML
     end
 
@@ -426,7 +422,7 @@ module SolidQueueMonitor
           <div class="section-header">
             <h3 class="section-title">Arguments</h3>
             <div class="section-actions">
-              <button class="copy-button" onclick="copyToClipboard('arguments-content')">
+              <button class="copy-button" data-action="copy" data-target="arguments-content">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                   <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -647,14 +643,14 @@ module SolidQueueMonitor
     def render_raw_data_section
       <<-HTML
         <div class="job-section collapsible-section">
-          <div class="section-header collapsible-header" onclick="toggleSection(this)">
+          <div class="section-header collapsible-header" data-action="toggle-section">
             <div class="collapsible-title">
               <svg class="collapse-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="9 18 15 12 9 6"></polyline>
               </svg>
               <h3 class="section-title">Raw Data</h3>
             </div>
-            <button class="copy-button" onclick="event.stopPropagation(); copyToClipboard('raw-data-content')">
+            <button class="copy-button" data-action="copy" data-target="raw-data-content" data-stop-propagation="true">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -662,33 +658,48 @@ module SolidQueueMonitor
               Copy
             </button>
           </div>
-          <div class="collapsible-content" style="display: none;">
+          <div class="collapsible-content">
             <pre class="raw-data-content" id="raw-data-content">#{CGI.escapeHTML(JSON.pretty_generate(@job.attributes))}</pre>
           </div>
         </div>
-        <script>
-          function toggleSection(header) {
-            const content = header.nextElementSibling;
-            const icon = header.querySelector('.collapse-icon');
-            if (content.style.display === 'none') {
-              content.style.display = 'block';
-              icon.style.transform = 'rotate(90deg)';
-            } else {
-              content.style.display = 'none';
-              icon.style.transform = 'rotate(0deg)';
-            }
-          }
+        #{script_tag_open}
+          (function() {
+            document.addEventListener('click', function(e) {
+              var el = e.target.closest('[data-action]');
+              if (!el) return;
 
-          function copyToClipboard(elementId) {
-            const element = document.getElementById(elementId);
-            const text = element.innerText || element.textContent;
-            navigator.clipboard.writeText(text).then(() => {
-              const btn = event.target.closest('.copy-button');
-              const originalText = btn.innerHTML;
-              btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!';
-              setTimeout(() => { btn.innerHTML = originalText; }, 2000);
+              if (el.dataset.stopPropagation === 'true') e.stopPropagation();
+
+              var action = el.dataset.action;
+
+              if (action === 'copy') {
+                var target = document.getElementById(el.dataset.target);
+                if (!target) return;
+                var text = target.innerText || target.textContent;
+                navigator.clipboard.writeText(text).then(function() {
+                  var original = el.innerHTML;
+                  el.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!';
+                  setTimeout(function() { el.innerHTML = original; }, 2000);
+                });
+              }
+
+              if (action === 'show-backtrace') {
+                var which = el.dataset.backtrace;
+                var appEl = document.getElementById('app-backtrace');
+                var fullEl = document.getElementById('full-backtrace');
+                if (appEl) appEl.classList.toggle('is-hidden', which !== 'app');
+                if (fullEl) fullEl.classList.toggle('is-hidden', which !== 'full');
+                document.querySelectorAll('[data-action="show-backtrace"]').forEach(function(btn) {
+                  btn.classList.toggle('active', btn.dataset.backtrace === which);
+                });
+              }
+
+              if (action === 'toggle-section') {
+                var section = el.closest('.collapsible-section');
+                if (section) section.classList.toggle('is-expanded');
+              }
             });
-          }
+          })();
         </script>
       HTML
     end

@@ -206,6 +206,25 @@ This makes it easy to find specific jobs when debugging issues in your applicati
 - **Rails**: 7.1 or higher
 - **Solid Queue**: 0.1.0 or higher
 
+## Content Security Policy
+
+Solid Queue Monitor is compatible with strict Content Security Policy as of v1.3.0.
+
+If your application uses nonce-based CSP (the Rails default when `content_security_policy_nonce_generator` is set), Solid Queue Monitor will automatically stamp the per-request nonce onto every inline `<style>` and `<script>` tag it emits. Ensure your nonce directives include both `script-src` and `style-src`:
+
+```ruby
+# config/initializers/content_security_policy.rb
+Rails.application.config.content_security_policy do |policy|
+  policy.script_src :self
+  policy.style_src  :self
+end
+
+Rails.application.config.content_security_policy_nonce_generator = ->(req) { SecureRandom.base64(16) }
+Rails.application.config.content_security_policy_nonce_directives = %w[script-src style-src]
+```
+
+No other configuration is required. If your application runs CSP without nonces (e.g., strict `script-src 'self'` only), the monitor UI will not function — asset-extraction support is tracked for a future release.
+
 ## Contributing
 
 Contributions are welcome! Here's how you can contribute:

@@ -66,7 +66,7 @@ module SolidQueueMonitor
 
       <<-HTML
         <div class="chart-time-select-wrapper">
-          <select class="chart-time-select" id="chart-time-select" onchange="window.location.href='?time_range=' + this.value">
+          <select class="chart-time-select" id="chart-time-select">
             #{options}
           </select>
         </div>
@@ -212,15 +212,15 @@ module SolidQueueMonitor
       <<-HTML
         <div class="chart-legend">
           <span class="legend-item">
-            <span class="legend-color" style="background-color: #{COLORS[:created]}"></span>
+            <span class="legend-color legend-color-created"></span>
             Created
           </span>
           <span class="legend-item">
-            <span class="legend-color" style="background-color: #{COLORS[:completed]}"></span>
+            <span class="legend-color legend-color-completed"></span>
             Completed
           </span>
           <span class="legend-item">
-            <span class="legend-color" style="background-color: #{COLORS[:failed]}"></span>
+            <span class="legend-color legend-color-failed"></span>
             Failed
           </span>
         </div>
@@ -229,7 +229,7 @@ module SolidQueueMonitor
 
     def render_tooltip
       <<-HTML
-        <div id="chart-tooltip" class="chart-tooltip" style="display: none;">
+        <div id="chart-tooltip" class="chart-tooltip">
           <div class="tooltip-label"></div>
           <div class="tooltip-value"></div>
         </div>

@@ -104,12 +104,17 @@ module SolidQueueMonitor
     def prune_all_link
       return '' if @dead_count.zero?
 
+      suffix = @dead_count > 1 ? 'es' : ''
+      message = "Remove all #{@dead_count} dead process#{suffix}? " \
+                'This will clean up processes that have stopped sending heartbeats.'
+
       <<-HTML
         <a href="#" class="summary-action"
-           onclick="if(confirm('Remove all #{@dead_count} dead process#{@dead_count > 1 ? 'es' : ''}? This will clean up processes that have stopped sending heartbeats.')) { document.getElementById('prune-all-form').submit(); } return false;">
+           data-confirm-submit="prune-all-form"
+           data-confirm="#{CGI.escapeHTML(message)}">
           Prune all
         </a>
-        <form id="prune-all-form" action="#{prune_workers_path}" method="post" style="display: none;"></form>
+        <form id="prune-all-form" action="#{prune_workers_path}" method="post" class="is-hidden"></form>
       HTML
     end
 
@@ -185,7 +190,7 @@ module SolidQueueMonitor
 
       <<-HTML
         <form action="#{remove_worker_path(id: process.id)}" method="post" class="inline-form"
-              onsubmit="return confirm('Remove this dead process from the registry?');">
+              data-confirm="Remove this dead process from the registry?">
           <button type="submit" class="action-button discard-button" title="Remove dead process">
             Remove
           </button>

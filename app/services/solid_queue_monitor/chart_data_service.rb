@@ -86,9 +86,9 @@ module SolidQueueMonitor
       if adapter?('sqlite')
         "CAST((CAST(strftime('%s', #{column}) AS INTEGER) - #{start_epoch}) / #{interval_seconds} AS INTEGER)"
       elsif adapter?('mysql') || adapter?('trilogy')
-        "CAST((UNIX_TIMESTAMP(#{column}) - #{start_epoch}) / #{interval_seconds} AS SIGNED)"
+        "FLOOR((UNIX_TIMESTAMP(#{column}) - #{start_epoch}) / #{interval_seconds})"
       else
-        "CAST((EXTRACT(EPOCH FROM #{column}) - #{start_epoch}) / #{interval_seconds} AS INTEGER)"
+        "FLOOR((EXTRACT(EPOCH FROM #{column}) - #{start_epoch}) / #{interval_seconds})::integer"
       end
     end
 

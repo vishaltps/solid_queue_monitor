@@ -15,7 +15,8 @@ module SolidQueueMonitor
 
       render_page("Job ##{@job.id}", SolidQueueMonitor::JobDetailsPresenter.new(
         @job,
-        **job_data
+        **job_data,
+        nonce: content_security_policy_nonce
       ).render)
     end
 

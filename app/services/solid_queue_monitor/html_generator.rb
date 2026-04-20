@@ -5,12 +5,13 @@ module SolidQueueMonitor
     include Rails.application.routes.url_helpers
     include SolidQueueMonitor::Engine.routes.url_helpers
 
-    def initialize(title:, content:, message: nil, message_type: nil, search_query: nil)
+    def initialize(title:, content:, message: nil, message_type: nil, search_query: nil, nonce: nil)
       @title = title
       @content = content
       @message = message
       @message_type = message_type
       @search_query = search_query
+      @nonce = nonce
     end
 
     def generate
@@ -34,7 +35,7 @@ module SolidQueueMonitor
       <<-HTML
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
+        #{style_tag_open}
           #{SolidQueueMonitor::StylesheetGenerator.new.generate}
         </style>
       HTML
@@ -62,27 +63,14 @@ module SolidQueueMonitor
       class_name = @message_type == 'success' ? 'message-success' : 'message-error'
       <<-HTML
         <div id="flash-message" class="message #{class_name}">#{@message}</div>
-        <script>
-          // Automatically hide the flash message after 5 seconds
+        #{script_tag_open}
           document.addEventListener('DOMContentLoaded', function() {
-            var flashMessage = document.getElementById('flash-message');
-            if (flashMessage) {
-              setTimeout(function() {
-                flashMessage.style.opacity = '1';
-                // Fade out animation
-                var fadeEffect = setInterval(function() {
-                  if (!flashMessage.style.opacity) {
-                    flashMessage.style.opacity = 1;
-                  }
-                  if (flashMessage.style.opacity > 0) {
-                    flashMessage.style.opacity -= 0.1;
-                  } else {
-                    clearInterval(fadeEffect);
-                    flashMessage.style.display = 'none';
-                  }
-                }, 50);
-              }, 5000); // 5 seconds
-            }
+            var el = document.getElementById('flash-message');
+            if (!el) return;
+            setTimeout(function() {
+              el.classList.add('is-fading');
+              setTimeout(function() { el.classList.add('is-hidden'); }, 500);
+            }, 5000);
           });
         </script>
       HTML
@@ -149,6 +137,14 @@ module SolidQueueMonitor
       text.to_s.gsub('&', '&amp;').gsub('<', '&lt;').gsub('>', '&gt;').gsub('"', '&quot;')
     end
 
+    def style_tag_open
+      @nonce ? %(<style nonce="#{@nonce}">) : '<style>'
+    end
+
+    def script_tag_open
+      @nonce ? %(<script nonce="#{@nonce}">) : '<script>'
+    end
+
     def generate_auto_refresh_controls
       return '' unless SolidQueueMonitor.auto_refresh_enabled
 
@@ -194,7 +190,7 @@ module SolidQueueMonitor
     def generate_auto_refresh_script
       return '' unless SolidQueueMonitor.auto_refresh_enabled
 
-      "<script>#{auto_refresh_javascript}</script>"
+      "#{script_tag_open}#{auto_refresh_javascript}</script>"
     end
 
     def auto_refresh_javascript
@@ -229,7 +225,7 @@ module SolidQueueMonitor
           if (indicator) indicator.classList.toggle('active', isEnabled);
           if (countdownEl) {
             countdownEl.textContent = countdown + 's';
-            countdownEl.style.opacity = isEnabled ? '1' : '0.4';
+            countdownEl.classList.toggle('countdown-paused', !isEnabled);
           }
         }
         function tick() {
@@ -270,9 +266,10 @@ module SolidQueueMonitor
 
     def generate_chart_script
       <<-HTML
-        <script>
+        #{script_tag_open}
           #{theme_toggle_javascript}
           #{chart_tooltip_javascript}
+          #{global_behaviors_javascript}
         </script>
       HTML
     end
@@ -363,7 +360,7 @@ module SolidQueueMonitor
 
               tooltip.querySelector('.tooltip-label').textContent = label;
               tooltip.querySelector('.tooltip-value').textContent = seriesNames[series] + ': ' + value;
-              tooltip.style.display = 'block';
+              tooltip.classList.add('tooltip-visible');
               positionTooltip(e);
             });
 
@@ -372,7 +369,7 @@ module SolidQueueMonitor
             });
 
             point.addEventListener('mouseleave', function() {
-              tooltip.style.display = 'none';
+              tooltip.classList.remove('tooltip-visible');
             });
           });
 
@@ -387,10 +384,39 @@ module SolidQueueMonitor
               y = e.clientY + 10;
             }
 
+            // Dynamic cursor-tracked position, not CSP-restricted.
             tooltip.style.left = x + 'px';
             tooltip.style.top = y + 'px';
           }
         })();
+      JS
+    end
+
+    def global_behaviors_javascript
+      <<-JS
+        document.addEventListener('submit', function(e) {
+          var form = e.target;
+          var msg = form.dataset && form.dataset.confirm;
+          if (msg && !window.confirm(msg)) { e.preventDefault(); }
+        }, true);
+
+        document.addEventListener('click', function(e) {
+          var el = e.target.closest('[data-confirm-submit]');
+          if (!el) return;
+          e.preventDefault();
+          var msg = el.dataset.confirm || 'Are you sure?';
+          if (!window.confirm(msg)) return;
+          var formId = el.dataset.confirmSubmit;
+          var form = document.getElementById(formId);
+          if (form) form.submit();
+        });
+
+        var timeRangeSelect = document.getElementById('chart-time-select');
+        if (timeRangeSelect) {
+          timeRangeSelect.addEventListener('change', function() {
+            window.location.href = '?time_range=' + this.value;
+          });
+        }
       JS
     end
 

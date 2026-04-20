@@ -13,7 +13,8 @@ module SolidQueueMonitor
                                                                             current_page: @failed_jobs[:current_page],
                                                                             total_pages: @failed_jobs[:total_pages],
                                                                             filters: filter_params,
-                                                                            sort: sort_params).render)
+                                                                            sort: sort_params,
+                                                                            nonce: content_security_policy_nonce).render)
     end
 
     def retry

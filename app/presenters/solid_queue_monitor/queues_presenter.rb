@@ -76,7 +76,7 @@ module SolidQueueMonitor
       else
         <<-HTML
           <form action="#{pause_queue_path}" method="post" class="inline-form"
-                onsubmit="return confirm('Are you sure you want to pause the #{queue_name} queue? Workers will stop processing jobs from this queue.');">
+                data-confirm="Are you sure you want to pause the #{queue_name} queue? Workers will stop processing jobs from this queue.">
             <input type="hidden" name="queue_name" value="#{queue_name}">
             <button type="submit" class="action-button pause-button" title="Pause queue processing">
               Pause

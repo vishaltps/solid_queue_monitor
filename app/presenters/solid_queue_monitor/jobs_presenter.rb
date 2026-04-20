@@ -119,7 +119,7 @@ module SolidQueueMonitor
                 </form>
 
                 <form method="post" action="#{discard_failed_job_path(id: failed_execution.id)}" class="inline-form"
-                      onsubmit="return confirm('Are you sure you want to discard this job?');">
+                      data-confirm="Are you sure you want to discard this job?">
                   <input type="hidden" name="redirect_to" value="#{root_path}">
                   <button type="submit" class="action-button discard-button">Discard</button>
                 </form>
