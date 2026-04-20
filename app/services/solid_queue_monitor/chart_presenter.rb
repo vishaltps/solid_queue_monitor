@@ -212,15 +212,15 @@ module SolidQueueMonitor
       <<-HTML
         <div class="chart-legend">
           <span class="legend-item">
-            <span class="legend-color" style="background-color: #{COLORS[:created]}"></span>
+            <span class="legend-color legend-color-created"></span>
             Created
           </span>
           <span class="legend-item">
-            <span class="legend-color" style="background-color: #{COLORS[:completed]}"></span>
+            <span class="legend-color legend-color-completed"></span>
             Completed
           </span>
           <span class="legend-item">
-            <span class="legend-color" style="background-color: #{COLORS[:failed]}"></span>
+            <span class="legend-color legend-color-failed"></span>
             Failed
           </span>
         </div>

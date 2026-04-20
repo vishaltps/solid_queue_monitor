@@ -20,6 +20,13 @@ RSpec.describe 'CSP compatibility', type: :request do
       expect(matches).to be_empty,
                          "Found inline handler(s) at #{path}: #{matches.join(', ')}"
     end
+
+    it "#{path} has no inline style attributes" do
+      get path
+      expect(response).to have_http_status(:ok)
+      expect(response.body).not_to match(/\sstyle="/),
+                                   "Inline style= attribute found at #{path} (nonces do not apply to style attributes)"
+    end
   end
 
   describe 'without a CSP nonce configured' do

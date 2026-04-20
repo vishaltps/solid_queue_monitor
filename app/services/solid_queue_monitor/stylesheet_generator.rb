@@ -1088,6 +1088,18 @@ module SolidQueueMonitor
         border-radius: 2px;
       }
 
+      .solid_queue_monitor .legend-color-created {
+        background-color: #3b82f6;
+      }
+
+      .solid_queue_monitor .legend-color-completed {
+        background-color: #10b981;
+      }
+
+      .solid_queue_monitor .legend-color-failed {
+        background-color: #ef4444;
+      }
+
       .solid_queue_monitor .chart-tooltip {
         position: fixed;
         background: #1f2937;
