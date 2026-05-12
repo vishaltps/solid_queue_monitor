@@ -276,6 +276,11 @@
           background-color: #fffbeb;
         }
 
+        .solid_queue_monitor.dark-theme .queue-paused {
+          background-color: #3a2410;
+          color: #fde68a;
+        }
+
         .solid_queue_monitor .pause-button {
           background: #f59e0b;
           color: white;
