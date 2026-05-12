@@ -4,15 +4,25 @@ require 'spec_helper'
 
 RSpec.describe 'CSP compatibility' do
   let(:inline_handler_pattern) { /\s(onclick|onchange|onsubmit|onfocus|onblur|oninput|onkeyup|onkeydown)=/ }
+  let(:inline_style_attribute_pattern) { /\sstyle=(["'])/ }
+  let(:inline_style_block_pattern) { /<style\b/i }
+  let(:inline_script_block_pattern) { /<script(?![^>]*\bsrc=)[^>]*>/i }
+  let(:css_fingerprint) { SolidQueueMonitor::AssetCache.fingerprint_for('application.css') }
+  let(:js_fingerprint) { SolidQueueMonitor::AssetCache.fingerprint_for('application.js') }
 
   before do
     create_list(:solid_queue_job, 2)
     create(:solid_queue_failed_execution)
     create(:solid_queue_scheduled_execution)
     create(:solid_queue_ready_execution)
+    SolidQueueMonitor::AssetCache.clear!
   end
 
-  shared_examples 'a CSP-safe page' do |path|
+  after do
+    SolidQueueMonitor::AssetCache.clear!
+  end
+
+  shared_examples 'a CSP-safe response' do |path|
     it "#{path} has no inline event handlers" do
       get path
       expect(response).to have_http_status(:ok)
@@ -24,8 +34,22 @@ RSpec.describe 'CSP compatibility' do
     it "#{path} has no inline style attributes" do
       get path
       expect(response).to have_http_status(:ok)
-      expect(response.body).not_to match(/\sstyle="/),
+      expect(response.body).not_to match(inline_style_attribute_pattern),
                                    "Inline style= attribute found at #{path} (nonces do not apply to style attributes)"
+    end
+
+    it "#{path} has no inline <style> blocks" do
+      get path
+      expect(response).to have_http_status(:ok)
+      expect(response.body).not_to match(inline_style_block_pattern),
+                                   "Inline <style> block found at #{path}"
+    end
+
+    it "#{path} has no inline <script> blocks" do
+      get path
+      expect(response).to have_http_status(:ok)
+      expect(response.body).not_to match(inline_script_block_pattern),
+                                   "Inline <script> block found at #{path}"
     end
   end
 
@@ -40,7 +64,7 @@ RSpec.describe 'CSP compatibility' do
       '/queues',
       '/workers'
     ].each do |path|
-      include_examples 'a CSP-safe page', path
+      include_examples 'a CSP-safe response', path
     end
 
     it 'emits the stylesheet without a nonce attribute' do
@@ -54,6 +78,20 @@ RSpec.describe 'CSP compatibility' do
       response.body.scan(/<script[^>]*>/).each do |tag|
         expect(tag).to include('src=')
         expect(tag).not_to include('nonce=')
+      end
+    end
+
+    it 'serves CSP-safe external assets' do
+      [
+        "/assets/application-#{css_fingerprint}.css",
+        "/assets/application-#{js_fingerprint}.js"
+      ].each do |path|
+        get path
+        expect(response).to have_http_status(:ok)
+        expect(response.body).not_to match(inline_handler_pattern)
+        expect(response.body).not_to match(inline_style_attribute_pattern)
+        expect(response.body).not_to match(inline_style_block_pattern)
+        expect(response.body).not_to match(inline_script_block_pattern)
       end
     end
   end

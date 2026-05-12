@@ -32,19 +32,7 @@ module SolidQueueMonitor
     end
 
     def mini_job_status_badge(job)
-      status = if job.respond_to?(:failed_execution) && job.failed_execution.present?
-                 :failed
-               elsif job.respond_to?(:claimed_execution) && job.claimed_execution.present?
-                 :in_progress
-               elsif job.respond_to?(:scheduled_execution) && job.scheduled_execution.present?
-                 :scheduled
-               elsif job.respond_to?(:ready_execution) && job.ready_execution.present?
-                 :ready
-               elsif job.finished_at
-                 :completed
-               else
-                 :pending
-               end
+      status = mini_job_status(job)
 
       labels = {
         failed: 'Failed',
@@ -67,16 +55,38 @@ module SolidQueueMonitor
 
       error_hash = deserialize_failed_error(error)
       {
-        type: error_hash['exception_class'] || error_hash[:exception_class] ||
-          error_hash['error_class'] || error_hash[:error_class] ||
-          error_hash['class'] || error_hash[:class] || 'Error',
-        message: error_hash['message'] || error_hash[:message] ||
-          error_hash['error'] || error_hash[:error] || 'Unknown error',
-        backtrace: Array(error_hash['backtrace'] || error_hash[:backtrace] || error_hash['stack_trace'] || error_hash[:stack_trace])
+        type: failed_error_type(error_hash),
+        message: failed_error_text(error_hash),
+        backtrace: failed_error_backtrace(error_hash)
       }
     end
 
     private
+
+    def mini_job_status(job)
+      return :failed if job.respond_to?(:failed_execution) && job.failed_execution.present?
+      return :in_progress if job.respond_to?(:claimed_execution) && job.claimed_execution.present?
+      return :scheduled if job.respond_to?(:scheduled_execution) && job.scheduled_execution.present?
+      return :ready if job.respond_to?(:ready_execution) && job.ready_execution.present?
+      return :completed if job.finished_at
+
+      :pending
+    end
+
+    def failed_error_type(error_hash)
+      error_hash['exception_class'] || error_hash[:exception_class] ||
+        error_hash['error_class'] || error_hash[:error_class] ||
+        error_hash['class'] || error_hash[:class] || 'Error'
+    end
+
+    def failed_error_text(error_hash)
+      error_hash['message'] || error_hash[:message] ||
+        error_hash['error'] || error_hash[:error] || 'Unknown error'
+    end
+
+    def failed_error_backtrace(error_hash)
+      Array(error_hash['backtrace'] || error_hash[:backtrace] || error_hash['stack_trace'] || error_hash[:stack_trace])
+    end
 
     def deserialize_failed_error(error)
       return error if error.is_a?(Hash)

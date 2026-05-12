@@ -2,11 +2,11 @@
 
 module SolidQueueMonitor
   module JobDetailsHelper
-    def detail_job_status
-      return :failed if @failed_execution
-      return :in_progress if @claimed_execution
-      return :scheduled if @scheduled_execution || @job.scheduled_at&.future?
-      return :completed if @job.finished_at
+    def detail_job_status(job:, failed_execution:, claimed_execution:, scheduled_execution:)
+      return :failed if failed_execution
+      return :in_progress if claimed_execution
+      return :scheduled if scheduled_execution || job.scheduled_at&.future?
+      return :completed if job.finished_at
 
       :pending
     end
@@ -34,11 +34,11 @@ module SolidQueueMonitor
       "#{(seconds / 3600).floor}h #{((seconds % 3600) / 60).floor}m"
     end
 
-    def detail_timing
-      created_at = @job.created_at
-      started_at = @claimed_execution&.created_at
-      finished_at = @job.finished_at
-      failed_at = @failed_execution&.created_at
+    def detail_timing(job:, claimed_execution:, failed_execution:)
+      created_at = job.created_at
+      started_at = claimed_execution&.created_at
+      finished_at = job.finished_at
+      failed_at = failed_execution&.created_at
       end_time = finished_at || failed_at
 
       {

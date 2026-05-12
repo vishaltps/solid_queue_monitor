@@ -1,11 +1,12 @@
 <% events = [] %>
+<% status = detail_job_status(job: @job, failed_execution: @failed_execution, claimed_execution: @claimed_execution, scheduled_execution: @scheduled_execution) %>
 <% events << { label: 'Created', time: @job.created_at, status: :done } if @job.created_at %>
 <% scheduled_at = @job.scheduled_at || @scheduled_execution&.scheduled_at %>
 <% events << { label: 'Scheduled', time: scheduled_at, status: :done } if scheduled_at && scheduled_at != @job.created_at %>
 <% events << { label: 'Started', time: @claimed_execution.created_at, status: :done } if @claimed_execution %>
-<% events << { label: 'Completed', time: @job.finished_at, status: :success } if detail_job_status == :completed %>
-<% events << { label: 'Failed', time: @failed_execution.created_at, status: :failed } if detail_job_status == :failed %>
-<% events << { label: 'Running...', time: nil, status: :active } if detail_job_status == :in_progress %>
+<% events << { label: 'Completed', time: @job.finished_at, status: :success } if status == :completed %>
+<% events << { label: 'Failed', time: @failed_execution.created_at, status: :failed } if status == :failed %>
+<% events << { label: 'Running...', time: nil, status: :active } if status == :in_progress %>
 
 <% if events.size >= 2 %>
   <div class="job-section">

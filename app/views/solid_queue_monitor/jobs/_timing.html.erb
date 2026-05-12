@@ -1,4 +1,4 @@
-<% timing = detail_timing %>
+<% timing = detail_timing(job: @job, claimed_execution: @claimed_execution, failed_execution: @failed_execution) %>
 <div class="timing-cards">
   <% { 'Queue Wait' => timing[:queue_wait], 'Execution' => timing[:execution], 'Total Time' => timing[:total] }.each do |label, duration| %>
     <div class="timing-card">

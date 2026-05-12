@@ -1,7 +1,8 @@
+<% status = detail_job_status(job: @job, failed_execution: @failed_execution, claimed_execution: @claimed_execution, scheduled_execution: @scheduled_execution) %>
 <div class="job-header">
   <div class="job-header-main">
     <h1 class="job-title"><%= @job.class_name %></h1>
-    <span class="job-status-badge <%= detail_status_class %>"><%= detail_status_label %></span>
+    <span class="job-status-badge <%= detail_status_class(status) %>"><%= detail_status_label(status) %></span>
   </div>
   <div class="job-header-meta">
     <span class="job-queue"><%= queue_link(@job.queue_name) %></span>
