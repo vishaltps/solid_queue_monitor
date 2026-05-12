@@ -20,3 +20,7 @@
 # Claude Code personal workflows (local only)
 .claude/
 CLAUDE.md
+
+# Codex personal workflows (local only)
+.agents/
+AGENTS.md
