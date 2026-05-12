@@ -208,9 +208,23 @@ This makes it easy to find specific jobs when debugging issues in your applicati
 
 ## Content Security Policy
 
-Solid Queue Monitor is compatible with strict Content Security Policy as of v1.3.0.
+Solid Queue Monitor is fully CSP-compatible as of v2.0.0. The dashboard works out of the box under strict policies — no nonce configuration is required.
 
-If your application uses nonce-based CSP (the Rails default when `content_security_policy_nonce_generator` is set), Solid Queue Monitor will automatically stamp the per-request nonce onto every inline `<style>` and `<script>` tag it emits. Ensure your nonce directives include both `script-src` and `style-src`:
+### Strict CSP (v2.0.0+)
+
+As of v2.0 the dashboard's CSS and JavaScript are served as external, content-hashed assets (e.g. `/solid_queue/assets/application-a1b2c3d4.css`) with `Cache-Control: immutable`. The dashboard emits zero inline `<style>` or `<script>` blocks. A strict policy that only allows `'self'` for both directives is sufficient:
+
+```ruby
+# config/initializers/content_security_policy.rb
+Rails.application.config.content_security_policy do |policy|
+  policy.script_src :self
+  policy.style_src  :self
+end
+```
+
+### Nonce-based CSP
+
+Nonce-based CSP is also supported. When `content_security_policy_nonce_generator` is configured, Solid Queue Monitor stamps the per-request nonce onto the `<link rel="stylesheet">` and `<script src="...">` tags it emits — so policies that exclude `'self'` and only allow nonces still work:
 
 ```ruby
 # config/initializers/content_security_policy.rb
@@ -223,7 +237,9 @@ Rails.application.config.content_security_policy_nonce_generator = ->(req) { Sec
 Rails.application.config.content_security_policy_nonce_directives = %w[script-src style-src]
 ```
 
-No other configuration is required. If your application runs CSP without nonces (e.g., strict `script-src 'self'` only), the monitor UI will not function — asset-extraction support is tracked for a future release.
+### Upgrading from v1.x
+
+v1.x emitted inline `<style nonce>` and `<script nonce>` blocks, so a nonce generator was effectively required for strict policies. v2.0 removes all inline blocks. If you added a nonce generator only to make the monitor work, you can keep it (no harm) or remove it.
 
 ## Contributing
 
