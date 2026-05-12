@@ -1,0 +1,9 @@
+<% content_for :title, 'Overview' %>
+
+<%= render 'stats' %>
+
+<% if SolidQueueMonitor.show_chart && @chart_data.present? %>
+  <%= render 'chart' %>
+<% end %>
+
+<%= render 'recent_jobs' %>

@@ -1,0 +1,63 @@
+<% content_for :title, "Queue: #{@queue_name}" %>
+
+<div class="section-header-row">
+  <div class="section-header-left">
+    <% if @paused %>
+      <span class="status-badge status-paused">Paused</span>
+    <% else %>
+      <span class="status-badge status-active">Active</span>
+    <% end %>
+  </div>
+  <div class="section-header-right">
+    <% if @paused %>
+      <form action="<%= resume_queue_path %>" method="post" class="inline-form">
+        <input type="hidden" name="queue_name" value="<%= @queue_name %>">
+        <input type="hidden" name="redirect_to" value="<%= queue_details_path(queue_name: @queue_name) %>">
+        <button type="submit" class="action-button resume-button">Resume Queue</button>
+      </form>
+    <% else %>
+      <form action="<%= pause_queue_path %>" method="post" class="inline-form" data-confirm="Are you sure you want to pause this queue?">
+        <input type="hidden" name="queue_name" value="<%= @queue_name %>">
+        <input type="hidden" name="redirect_to" value="<%= queue_details_path(queue_name: @queue_name) %>">
+        <button type="submit" class="action-button pause-button">Pause Queue</button>
+      </form>
+    <% end %>
+  </div>
+</div>
+
+<div class="stats-container">
+  <div class="stats">
+    <% @counts.each do |label, value| %>
+      <%= render 'solid_queue_monitor/overview/stat_card', title: label.to_s.titleize, value: value %>
+    <% end %>
+  </div>
+</div>
+
+<%= render 'solid_queue_monitor/shared/filters',
+           action_path: @action_path,
+           filters: @filters.merge(queue_name: nil),
+           show_status: true %>
+
+<% if @jobs[:records].empty? %>
+  <p class="empty-message">No jobs in this queue</p>
+<% else %>
+  <% columns = [
+    { sort_key: nil, label: 'ID' },
+    { sort_key: :class_name, label: 'Job' },
+    { sort_key: nil, label: 'Arguments' },
+    { sort_key: nil, label: 'Status' },
+    { sort_key: :created_at, label: 'Created At' },
+    { sort_key: nil, label: 'Actions' }
+  ] %>
+
+  <%= render 'solid_queue_monitor/shared/jobs_table',
+             jobs: @jobs[:records],
+             columns: columns,
+             sort: @sort,
+             filters: @filters,
+             row_partial: 'solid_queue_monitor/queues/job_row' %>
+<% end %>
+
+<%= render 'solid_queue_monitor/shared/pagination',
+           current_page: @jobs[:current_page],
+           total_pages: @jobs[:total_pages] %>

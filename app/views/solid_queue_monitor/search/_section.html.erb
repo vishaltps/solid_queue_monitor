@@ -1,0 +1,25 @@
+<div class="search-results-section">
+  <h3><%= title %> (<%= items.size %>)</h3>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <% if title == 'Recurring Tasks' %>
+            <th>Key</th><th>Class</th><th>Schedule</th><th>Queue</th>
+          <% elsif title == 'Failed Jobs' %>
+            <th>Job</th><th>Queue</th><th>Error</th><th>Failed At</th>
+          <% elsif title == 'Completed Jobs' %>
+            <th>Job</th><th>Queue</th><th>Arguments</th><th>Completed At</th>
+          <% else %>
+            <th>Job</th><th>Queue</th><th>Arguments</th><th>Time</th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% items.each do |item| %>
+          <%= render row_partial, item: item, time_label: local_assigns[:time_label] %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

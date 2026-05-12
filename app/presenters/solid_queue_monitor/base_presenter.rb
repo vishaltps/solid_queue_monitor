@@ -58,6 +58,8 @@ module SolidQueueMonitor
     end
 
     def calculate_visible_pages(current_page, total_pages)
+      # Logic moved to SolidQueueMonitor::PaginationHelper for ERB-rendered pages.
+      # Kept here while presenter-rendered pages are migrated.
       if total_pages <= 7
         (1..total_pages).to_a
       else

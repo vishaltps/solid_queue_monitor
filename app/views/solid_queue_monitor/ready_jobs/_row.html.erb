@@ -1,0 +1,7 @@
+<tr>
+  <td><%= link_to job.job.class_name, job_path(job.job), class: 'job-class-link' %></td>
+  <td><%= queue_link(job.queue_name) %></td>
+  <td><%= job.priority %></td>
+  <td><%= format_arguments(job.job.arguments) %></td>
+  <td><%= format_datetime(job.created_at) %></td>
+</tr>

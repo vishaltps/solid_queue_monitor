@@ -1,0 +1,36 @@
+<% content_for :title, 'Scheduled Jobs' %>
+
+<%= render 'solid_queue_monitor/shared/filters',
+           action_path: @action_path,
+           filters: @filters,
+           show_status: false %>
+
+<div class="bulk-actions-bar">
+  <button type="button" class="action-button execute-button" id="execute-selected-top" data-action-url="<%= execute_jobs_path %>" disabled>
+    Execute Selected
+  </button>
+  <button type="button" class="action-button discard-button" id="reject-selected-top" data-action-url="<%= reject_jobs_path %>" disabled>
+    Reject Selected
+  </button>
+</div>
+
+<form id="scheduled-jobs-form" method="post">
+  <% columns = [
+    { sort_key: nil, label: tag.input(type: 'checkbox', id: 'scheduled-jobs-select-all') },
+    { sort_key: :class_name, label: 'Job' },
+    { sort_key: :queue_name, label: 'Queue' },
+    { sort_key: :scheduled_at, label: 'Scheduled At' },
+    { sort_key: nil, label: 'Arguments' }
+  ] %>
+
+  <%= render 'solid_queue_monitor/shared/jobs_table',
+             jobs: @scheduled_jobs[:records],
+             columns: columns,
+             sort: @sort,
+             filters: @filters,
+             row_partial: 'solid_queue_monitor/scheduled_jobs/row' %>
+</form>
+
+<%= render 'solid_queue_monitor/shared/pagination',
+           current_page: @scheduled_jobs[:current_page],
+           total_pages: @scheduled_jobs[:total_pages] %>

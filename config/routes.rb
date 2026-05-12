@@ -15,7 +15,7 @@ SolidQueueMonitor::Engine.routes.draw do
   resources :failed_jobs, only: [:index]
   resources :in_progress_jobs, only: [:index]
   resources :queues, only: [:index]
-  get 'queues/:queue_name', to: 'queues#show', as: :queue_details, constraints: { queue_name: /[^\/]+/ }
+  get 'queues/:queue_name', to: 'queues#show', as: :queue_details, constraints: { queue_name: %r{[^/]+} }
   resources :workers, only: [:index]
   resources :jobs, only: [:show]
 
@@ -33,4 +33,9 @@ SolidQueueMonitor::Engine.routes.draw do
 
   post 'remove_worker/:id', to: 'workers#remove', as: :remove_worker
   post 'prune_workers', to: 'workers#prune', as: :prune_workers
+
+  get 'assets/:file',
+      to: 'assets#show',
+      as: :asset,
+      constraints: { file: /[A-Za-z0-9_\-]+-[a-f0-9]+\.(css|js)/ }
 end

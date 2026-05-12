@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Solid Queue Monitor - <%= content_for?(:title) ? yield(:title) : 'Dashboard' %></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%= stylesheet_link_tag asset_url_for('application.css'), nonce: content_security_policy_nonce %>
+  </head>
+  <body class="solid_queue_monitor"
+        data-auto-refresh-enabled="<%= SolidQueueMonitor.auto_refresh_enabled %>"
+        data-auto-refresh-interval="<%= SolidQueueMonitor.auto_refresh_interval %>">
+    <%= render 'solid_queue_monitor/shared/flash' %>
+    <div class="container">
+      <%= render 'solid_queue_monitor/shared/header' %>
+      <div class="section">
+        <% if content_for?(:title) %>
+          <h2><%= yield :title %></h2>
+        <% end %>
+        <%= yield %>
+      </div>
+      <%= render 'solid_queue_monitor/shared/footer' %>
+    </div>
+    <%= javascript_include_tag asset_url_for('application.js'), nonce: content_security_policy_nonce %>
+  </body>
+</html>

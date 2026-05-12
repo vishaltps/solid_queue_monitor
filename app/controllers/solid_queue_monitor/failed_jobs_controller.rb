@@ -8,13 +8,9 @@ module SolidQueueMonitor
       base_query = SolidQueue::FailedExecution.includes(:job)
       sorted_query = apply_execution_sorting(filter_failed_jobs(base_query), SORTABLE_COLUMNS, 'created_at', :desc)
       @failed_jobs = paginate(sorted_query)
-
-      render_page('Failed Jobs', SolidQueueMonitor::FailedJobsPresenter.new(@failed_jobs[:records],
-                                                                            current_page: @failed_jobs[:current_page],
-                                                                            total_pages: @failed_jobs[:total_pages],
-                                                                            filters: filter_params,
-                                                                            sort: sort_params,
-                                                                            nonce: content_security_policy_nonce).render)
+      @filters = filter_params
+      @sort = sort_params
+      @action_path = failed_jobs_path
     end
 
     def retry

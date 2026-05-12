@@ -1,0 +1,25 @@
+<% content_for :title, 'Ready Jobs' %>
+
+<%= render 'solid_queue_monitor/shared/filters',
+           action_path: @action_path,
+           filters: @filters,
+           show_status: false %>
+
+<% columns = [
+  { sort_key: :class_name, label: 'Job' },
+  { sort_key: :queue_name, label: 'Queue' },
+  { sort_key: :priority, label: 'Priority' },
+  { sort_key: nil, label: 'Arguments' },
+  { sort_key: :created_at, label: 'Created At' }
+] %>
+
+<%= render 'solid_queue_monitor/shared/jobs_table',
+           jobs: @ready_jobs[:records],
+           columns: columns,
+           sort: @sort,
+           filters: @filters,
+           row_partial: 'solid_queue_monitor/ready_jobs/row' %>
+
+<%= render 'solid_queue_monitor/shared/pagination',
+           current_page: @ready_jobs[:current_page],
+           total_pages: @ready_jobs[:total_pages] %>

@@ -1,0 +1,20 @@
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <% columns.each do |column| %>
+          <% if column[:sort_key] %>
+            <%= sortable_header(column[:sort_key], column[:label], sort: sort, filters: filters) %>
+          <% else %>
+            <th><%= column[:label] %></th>
+          <% end %>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% jobs.each do |job| %>
+        <%= render row_partial, job: job %>
+      <% end %>
+    </tbody>
+  </table>
+</div>

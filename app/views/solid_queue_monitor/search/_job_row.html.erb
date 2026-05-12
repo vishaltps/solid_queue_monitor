@@ -1,0 +1,9 @@
+<% solid_queue_job = item.job %>
+<% queue_name = item.respond_to?(:queue_name) && item.queue_name.present? ? item.queue_name : solid_queue_job.queue_name %>
+<% time = item.respond_to?(:scheduled_at) && time_label == 'Scheduled for' ? item.scheduled_at : item.created_at %>
+<tr>
+  <td><%= link_to solid_queue_job.class_name, job_path(solid_queue_job), class: 'job-class-link' %></td>
+  <td><%= queue_link(queue_name) %></td>
+  <td><%= format_arguments(solid_queue_job.arguments) %></td>
+  <td><span class="job-timestamp"><%= time_label %>: <%= format_datetime(time) %></span></td>
+</tr>

@@ -43,15 +43,16 @@ RSpec.describe 'CSP compatibility' do
       include_examples 'a CSP-safe page', path
     end
 
-    it 'emits <style> without nonce attribute' do
+    it 'emits the stylesheet without a nonce attribute' do
       get '/'
-      expect(response.body).to match(/<style>/)
-      expect(response.body).not_to match(/<style\s+nonce=/)
+      expect(response.body).to match(%r{<link[^>]+rel="stylesheet"[^>]+href="/assets/application-[a-f0-9]{16}\.css"})
+      expect(response.body).not_to match(/<link[^>]+rel="stylesheet"[^>]+nonce=/)
     end
 
-    it 'emits <script> tags without nonce attribute' do
+    it 'emits external <script> tags without nonce attribute' do
       get '/'
       response.body.scan(/<script[^>]*>/).each do |tag|
+        expect(tag).to include('src=')
         expect(tag).not_to include('nonce=')
       end
     end
@@ -63,15 +64,18 @@ RSpec.describe 'CSP compatibility' do
         .to receive(:content_security_policy_nonce).and_return('test-nonce-123')
     end
 
-    it 'stamps nonce on the <style> tag' do
+    it 'stamps nonce on the stylesheet tag' do
       get '/'
-      expect(response.body).to include('<style nonce="test-nonce-123">')
+      stylesheet_tags = response.body.scan(/<link[^>]+rel="stylesheet"[^>]*>/)
+      expect(stylesheet_tags).not_to be_empty
+      expect(stylesheet_tags).to all(include('nonce="test-nonce-123"'))
     end
 
-    it 'stamps nonce on every <script> tag' do
+    it 'stamps nonce on every external <script> tag' do
       get '/'
       scripts = response.body.scan(/<script[^>]*>/)
       expect(scripts).not_to be_empty
+      expect(scripts).to all(include('src='))
       expect(scripts).to all(include('nonce="test-nonce-123"'))
     end
   end

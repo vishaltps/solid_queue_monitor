@@ -1,0 +1,82 @@
+<% content_for :title, 'Workers' %>
+
+<div class="workers-summary">
+  <div class="summary-card">
+    <span class="summary-label">Total Processes</span>
+    <span class="summary-value"><%= @summary[:total] %></span>
+  </div>
+  <div class="summary-card summary-healthy">
+    <span class="summary-label">Healthy</span>
+    <span class="summary-value"><%= @summary[:healthy] %></span>
+  </div>
+  <div class="summary-card summary-stale">
+    <span class="summary-label">Stale</span>
+    <span class="summary-value"><%= @summary[:stale] %></span>
+  </div>
+  <div class="summary-card summary-dead">
+    <span class="summary-label">Dead</span>
+    <span class="summary-value"><%= @summary[:dead] %></span>
+    <% if @summary[:dead].positive? %>
+      <% suffix = @summary[:dead] > 1 ? 'es' : '' %>
+      <a href="#"
+         class="summary-action"
+         data-confirm-submit="prune-all-form"
+         data-confirm="Remove all <%= @summary[:dead] %> dead process<%= suffix %>? This will clean up processes that have stopped sending heartbeats.">
+        Prune all
+      </a>
+      <form id="prune-all-form" action="<%= prune_workers_path %>" method="post" class="is-hidden"></form>
+    <% end %>
+  </div>
+</div>
+
+<div class="filter-form-container">
+  <%= form_with url: workers_path, method: :get, local: true, html: { class: 'filter-form' } do |form| %>
+    <div class="filter-group">
+      <%= form.label :kind, 'Kind:' %>
+      <%= form.select :kind,
+                      options_for_select([['All', ''], %w[Worker Worker], %w[Dispatcher Dispatcher], %w[Scheduler Scheduler]], @filters[:kind]) %>
+    </div>
+    <div class="filter-group">
+      <%= form.label :hostname, 'Hostname:' %>
+      <%= form.text_field :hostname, value: @filters[:hostname], placeholder: 'Filter by hostname' %>
+    </div>
+    <div class="filter-group">
+      <%= form.label :status, 'Status:' %>
+      <%= form.select :status,
+                      options_for_select([['All', ''], %w[Healthy healthy], %w[Stale stale], %w[Dead dead]], @filters[:status]) %>
+    </div>
+    <div class="filter-actions">
+      <%= form.submit 'Apply Filters', class: 'filter-button' %>
+      <%= link_to 'Reset', workers_path, class: 'reset-button' %>
+    </div>
+  <% end %>
+</div>
+
+<% if @process_records.empty? %>
+  <div class="empty-state">
+    <p>No worker processes found.</p>
+    <p class="empty-state-hint">Workers will appear here when Solid Queue processes are running.</p>
+  </div>
+<% else %>
+  <% columns = [
+    { sort_key: nil, label: 'Kind' },
+    { sort_key: :hostname, label: 'Hostname' },
+    { sort_key: nil, label: 'PID' },
+    { sort_key: nil, label: 'Queues' },
+    { sort_key: :last_heartbeat_at, label: 'Last Heartbeat' },
+    { sort_key: nil, label: 'Status' },
+    { sort_key: nil, label: 'Jobs Processing' },
+    { sort_key: nil, label: 'Actions' }
+  ] %>
+
+  <%= render 'solid_queue_monitor/shared/jobs_table',
+             jobs: @process_records,
+             columns: columns,
+             sort: @sort,
+             filters: @filters,
+             row_partial: 'solid_queue_monitor/workers/row' %>
+<% end %>
+
+<%= render 'solid_queue_monitor/shared/pagination',
+           current_page: @processes[:current_page],
+           total_pages: @processes[:total_pages] %>

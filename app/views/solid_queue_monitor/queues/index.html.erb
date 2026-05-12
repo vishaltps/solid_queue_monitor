@@ -1,0 +1,18 @@
+<% content_for :title, 'Queues' %>
+
+<% columns = [
+  { sort_key: :queue_name, label: 'Queue Name' },
+  { sort_key: nil, label: 'Status' },
+  { sort_key: :job_count, label: 'Total Jobs' },
+  { sort_key: nil, label: 'Ready Jobs' },
+  { sort_key: nil, label: 'Scheduled Jobs' },
+  { sort_key: nil, label: 'Failed Jobs' },
+  { sort_key: nil, label: 'Actions' }
+] %>
+
+<%= render 'solid_queue_monitor/shared/jobs_table',
+           jobs: @queues,
+           columns: columns,
+           sort: @sort,
+           filters: {},
+           row_partial: 'solid_queue_monitor/queues/row' %>

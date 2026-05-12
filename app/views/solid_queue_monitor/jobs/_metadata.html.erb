@@ -1,0 +1,22 @@
+<div class="job-section">
+  <h3 class="section-title">Job Details</h3>
+  <div class="details-grid">
+    <div class="detail-row"><span class="detail-label">Class</span><span class="detail-value"><%= @job.class_name %></span></div>
+    <div class="detail-row"><span class="detail-label">Queue</span><span class="detail-value"><%= queue_link(@job.queue_name, css_class: 'queue-badge') %></span></div>
+    <div class="detail-row"><span class="detail-label">Priority</span><span class="detail-value"><%= @job.priority %></span></div>
+    <div class="detail-row"><span class="detail-label">Active Job ID</span><span class="detail-value detail-mono"><%= @job.active_job_id || '-' %></span></div>
+    <% if @job.concurrency_key.present? %>
+      <div class="detail-row"><span class="detail-label">Concurrency Key</span><span class="detail-value detail-mono"><%= @job.concurrency_key %></span></div>
+    <% end %>
+    <div class="detail-row"><span class="detail-label">Created At</span><span class="detail-value"><%= format_datetime(@job.created_at) %></span></div>
+    <% if @scheduled_execution || @job.scheduled_at %>
+      <div class="detail-row"><span class="detail-label">Scheduled At</span><span class="detail-value"><%= format_datetime(@job.scheduled_at || @scheduled_execution&.scheduled_at) %></span></div>
+    <% end %>
+    <% if @job.finished_at %>
+      <div class="detail-row"><span class="detail-label">Finished At</span><span class="detail-value"><%= format_datetime(@job.finished_at) %></span></div>
+    <% end %>
+    <% if @failed_execution %>
+      <div class="detail-row"><span class="detail-label">Failed At</span><span class="detail-value"><%= format_datetime(@failed_execution.created_at) %></span></div>
+    <% end %>
+  </div>
+</div>
