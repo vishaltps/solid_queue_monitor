@@ -1,0 +1,13 @@
+<% solid_queue_job = job.job %>
+<tr>
+  <td>
+    <div class="job-class"><%= link_to solid_queue_job.class_name, job_path(solid_queue_job), class: 'job-class-link' %></div>
+    <div class="job-meta">
+      <span class="job-timestamp">Queued at: <%= format_datetime(solid_queue_job.created_at) %></span>
+    </div>
+  </td>
+  <td><%= queue_link(solid_queue_job.queue_name) %></td>
+  <td><%= format_arguments(solid_queue_job.arguments) %></td>
+  <td><%= format_datetime(job.created_at) %></td>
+  <td><%= job.process_id %></td>
+</tr>

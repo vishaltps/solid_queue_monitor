@@ -1,0 +1,23 @@
+<% content_for :title, 'Search' %>
+
+<% if @query.blank? %>
+  <div class="empty-state">
+    <p>Enter a search term in the header to find jobs across all categories.</p>
+  </div>
+<% elsif @total_count.zero? %>
+  <div class="empty-state">
+    <p>No results found for "<%= @query %>"</p>
+    <p class="results-summary">0 results</p>
+  </div>
+<% else %>
+  <div class="results-summary">
+    <p>Found <%= @total_count %> <%= 'result'.pluralize(@total_count) %> for "<%= @query %>"</p>
+  </div>
+
+  <%= render 'section', title: 'Ready Jobs', items: @results[:ready], row_partial: 'solid_queue_monitor/search/job_row', time_label: 'Created at' if @results[:ready].any? %>
+  <%= render 'section', title: 'Scheduled Jobs', items: @results[:scheduled], row_partial: 'solid_queue_monitor/search/job_row', time_label: 'Scheduled for' if @results[:scheduled].any? %>
+  <%= render 'section', title: 'Failed Jobs', items: @results[:failed], row_partial: 'solid_queue_monitor/search/failed_row' if @results[:failed].any? %>
+  <%= render 'section', title: 'In Progress Jobs', items: @results[:in_progress], row_partial: 'solid_queue_monitor/search/job_row', time_label: 'Started at' if @results[:in_progress].any? %>
+  <%= render 'section', title: 'Completed Jobs', items: @results[:completed], row_partial: 'solid_queue_monitor/search/completed_row' if @results[:completed].any? %>
+  <%= render 'section', title: 'Recurring Tasks', items: @results[:recurring], row_partial: 'solid_queue_monitor/search/recurring_row' if @results[:recurring].any? %>
+<% end %>

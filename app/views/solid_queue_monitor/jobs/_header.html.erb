@@ -1,0 +1,37 @@
+<% status = detail_job_status(job: @job, failed_execution: @failed_execution, claimed_execution: @claimed_execution, scheduled_execution: @scheduled_execution) %>
+<div class="job-header">
+  <div class="job-header-main">
+    <h1 class="job-title"><%= @job.class_name %></h1>
+    <span class="job-status-badge <%= detail_status_class(status) %>"><%= detail_status_label(status) %></span>
+  </div>
+  <div class="job-header-meta">
+    <span class="job-queue"><%= queue_link(@job.queue_name) %></span>
+    <span class="job-separator">.</span>
+    <span class="job-priority">Priority <%= @job.priority %></span>
+    <span class="job-separator">.</span>
+    <span class="job-id">Job #<%= @job.id %></span>
+  </div>
+  <% if @failed_execution || @scheduled_execution %>
+    <div class="job-actions">
+      <% if @failed_execution %>
+        <form action="<%= retry_failed_job_path(id: @failed_execution.id) %>" method="post" class="inline-form">
+          <input type="hidden" name="redirect_to" value="<%= job_path(@job) %>">
+          <button type="submit" class="action-button retry-button">Retry</button>
+        </form>
+        <form action="<%= discard_failed_job_path(id: @failed_execution.id) %>"
+              method="post"
+              class="inline-form"
+              data-confirm="Are you sure you want to discard this job?">
+          <input type="hidden" name="redirect_to" value="<%= failed_jobs_path %>">
+          <button type="submit" class="action-button discard-button">Discard</button>
+        </form>
+      <% end %>
+      <% if @scheduled_execution %>
+        <form action="<%= execute_scheduled_job_path(id: @scheduled_execution.id) %>" method="post" class="inline-form">
+          <input type="hidden" name="redirect_to" value="<%= scheduled_jobs_path %>">
+          <button type="submit" class="action-button retry-button">Execute Now</button>
+        </form>
+      <% end %>
+    </div>
+  <% end %>
+</div>

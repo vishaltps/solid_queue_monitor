@@ -1,0 +1,25 @@
+<% content_for :title, 'In Progress Jobs' %>
+
+<%= render 'solid_queue_monitor/shared/filters',
+           action_path: @action_path,
+           filters: @filters,
+           show_status: false %>
+
+<% columns = [
+  { sort_key: :class_name, label: 'Job' },
+  { sort_key: :queue_name, label: 'Queue' },
+  { sort_key: nil, label: 'Arguments' },
+  { sort_key: :created_at, label: 'Started At' },
+  { sort_key: nil, label: 'Process ID' }
+] %>
+
+<%= render 'solid_queue_monitor/shared/jobs_table',
+           jobs: @in_progress_jobs[:records],
+           columns: columns,
+           sort: @sort,
+           filters: @filters,
+           row_partial: 'solid_queue_monitor/in_progress_jobs/row' %>
+
+<%= render 'solid_queue_monitor/shared/pagination',
+           current_page: @in_progress_jobs[:current_page],
+           total_pages: @in_progress_jobs[:total_pages] %>

@@ -1,0 +1,38 @@
+<% content_for :title, 'Failed Jobs' %>
+
+<%= render 'solid_queue_monitor/shared/filters',
+           action_path: @action_path,
+           filters: @filters,
+           show_status: false %>
+
+<div class="bulk-actions-bar">
+  <button type="button" class="action-button retry-button" id="retry-selected-top" data-action-url="<%= retry_failed_jobs_path %>" disabled>
+    Retry Selected
+  </button>
+  <button type="button" class="action-button discard-button" id="discard-selected-top" data-action-url="<%= discard_failed_jobs_path %>" disabled>
+    Discard Selected
+  </button>
+</div>
+
+<form method="post" id="failed-jobs-form">
+  <% columns = [
+    { sort_key: nil, label: tag.input(type: 'checkbox', id: 'select-all', class: 'select-all-checkbox') },
+    { sort_key: :class_name, label: 'Job' },
+    { sort_key: :queue_name, label: 'Queue' },
+    { sort_key: nil, label: 'Error' },
+    { sort_key: nil, label: 'Arguments' },
+    { sort_key: :created_at, label: 'Failed At' },
+    { sort_key: nil, label: 'Actions' }
+  ] %>
+
+  <%= render 'solid_queue_monitor/shared/jobs_table',
+             jobs: @failed_jobs[:records],
+             columns: columns,
+             sort: @sort,
+             filters: @filters,
+             row_partial: 'solid_queue_monitor/failed_jobs/row' %>
+</form>
+
+<%= render 'solid_queue_monitor/shared/pagination',
+           current_page: @failed_jobs[:current_page],
+           total_pages: @failed_jobs[:total_pages] %>

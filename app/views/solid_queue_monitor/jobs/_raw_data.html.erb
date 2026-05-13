@@ -1,0 +1,11 @@
+<div class="job-section collapsible-section">
+  <div class="section-header collapsible-header" data-action="toggle-section">
+    <div class="collapsible-title">
+      <h3 class="section-title">Raw Data</h3>
+    </div>
+    <button class="copy-button" data-action="copy" data-target="raw-data-content" data-stop-propagation="true">Copy</button>
+  </div>
+  <div class="collapsible-content">
+    <pre class="raw-data-content" id="raw-data-content"><%= JSON.pretty_generate(@job.attributes) %></pre>
+  </div>
+</div>

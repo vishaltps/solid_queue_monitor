@@ -1,0 +1,7 @@
+<tr>
+  <td><input type="checkbox" name="job_ids[]" value="<%= job.id %>"></td>
+  <td><%= link_to job.job.class_name, job_path(job.job), class: 'job-class-link' %></td>
+  <td><%= queue_link(job.queue_name) %></td>
+  <td><%= format_datetime(job.scheduled_at) %></td>
+  <td><%= format_arguments(job.job.arguments) %></td>
+</tr>

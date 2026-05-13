@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.0.0] - 2026-05-12
+
+### Changed
+
+- **Major architectural refactor**: the dashboard now renders via standard Rails ERB views, helpers, and partials instead of Ruby presenters emitting HTML strings. Configuration, mount point, URLs, HTTP Basic auth, and CSP nonce support are unchanged.
+- CSS and JavaScript are now served as external assets via a new `AssetsController` with content-hashed URLs and `Cache-Control: immutable`. No Sprockets or Propshaft dependency is required, so Rails API-only host applications keep working as in v1.x.
+- Dashboard pages now work under a strict `script-src 'self'; style-src 'self'` Content Security Policy without requiring host-app nonce configuration. Nonce-on-link-tag behavior is preserved for hosts running nonce-only CSPs.
+- Runtime configuration such as auto-refresh interval, auto-refresh enabled state, and theme preference is now passed via `<body data-*>` attributes instead of inline JavaScript interpolation.
+
+### Removed
+
+- `SolidQueueMonitor::HtmlGenerator`, `StylesheetGenerator`, `ChartPresenter`, `BasePresenter`, and all `*Presenter` classes. These were internal and not documented as public API. Users who reached into them via monkey patches will need to migrate to view/helper overrides.
+- `SolidQueueMonitor::BaseController#render_page` now that Rails implicit rendering handles all pages.
+- The brief inline `<script>` that prevented dark-mode first-paint flash has been removed in favor of zero inline scripts. Users with a dark system preference may see a short light flash on the first page load; subsequent loads use the cached localStorage value.
+
+### Migration
+
+For most users, `bundle update solid_queue_monitor` is sufficient. The dashboard looks and behaves identically. Configuration options, routes, authentication, and CSP nonce support are unchanged.
+
+If you customized the UI by monkey-patching a presenter, migrate that customization to view/helper overrides. Open an issue at https://github.com/vishaltps/solid_queue_monitor/issues if you need guidance.
+
 ## [1.3.0] - 2026-04-16
 
 ### Added

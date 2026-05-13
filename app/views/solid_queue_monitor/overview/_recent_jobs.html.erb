@@ -1,0 +1,31 @@
+<div class="section-wrapper">
+  <div class="section">
+    <h3>Recent Jobs</h3>
+
+    <%= render 'solid_queue_monitor/shared/filters',
+               action_path: root_path,
+               filters: @filters,
+               show_status: true %>
+
+    <% columns = [
+      { sort_key: nil, label: 'ID' },
+      { sort_key: :class_name, label: 'Job' },
+      { sort_key: :queue_name, label: 'Queue' },
+      { sort_key: nil, label: 'Arguments' },
+      { sort_key: nil, label: 'Status' },
+      { sort_key: :created_at, label: 'Created At' },
+      { sort_key: nil, label: 'Actions' }
+    ] %>
+
+    <%= render 'solid_queue_monitor/shared/jobs_table',
+               jobs: @recent_jobs[:records],
+               columns: columns,
+               sort: @sort,
+               filters: @filters,
+               row_partial: 'solid_queue_monitor/overview/recent_job_row' %>
+
+    <%= render 'solid_queue_monitor/shared/pagination',
+               current_page: @recent_jobs[:current_page],
+               total_pages: @recent_jobs[:total_pages] %>
+  </div>
+</div>

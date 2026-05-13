@@ -1,0 +1,12 @@
+<% process = @claimed_execution.instance_variable_get(:@process) %>
+<% if process %>
+  <div class="job-section">
+    <h3 class="section-title">Worker</h3>
+    <div class="details-grid">
+      <div class="detail-row"><span class="detail-label">Hostname</span><span class="detail-value"><%= process.hostname %></span></div>
+      <div class="detail-row"><span class="detail-label">PID</span><span class="detail-value"><%= process.pid %></span></div>
+      <div class="detail-row"><span class="detail-label">Process Type</span><span class="detail-value"><%= process.kind %></span></div>
+      <div class="detail-row"><span class="detail-label">Started At</span><span class="detail-value"><%= format_datetime(@claimed_execution.created_at) %></span></div>
+    </div>
+  </div>
+<% end %>

@@ -1,0 +1,26 @@
+<tr>
+  <td><input type="checkbox" class="job-checkbox" value="<%= job.id %>"></td>
+  <td>
+    <div class="job-class"><%= link_to job.job.class_name, job_path(job.job), class: 'job-class-link' %></div>
+    <div class="job-meta">
+      <span class="job-timestamp">Queued at: <%= format_datetime(job.job.created_at) %></span>
+    </div>
+  </td>
+  <td><div class="job-queue"><%= queue_link(job.job.queue_name) %></div></td>
+  <td><div class="error-message"><%= truncate(failed_error_message(job.error), length: 100) %></div></td>
+  <td><%= format_arguments(job.job.arguments) %></td>
+  <td><%= format_datetime(job.created_at) %></td>
+  <td class="actions-cell">
+    <div class="job-actions">
+      <form method="post" action="<%= retry_failed_job_path(id: job.id) %>" class="inline-form">
+        <button type="submit" class="action-button retry-button">Retry</button>
+      </form>
+      <form method="post"
+            action="<%= discard_failed_job_path(id: job.id) %>"
+            class="inline-form"
+            data-confirm="Are you sure you want to discard this job?">
+        <button type="submit" class="action-button discard-button">Discard</button>
+      </form>
+    </div>
+  </td>
+</tr>

@@ -1,0 +1,26 @@
+<% error = parsed_failed_error(@failed_execution.error) %>
+<div class="job-section error-section">
+  <div class="section-header">
+    <h3 class="section-title">Error</h3>
+    <button class="copy-button" data-action="copy" data-target="error-content">Copy</button>
+  </div>
+  <div id="error-content">
+    <div class="error-type"><%= error[:type] %></div>
+    <div class="error-message-box"><%= error[:message] %></div>
+  </div>
+  <% if error[:backtrace].present? %>
+    <% lines = error[:backtrace] %>
+    <% app_lines = lines.select { |line| line.include?('/app/') || line.include?('/lib/') } %>
+    <div class="backtrace-section">
+      <div class="backtrace-header">
+        <span class="backtrace-title">Backtrace</span>
+        <div class="backtrace-toggle">
+          <button class="toggle-btn active" data-action="show-backtrace" data-backtrace="app">App Only</button>
+          <button class="toggle-btn" data-action="show-backtrace" data-backtrace="full">Full</button>
+        </div>
+      </div>
+      <pre class="backtrace-content" id="app-backtrace"><%= safe_join((app_lines.presence || lines.first(5)).map.with_index { |line, index| tag.span("#{index + 1}. #{line.to_s.strip}", class: 'backtrace-line') }, "\n") %></pre>
+      <pre class="backtrace-content is-hidden" id="full-backtrace"><%= safe_join(lines.map.with_index { |line, index| tag.span("#{index + 1}. #{line.to_s.strip}", class: 'backtrace-line') }, "\n") %></pre>
+    </div>
+  <% end %>
+</div>

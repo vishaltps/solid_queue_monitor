@@ -11,13 +11,9 @@ module SolidQueueMonitor
         return
       end
 
-      job_data = load_job_data(@job)
-
-      render_page("Job ##{@job.id}", SolidQueueMonitor::JobDetailsPresenter.new(
-        @job,
-        **job_data,
-        nonce: content_security_policy_nonce
-      ).render)
+      load_job_data(@job).each do |name, value|
+        instance_variable_set("@#{name}", value)
+      end
     end
 
     private

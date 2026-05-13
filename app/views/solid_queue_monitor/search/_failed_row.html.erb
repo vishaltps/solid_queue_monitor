@@ -1,0 +1,6 @@
+<tr>
+  <td><%= link_to item.job.class_name, job_path(item.job), class: 'job-class-link' %></td>
+  <td><%= queue_link(item.job.queue_name) %></td>
+  <td><div class="error-message"><%= truncate(item.error.to_s, length: 100) %></div></td>
+  <td><span class="job-timestamp"><%= format_datetime(item.created_at) %></span></td>
+</tr>

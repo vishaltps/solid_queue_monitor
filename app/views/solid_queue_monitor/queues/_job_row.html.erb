@@ -1,0 +1,26 @@
+<% status = job_status(job) %>
+<% failed_execution = SolidQueue::FailedExecution.find_by(job_id: job.id) if status == 'failed' %>
+<tr>
+  <td><%= link_to job.id, job_path(job), class: 'job-class-link' %></td>
+  <td><%= link_to job.class_name, job_path(job), class: 'job-class-link' %></td>
+  <td><%= format_arguments(job.arguments) %></td>
+  <td><%= job_status_badge(job) %></td>
+  <td><%= format_datetime(job.created_at) %></td>
+  <td class="actions-cell">
+    <% if failed_execution %>
+      <div class="job-actions">
+        <form method="post" action="<%= retry_failed_job_path(id: failed_execution.id) %>" class="inline-form">
+          <input type="hidden" name="redirect_to" value="<%= queue_details_path(queue_name: @queue_name) %>">
+          <button type="submit" class="action-button retry-button">Retry</button>
+        </form>
+        <form method="post"
+              action="<%= discard_failed_job_path(id: failed_execution.id) %>"
+              class="inline-form"
+              data-confirm="Are you sure you want to discard this job?">
+          <input type="hidden" name="redirect_to" value="<%= queue_details_path(queue_name: @queue_name) %>">
+          <button type="submit" class="action-button discard-button">Discard</button>
+        </form>
+      </div>
+    <% end %>
+  </td>
+</tr>

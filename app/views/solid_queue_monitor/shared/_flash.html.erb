@@ -1,0 +1,17 @@
+<%
+  message = @flash_message
+  message_type = @flash_type
+  begin
+    message ||= session[:flash_message]
+    message_type ||= session[:flash_type]
+    session.delete(:flash_message) if message
+    session.delete(:flash_type) if message_type
+  rescue StandardError
+    # Session not available.
+  end
+%>
+<% if message %>
+  <div id="flash-message" class="message <%= message_class(message_type) %>">
+    <%= message %>
+  </div>
+<% end %>

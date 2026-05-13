@@ -8,14 +8,11 @@ module SolidQueueMonitor
       base_query = SolidQueue::Process.all
       sorted_query = apply_sorting(filter_workers(base_query), SORTABLE_COLUMNS, 'last_heartbeat_at', :desc)
       @processes = paginate(sorted_query)
-
-      render_page('Workers', SolidQueueMonitor::WorkersPresenter.new(
-        @processes[:records],
-        current_page: @processes[:current_page],
-        total_pages: @processes[:total_pages],
-        filters: worker_filter_params,
-        sort: sort_params
-      ).render)
+      @process_records = @processes[:records].to_a
+      @filters = worker_filter_params
+      @sort = sort_params
+      @summary = worker_summary
+      preload_claimed_data
     end
 
     def remove
@@ -72,6 +69,25 @@ module SolidQueueMonitor
         hostname: params[:hostname],
         status: params[:status]
       }
+    end
+
+    def worker_summary
+      all_processes = SolidQueue::Process.all.to_a
+      {
+        total: all_processes.count,
+        healthy: all_processes.count { |process| view_context.worker_status(process) == :healthy },
+        stale: all_processes.count { |process| view_context.worker_status(process) == :stale },
+        dead: all_processes.count { |process| view_context.worker_status(process) == :dead }
+      }
+    end
+
+    def preload_claimed_data
+      process_ids = @process_records.map(&:id)
+      @claimed_counts = SolidQueue::ClaimedExecution.where(process_id: process_ids).group(:process_id).count
+      @claimed_jobs = SolidQueue::ClaimedExecution.includes(:job).where(process_id: process_ids).each_with_object({}) do |execution, hash|
+        hash[execution.process_id] ||= []
+        hash[execution.process_id] << execution.job
+      end
     end
   end
 end

@@ -11,12 +11,7 @@ module SolidQueueMonitor
       @queues = apply_queue_sorting(base_query)
       @paused_queues = QueuePauseService.paused_queues
       @queue_stats = aggregate_queue_stats
-
-      render_page('Queues', SolidQueueMonitor::QueuesPresenter.new(
-        @queues, @paused_queues,
-        queue_stats: @queue_stats,
-        sort: sort_params
-      ).render)
+      @sort = sort_params
     end
 
     def show
@@ -30,18 +25,9 @@ module SolidQueueMonitor
       preload_job_statuses(@jobs[:records])
 
       @counts = calculate_queue_counts(@queue_name)
-
-      render_page("Queue: #{@queue_name}",
-                  SolidQueueMonitor::QueueDetailsPresenter.new(
-                    queue_name: @queue_name,
-                    paused: @paused,
-                    jobs: @jobs[:records],
-                    counts: @counts,
-                    current_page: @jobs[:current_page],
-                    total_pages: @jobs[:total_pages],
-                    filters: queue_filter_params,
-                    sort: sort_params
-                  ).render)
+      @filters = queue_filter_params
+      @sort = sort_params
+      @action_path = queue_details_path(queue_name: @queue_name)
     end
 
     def pause

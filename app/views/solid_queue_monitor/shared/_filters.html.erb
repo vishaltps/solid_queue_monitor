@@ -1,0 +1,48 @@
+<% show_status = local_assigns.fetch(:show_status, true) %>
+
+<div class="filter-form-container">
+  <%= form_with url: action_path, method: :get, local: true, html: { class: 'filter-form' } do |form| %>
+    <div class="filter-group">
+      <%= form.label :class_name, 'Job Class:' %>
+      <%= form.text_field :class_name,
+                          value: filters[:class_name],
+                          placeholder: 'Filter by class name' %>
+    </div>
+
+    <div class="filter-group">
+      <%= form.label :queue_name, 'Queue:' %>
+      <%= form.text_field :queue_name,
+                          value: filters[:queue_name],
+                          placeholder: 'Filter by queue' %>
+    </div>
+
+    <div class="filter-group">
+      <%= form.label :arguments, 'Arguments:' %>
+      <%= form.text_field :arguments,
+                          value: filters[:arguments],
+                          placeholder: 'Filter by arguments' %>
+    </div>
+
+    <% if show_status %>
+      <div class="filter-group">
+        <%= form.label :status, 'Status:' %>
+        <%= form.select :status,
+                        options_for_select(
+                          [
+                            ['All Statuses', ''],
+                            ['Completed', 'completed'],
+                            ['Failed', 'failed'],
+                            ['Scheduled', 'scheduled'],
+                            ['Pending', 'pending']
+                          ],
+                          filters[:status]
+                        ) %>
+      </div>
+    <% end %>
+
+    <div class="filter-actions">
+      <%= form.submit 'Apply Filters', class: 'filter-button' %>
+      <%= link_to 'Reset', action_path, class: 'reset-button' %>
+    </div>
+  <% end %>
+</div>

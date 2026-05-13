@@ -1,0 +1,25 @@
+<% if total_pages > 1 %>
+  <div class="pagination">
+    <% if current_page > 1 %>
+      <%= link_to 'Previous', pagination_href(current_page - 1), class: 'pagination-link pagination-nav' %>
+    <% else %>
+      <span class="pagination-link pagination-nav disabled">Previous</span>
+    <% end %>
+
+    <% visible_pages(current_page, total_pages).each do |page| %>
+      <% if page == :gap %>
+        <span class="pagination-gap">...</span>
+      <% elsif page == current_page %>
+        <span class="pagination-current"><%= page %></span>
+      <% else %>
+        <%= link_to page, pagination_href(page), class: 'pagination-link' %>
+      <% end %>
+    <% end %>
+
+    <% if current_page < total_pages %>
+      <%= link_to 'Next', pagination_href(current_page + 1), class: 'pagination-link pagination-nav' %>
+    <% else %>
+      <span class="pagination-link pagination-nav disabled">Next</span>
+    <% end %>
+  </div>
+<% end %>

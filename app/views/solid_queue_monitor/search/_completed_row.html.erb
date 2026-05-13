@@ -1,0 +1,6 @@
+<tr>
+  <td><%= link_to item.class_name, job_path(item), class: 'job-class-link' %></td>
+  <td><%= queue_link(item.queue_name) %></td>
+  <td><%= format_arguments(item.arguments) %></td>
+  <td><span class="job-timestamp"><%= format_datetime(item.finished_at) %></span></td>
+</tr>

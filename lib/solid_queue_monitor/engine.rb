@@ -5,9 +5,11 @@ module SolidQueueMonitor
     isolate_namespace SolidQueueMonitor
 
     config.autoload_paths << root.join('app', 'services')
+    config.autoload_paths << root.join('app', 'helpers')
 
     # Optional: Add eager loading for production
     config.eager_load_paths << root.join('app', 'services')
+    config.eager_load_paths << root.join('app', 'helpers')
 
     # Ensure session middleware is available
     initializer 'solid_queue_monitor.middleware' do |app|

@@ -6,7 +6,7 @@ module SolidQueueMonitor
     include ActionController::Flash
 
     before_action :authenticate, if: -> { SolidQueueMonitor::AuthenticationService.authentication_required? }
-    layout false
+    layout 'solid_queue_monitor/application'
     skip_before_action :verify_authenticity_token
 
     def set_flash_message(message, type)
@@ -17,7 +17,7 @@ module SolidQueueMonitor
       # Try to use Rails flash if available
       begin
         flash[:notice] = message if type == :success
-        flash[:alert] = message if type == :error
+        flash[:alert]  = message if type == :error
       rescue StandardError
         # Flash not available (e.g., no session middleware)
       end

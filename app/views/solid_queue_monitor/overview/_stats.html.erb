@@ -1,0 +1,11 @@
+<div class="stats-container">
+  <h3>Queue Statistics</h3>
+  <div class="stats">
+    <%= render 'stat_card', title: 'Active Jobs', value: @stats[:active_jobs] %>
+    <%= render 'stat_card', title: 'Ready', value: @stats[:ready] %>
+    <%= render 'stat_card', title: 'In Progress', value: @stats[:in_progress] %>
+    <%= render 'stat_card', title: 'Scheduled', value: @stats[:scheduled] %>
+    <%= render 'stat_card', title: 'Recurring', value: @stats[:recurring] %>
+    <%= render 'stat_card', title: 'Failed', value: @stats[:failed] %>
+  </div>
+</div>

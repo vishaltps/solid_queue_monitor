@@ -1,0 +1,25 @@
+<% if @recent_executions.any? %>
+  <div class="job-section">
+    <div class="section-header">
+      <h3 class="section-title">Recent Executions</h3>
+      <span class="section-subtitle">Other <%= @job.class_name %> jobs</span>
+    </div>
+    <div class="table-container">
+      <table class="recent-executions-table">
+        <thead>
+          <tr><th>Status</th><th>Arguments</th><th>Created</th><th>Duration</th></tr>
+        </thead>
+        <tbody>
+          <% @recent_executions.each do |recent_job| %>
+            <tr>
+              <td><%= mini_job_status_badge(recent_job) %></td>
+              <td class="args-preview"><%= link_to truncate(recent_job.arguments.inspect, length: 60), job_path(recent_job) %></td>
+              <td><%= time_ago_in_words(recent_job.created_at) %> ago</td>
+              <td><%= recent_job_duration(recent_job) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>

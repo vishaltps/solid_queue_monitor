@@ -1,0 +1,22 @@
+<% status = worker_status(job) %>
+<tr class="<%= worker_row_class(job) %>">
+  <td><%= worker_kind_badge(job.kind) %></td>
+  <td><%= worker_hostname(job) %></td>
+  <td><code><%= job.pid %></code></td>
+  <td><%= worker_queues(job) %></td>
+  <td><%= worker_heartbeat(job.last_heartbeat_at) %></td>
+  <td><%= worker_status_badge(status) %></td>
+  <td><%= worker_jobs_processing(job, claimed_counts: @claimed_counts, claimed_jobs: @claimed_jobs) %></td>
+  <td class="actions-cell">
+    <% if status == :dead %>
+      <form action="<%= remove_worker_path(id: job.id) %>"
+            method="post"
+            class="inline-form"
+            data-confirm="Remove this dead process from the registry?">
+        <button type="submit" class="action-button discard-button" title="Remove dead process">Remove</button>
+      </form>
+    <% else %>
+      <span class="action-placeholder">-</span>
+    <% end %>
+  </td>
+</tr>

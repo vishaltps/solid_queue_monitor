@@ -1,0 +1,8 @@
+<tr>
+  <td><%= job.key %></td>
+  <td><%= job.class_name %></td>
+  <td><%= job.schedule %></td>
+  <td><%= queue_link(job.queue_name) %></td>
+  <td><%= job.priority || 'Default' %></td>
+  <td><%= format_datetime(job.updated_at) %></td>
+</tr>

@@ -1,0 +1,33 @@
+<% queue_name = job.queue_name || 'default' %>
+<% paused = @paused_queues.include?(queue_name) %>
+
+<tr class="<%= 'queue-paused' if paused %>">
+  <td><%= queue_link(queue_name) %></td>
+  <td>
+    <% if paused %>
+      <span class="status-badge status-paused">Paused</span>
+    <% else %>
+      <span class="status-badge status-active">Active</span>
+    <% end %>
+  </td>
+  <td><%= job.job_count %></td>
+  <td><%= @queue_stats.dig(:ready, queue_name) || 0 %></td>
+  <td><%= @queue_stats.dig(:scheduled, queue_name) || 0 %></td>
+  <td><%= @queue_stats.dig(:failed, queue_name) || 0 %></td>
+  <td class="actions-cell">
+    <% if paused %>
+      <form action="<%= resume_queue_path %>" method="post" class="inline-form">
+        <input type="hidden" name="queue_name" value="<%= queue_name %>">
+        <button type="submit" class="action-button resume-button" title="Resume queue processing">Resume</button>
+      </form>
+    <% else %>
+      <form action="<%= pause_queue_path %>"
+            method="post"
+            class="inline-form"
+            data-confirm="Are you sure you want to pause the <%= queue_name %> queue? Workers will stop processing jobs from this queue.">
+        <input type="hidden" name="queue_name" value="<%= queue_name %>">
+        <button type="submit" class="action-button pause-button" title="Pause queue processing">Pause</button>
+      </form>
+    <% end %>
+  </td>
+</tr>
