@@ -3,6 +3,8 @@
 require 'spec_helper'
 
 RSpec.describe SolidQueueMonitor::ChartDataService do
+  include ActiveSupport::Testing::TimeHelpers
+
   describe '#calculate' do
     let(:service) { described_class.new(time_range: time_range) }
     let(:time_range) { '1d' }
@@ -98,6 +100,36 @@ RSpec.describe SolidQueueMonitor::ChartDataService do
 
       it 'excludes them' do
         expect(service.calculate[:created].sum).to eq(0)
+      end
+    end
+
+    context 'when the host application configures a non-UTC time zone' do
+      # 2026-05-13 17:00 UTC == 2026-05-13 10:00 America/Los_Angeles (PDT).
+      let(:frozen_utc) { Time.utc(2026, 5, 13, 17, 0, 0) }
+
+      around { |example| Time.use_zone('America/Los_Angeles') { example.run } }
+      before { travel_to(frozen_utc) }
+
+      it 'formats 1d x-axis labels in the host time zone' do
+        labels = described_class.new(time_range: '1d').calculate[:labels]
+        # 24 hourly buckets walking forward from (now - 1 day) at 10:00 PT
+        # back to now at 09:00 PT (23 hours later).
+        expect(labels.first).to eq('10:00')
+        expect(labels.last).to eq('09:00')
+      end
+
+      it 'does not format 1d labels in UTC' do
+        labels = described_class.new(time_range: '1d').calculate[:labels]
+        # In UTC the same range would start at 17:00 and end at 16:00.
+        expect(labels.first).not_to eq('17:00')
+        expect(labels.last).not_to eq('16:00')
+      end
+
+      it 'formats fine-grained 1h labels in the host time zone' do
+        labels = described_class.new(time_range: '1h').calculate[:labels]
+        # 12 buckets, 5 minutes each, walking from 09:00 PT to 09:55 PT.
+        expect(labels.first).to eq('09:00')
+        expect(labels.last).to eq('09:55')
       end
     end
   end
