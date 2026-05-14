@@ -124,6 +124,10 @@ SolidQueueMonitor.setup do |config|
   # Disable the chart on the overview page to skip chart queries entirely
   # config.show_chart = true
 end
+
+# Optional: inherit from a host-app controller to plug into your existing auth.
+# See "Custom Authentication" below. Defaults to "ActionController::Base".
+# SolidQueueMonitor.base_controller_class = 'AdminController'
 ```
 
 ### Performance at Scale
@@ -158,6 +162,48 @@ config.password = ENV['SOLID_QUEUE_MONITOR_PASSWORD']
 config.username = -> { Rails.application.credentials.dig(:solid_queue_monitor, :username) }
 config.password = -> { Rails.application.credentials.dig(:solid_queue_monitor, :password) }
 ```
+
+### Custom Authentication
+
+By default, Solid Queue Monitor uses HTTP Basic auth with the username/password from `SolidQueueMonitor.setup`. To integrate with your app's existing auth (Devise, Pundit, OmniAuth, custom sessions, etc.), point the engine at a base controller from your host app:
+
+```ruby
+# config/initializers/solid_queue_monitor.rb
+SolidQueueMonitor.setup do |config|
+  config.authentication_enabled = false # disable HTTP Basic
+end
+
+# Inherit from your own controller so its before_actions, rescue_froms,
+# layout, and current_user helper cascade into the engine.
+SolidQueueMonitor.base_controller_class = 'AdminController'
+```
+
+**Minimal example — just authenticate:**
+
+```ruby
+class AdminController < ApplicationController
+  before_action :authenticate_user!   # Devise (or your equivalent)
+end
+```
+
+**Richer example — require an admin role:**
+
+```ruby
+class AdminController < ApplicationController
+  before_action :authenticate_user!
+  before_action :require_admin
+
+  private
+
+  def require_admin
+    redirect_to root_path, alert: 'Not authorized' unless current_user&.admin?
+  end
+end
+```
+
+Leave `authentication_enabled = true` if you want HTTP Basic to run *on top of* your host auth (host runs first, HTTP Basic second). Most adopters disable it.
+
+Restart your server after changing this config — the class hierarchy is set at load time, so config changes won't take effect on a live process.
 
 ## Usage
 

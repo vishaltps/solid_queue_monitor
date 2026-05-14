@@ -5,8 +5,11 @@ require_relative 'solid_queue_monitor/engine'
 
 module SolidQueueMonitor
   class Error < StandardError; end
+
+  DEFAULT_BASE_CONTROLLER_CLASS = 'ActionController::Base'
+
   class << self
-    attr_writer :username, :password
+    attr_writer :username, :password, :base_controller_class
     attr_accessor :jobs_per_page, :authentication_enabled,
                   :auto_refresh_enabled, :auto_refresh_interval, :show_chart
 
@@ -16,6 +19,10 @@ module SolidQueueMonitor
 
     def password
       resolve_value(@password)
+    end
+
+    def base_controller_class
+      @base_controller_class || DEFAULT_BASE_CONTROLLER_CLASS
     end
 
     private

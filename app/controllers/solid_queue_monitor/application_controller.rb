@@ -1,9 +1,15 @@
 # frozen_string_literal: true
 
 module SolidQueueMonitor
-  class ApplicationController < ActionController::Base
+  class ApplicationController < SolidQueueMonitor.base_controller_class.safe_constantize || ActionController::Base
     include ActionController::HttpAuthentication::Basic::ControllerMethods
     include ActionController::Flash
+
+    # Explicitly include the engine's helpers so they remain available when the
+    # host configures a custom base_controller_class. Rails auto-includes engine
+    # helpers only when the parent is ActionController::Base; inheriting from a
+    # host controller short-circuits that, breaking view methods like render_chart.
+    helper SolidQueueMonitor::Engine.helpers
 
     before_action :authenticate, if: -> { SolidQueueMonitor::AuthenticationService.authentication_required? }
     layout 'solid_queue_monitor/application'

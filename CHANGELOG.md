@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.1.0] - 2026-05-13
+
+### Added
+
+- `SolidQueueMonitor.base_controller_class` config option. Set it to the name of a host-app controller (e.g. `'AdminController'`) and the engine's `ApplicationController` will inherit from that class, so every `before_action`, `rescue_from`, layout, and `current_user` helper cascades into the dashboard. This unblocks integration with Devise, Pundit, OmniAuth, and custom session middleware without monkey-patching. Defaults to `'ActionController::Base'`; behaviour is unchanged when not set.
+- README "Custom Authentication" section documenting the integration pattern with minimal and role-gated examples.
+
+### Changed
+
+- The activity chart's x-axis labels and bucket boundaries now consistently use the host application's `Time.zone` instead of UTC. No new config knob — set `config.time_zone` in `config/application.rb` as usual. Tests now pin this behaviour in `America/Los_Angeles`.
+
+### Migration
+
+`bundle update solid_queue_monitor` is sufficient. The default behaviour matches v2.0.0 exactly; both features are opt-in (the chart automatically picks up your existing `Time.zone`).
+
 ## [2.0.0] - 2026-05-12
 
 ### Changed
