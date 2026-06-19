@@ -322,7 +322,9 @@
     function bulkSubmit(action, promptMsg) {
       var ids = checkedBoxes().map(function (checkbox) { return checkbox.value; });
       if (ids.length === 0 || !window.confirm(promptMsg)) return;
-      Array.prototype.slice.call(form.querySelectorAll('input[type="hidden"]')).forEach(function (input) { input.remove(); });
+      // Only clear previously-appended job id inputs. Other hidden inputs
+      // (e.g. the CSRF authenticity_token) must be preserved.
+      Array.prototype.slice.call(form.querySelectorAll('input[type="hidden"][name="job_ids[]"]')).forEach(function (input) { input.remove(); });
       form.action = action;
       ids.forEach(function (id) { appendHidden('job_ids[]', id); });
       form.submit();

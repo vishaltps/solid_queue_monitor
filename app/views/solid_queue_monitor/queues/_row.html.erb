@@ -17,6 +17,7 @@
   <td class="actions-cell">
     <% if paused %>
       <form action="<%= resume_queue_path %>" method="post" class="inline-form">
+        <%= csrf_token_field %>
         <input type="hidden" name="queue_name" value="<%= queue_name %>">
         <button type="submit" class="action-button resume-button" title="Resume queue processing">Resume</button>
       </form>
@@ -25,6 +26,7 @@
             method="post"
             class="inline-form"
             data-confirm="Are you sure you want to pause the <%= queue_name %> queue? Workers will stop processing jobs from this queue.">
+        <%= csrf_token_field %>
         <input type="hidden" name="queue_name" value="<%= queue_name %>">
         <button type="submit" class="action-button pause-button" title="Pause queue processing">Pause</button>
       </form>

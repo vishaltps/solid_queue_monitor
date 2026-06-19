@@ -25,6 +25,23 @@ module SolidQueueMonitor
       type.to_s == 'success' ? 'message-success' : 'message-error'
     end
 
+    # Hidden authenticity_token field for raw HTML POST forms.
+    # Renders nothing unless CSRF protection is enabled, so hosts without a
+    # session store are unaffected (form_authenticity_token needs a session).
+    def csrf_token_field
+      return ''.html_safe unless SolidQueueMonitor.csrf_protection_enabled
+
+      hidden_field_tag(:authenticity_token, form_authenticity_token)
+    end
+
+    # CSRF meta tags for JS/fetch-driven POSTs (defense in depth).
+    # Only emitted when CSRF protection is enabled, for the same reason.
+    def csrf_meta_tags_if_enabled
+      return ''.html_safe unless SolidQueueMonitor.csrf_protection_enabled
+
+      csrf_meta_tags
+    end
+
     def queue_link(queue_name, css_class: nil)
       return '-' if queue_name.blank?
 

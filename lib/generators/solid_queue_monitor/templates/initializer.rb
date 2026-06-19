@@ -27,4 +27,11 @@ SolidQueueMonitor.setup do |config|
 
   # Disable the chart on the overview page to skip chart queries entirely.
   # config.show_chart = true
+
+  # Enable CSRF protection for the dashboard's destructive POST actions.
+  # Disabled by default for backward compatibility. Requires the host app to
+  # have a session store (e.g. cookie_store) and the dashboard mounted on the
+  # same origin. When enabled, all dashboard forms embed an authenticity token
+  # and unverified POSTs are rejected.
+  # config.csrf_protection_enabled = false
 end

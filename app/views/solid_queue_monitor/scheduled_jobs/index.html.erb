@@ -15,6 +15,7 @@
 </div>
 
 <form id="scheduled-jobs-form" method="post">
+  <%= csrf_token_field %>
   <% columns = [
     { sort_key: nil, label: tag.input(type: 'checkbox', id: 'scheduled-jobs-select-all') },
     { sort_key: :class_name, label: 'Job' },

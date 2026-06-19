@@ -24,7 +24,7 @@
          data-confirm="Remove all <%= @summary[:dead] %> dead process<%= suffix %>? This will clean up processes that have stopped sending heartbeats.">
         Prune all
       </a>
-      <form id="prune-all-form" action="<%= prune_workers_path %>" method="post" class="is-hidden"></form>
+      <form id="prune-all-form" action="<%= prune_workers_path %>" method="post" class="is-hidden"><%= csrf_token_field %></form>
     <% end %>
   </div>
 </div>

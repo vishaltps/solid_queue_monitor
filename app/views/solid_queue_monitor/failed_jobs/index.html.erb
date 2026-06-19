@@ -15,6 +15,7 @@
 </div>
 
 <form method="post" id="failed-jobs-form">
+  <%= csrf_token_field %>
   <% columns = [
     { sort_key: nil, label: tag.input(type: 'checkbox', id: 'select-all', class: 'select-all-checkbox') },
     { sort_key: :class_name, label: 'Job' },

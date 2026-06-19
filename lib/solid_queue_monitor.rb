@@ -11,7 +11,8 @@ module SolidQueueMonitor
   class << self
     attr_writer :username, :password, :base_controller_class
     attr_accessor :jobs_per_page, :authentication_enabled,
-                  :auto_refresh_enabled, :auto_refresh_interval, :show_chart
+                  :auto_refresh_enabled, :auto_refresh_interval, :show_chart,
+                  :csrf_protection_enabled
 
     def username
       resolve_value(@username)
@@ -39,6 +40,9 @@ module SolidQueueMonitor
   @auto_refresh_enabled = true
   @auto_refresh_interval = 30 # seconds
   @show_chart = true
+  # Disabled by default for backward compatibility: enabling CSRF protection
+  # requires a session-backed host app, which the gem does not assume.
+  @csrf_protection_enabled = false
 
   def self.setup
     yield self

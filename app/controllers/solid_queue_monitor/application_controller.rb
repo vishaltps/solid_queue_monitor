@@ -13,7 +13,12 @@ module SolidQueueMonitor
 
     before_action :authenticate, if: -> { SolidQueueMonitor::AuthenticationService.authentication_required? }
     layout 'solid_queue_monitor/application'
-    skip_before_action :verify_authenticity_token
+
+    # CSRF protection is opt-in (config.csrf_protection_enabled). By default the
+    # token check is skipped so the dashboard works in hosts without a session
+    # store. When the host enables it, the standard verify_authenticity_token
+    # before_action runs and unverified POSTs are rejected.
+    skip_before_action :verify_authenticity_token, unless: -> { SolidQueueMonitor.csrf_protection_enabled }
 
     def set_flash_message(message, type)
       # Store in instance variable for access in views
