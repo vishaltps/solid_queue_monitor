@@ -99,5 +99,33 @@ RSpec.describe 'CSRF protection' do
       expect(response).to have_http_status(:found)
       expect(SolidQueue::Pause.exists?(queue_name: 'default')).to be(true)
     end
+
+    # Regression: enabling CSRF protection also turns on Rails' cross-origin
+    # JavaScript guard (verify_same_origin_request). Since assets are served
+    # from a controller, a plain GET for the JS asset would otherwise raise
+    # ActionController::InvalidCrossOriginRequest. Assets are public and must
+    # stay exempt from forgery protection.
+    it 'serves the JS asset without a cross-origin request error' do
+      SolidQueueMonitor::AssetCache.clear!
+      fingerprint = SolidQueueMonitor::AssetCache.fingerprint_for('application.js')
+
+      get "/assets/application-#{fingerprint}.js"
+
+      expect(response).to have_http_status(:ok)
+      expect(response.content_type).to start_with('application/javascript')
+    ensure
+      SolidQueueMonitor::AssetCache.clear!
+    end
+
+    it 'serves the CSS asset' do
+      SolidQueueMonitor::AssetCache.clear!
+      fingerprint = SolidQueueMonitor::AssetCache.fingerprint_for('application.css')
+
+      get "/assets/application-#{fingerprint}.css"
+
+      expect(response).to have_http_status(:ok)
+    ensure
+      SolidQueueMonitor::AssetCache.clear!
+    end
   end
 end
