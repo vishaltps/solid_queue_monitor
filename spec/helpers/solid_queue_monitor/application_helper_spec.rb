@@ -39,6 +39,36 @@ RSpec.describe SolidQueueMonitor::ApplicationHelper do
     end
   end
 
+  describe '#csrf_token_field_if_enabled' do
+    it 'returns an empty string when CSRF protection is disabled' do
+      allow(SolidQueueMonitor).to receive(:csrf_protection_enabled).and_return(false)
+      expect(helper.csrf_token_field_if_enabled).to eq('')
+    end
+
+    it 'renders a hidden authenticity_token field when enabled' do
+      allow(SolidQueueMonitor).to receive(:csrf_protection_enabled).and_return(true)
+      allow(helper).to receive(:form_authenticity_token).and_return('abc123')
+
+      result = helper.csrf_token_field_if_enabled
+      expect(result).to include('type="hidden"')
+      expect(result).to include('name="authenticity_token"')
+      expect(result).to include('value="abc123"')
+    end
+  end
+
+  describe '#csrf_meta_tags_if_enabled' do
+    it 'returns an empty string when CSRF protection is disabled' do
+      allow(SolidQueueMonitor).to receive(:csrf_protection_enabled).and_return(false)
+      expect(helper.csrf_meta_tags_if_enabled).to eq('')
+    end
+
+    it 'delegates to csrf_meta_tags when enabled' do
+      allow(SolidQueueMonitor).to receive(:csrf_protection_enabled).and_return(true)
+      allow(helper).to receive(:csrf_meta_tags).and_return('<meta name="csrf-token" content="x">'.html_safe)
+      expect(helper.csrf_meta_tags_if_enabled).to include('name="csrf-token"')
+    end
+  end
+
   describe '#queue_link' do
     it 'renders a link to the queue details page' do
       result = helper.queue_link('default')

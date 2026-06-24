@@ -4,6 +4,7 @@
     <title>Solid Queue Monitor - <%= content_for?(:title) ? yield(:title) : 'Dashboard' %></title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%= csrf_meta_tags_if_enabled %>
     <%= stylesheet_link_tag asset_url_for('application.css'), nonce: content_security_policy_nonce %>
   </head>
   <body class="solid_queue_monitor"

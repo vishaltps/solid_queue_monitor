@@ -11,12 +11,14 @@
   <div class="section-header-right">
     <% if @paused %>
       <form action="<%= resume_queue_path %>" method="post" class="inline-form">
+        <%= csrf_token_field_if_enabled %>
         <input type="hidden" name="queue_name" value="<%= @queue_name %>">
         <input type="hidden" name="redirect_to" value="<%= queue_details_path(queue_name: @queue_name) %>">
         <button type="submit" class="action-button resume-button">Resume Queue</button>
       </form>
     <% else %>
       <form action="<%= pause_queue_path %>" method="post" class="inline-form" data-confirm="Are you sure you want to pause this queue?">
+        <%= csrf_token_field_if_enabled %>
         <input type="hidden" name="queue_name" value="<%= @queue_name %>">
         <input type="hidden" name="redirect_to" value="<%= queue_details_path(queue_name: @queue_name) %>">
         <button type="submit" class="action-button pause-button">Pause Queue</button>

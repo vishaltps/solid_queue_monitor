@@ -13,6 +13,7 @@
             method="post"
             class="inline-form"
             data-confirm="Remove this dead process from the registry?">
+        <%= csrf_token_field_if_enabled %>
         <button type="submit" class="action-button discard-button" title="Remove dead process">Remove</button>
       </form>
     <% else %>

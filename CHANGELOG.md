@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- `SolidQueueMonitor.csrf_protection_enabled` config option (default `false`). When enabled, the engine no longer skips `verify_authenticity_token`: all dashboard forms embed an `authenticity_token`, `csrf_meta_tags` are added to the layout, and unverified `POST` requests to the destructive actions (retry / discard / pause / resume / execute / reject / remove / prune) are rejected. Disabled by default for backward compatibility, since the gem does not assume the host app has a session store. See the new "CSRF Protection" section in the README for requirements.
+
 ## [2.1.0] - 2026-05-13
 
 ### Added

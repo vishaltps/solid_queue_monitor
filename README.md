@@ -123,6 +123,9 @@ SolidQueueMonitor.setup do |config|
 
   # Disable the chart on the overview page to skip chart queries entirely
   # config.show_chart = true
+
+  # Enable CSRF protection for the dashboard's destructive actions (opt-in)
+  # config.csrf_protection_enabled = false
 end
 
 # Optional: inherit from a host-app controller to plug into your existing auth.
@@ -139,6 +142,27 @@ If you don't need the job activity chart, disable it to skip chart queries entir
 ```ruby
 config.show_chart = false
 ```
+
+### CSRF Protection
+
+The dashboard's destructive actions (retry, discard, pause, resume, execute, reject, remove/prune workers) are all `POST` requests. By default CSRF protection is **disabled**, because the gem does not assume the host application has a session store (it works in API-only apps without one).
+
+If your host app has a session store and the dashboard is mounted on the same origin, you should enable CSRF protection:
+
+```ruby
+config.csrf_protection_enabled = true
+```
+
+When enabled:
+
+- All dashboard forms embed an `authenticity_token`, and `csrf_meta_tags` are added to the layout for JS/`fetch`-driven requests.
+- Unverified `POST` requests are rejected by Rails' standard `verify_authenticity_token` (returns `422 Unprocessable Entity`). Safe methods (`GET`/`HEAD`) pass through.
+
+Requirements:
+
+- The host app has a session store configured (e.g. `config.session_store :cookie_store`).
+- `config.api_only` is not enabled (or session middleware is otherwise present).
+- The dashboard is mounted on the same origin as the host app, so `form_authenticity_token` works.
 
 ### Authentication
 

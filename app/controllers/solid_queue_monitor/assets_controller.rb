@@ -4,6 +4,10 @@ module SolidQueueMonitor
   class AssetsController < ApplicationController
     skip_before_action :authenticate, raise: false
 
+    # Public read-only assets: exempt from CSRF so the cross-origin JavaScript
+    # guard doesn't reject GETs for the JS asset when csrf_protection_enabled.
+    skip_forgery_protection
+
     MIME_TYPES = { '.css' => 'text/css', '.js' => 'application/javascript' }.freeze
     FINGERPRINT_PATTERN = /\A(?<base>[A-Za-z0-9_]+)-(?<hash>[a-f0-9]+)(?<ext>\.css|\.js)\z/
 
