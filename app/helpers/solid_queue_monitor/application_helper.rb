@@ -28,7 +28,7 @@ module SolidQueueMonitor
     # Hidden authenticity_token field for raw HTML POST forms.
     # Renders nothing unless CSRF protection is enabled, so hosts without a
     # session store are unaffected (form_authenticity_token needs a session).
-    def csrf_token_field
+    def csrf_token_field_if_enabled
       return ''.html_safe unless SolidQueueMonitor.csrf_protection_enabled
 
       hidden_field_tag(:authenticity_token, form_authenticity_token)

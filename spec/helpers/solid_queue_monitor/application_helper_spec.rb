@@ -39,17 +39,17 @@ RSpec.describe SolidQueueMonitor::ApplicationHelper do
     end
   end
 
-  describe '#csrf_token_field' do
+  describe '#csrf_token_field_if_enabled' do
     it 'returns an empty string when CSRF protection is disabled' do
       allow(SolidQueueMonitor).to receive(:csrf_protection_enabled).and_return(false)
-      expect(helper.csrf_token_field).to eq('')
+      expect(helper.csrf_token_field_if_enabled).to eq('')
     end
 
     it 'renders a hidden authenticity_token field when enabled' do
       allow(SolidQueueMonitor).to receive(:csrf_protection_enabled).and_return(true)
       allow(helper).to receive(:form_authenticity_token).and_return('abc123')
 
-      result = helper.csrf_token_field
+      result = helper.csrf_token_field_if_enabled
       expect(result).to include('type="hidden"')
       expect(result).to include('name="authenticity_token"')
       expect(result).to include('value="abc123"')
