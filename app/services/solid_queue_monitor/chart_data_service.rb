@@ -61,7 +61,7 @@ module SolidQueueMonitor
     # This works identically on PostgreSQL and SQLite.
     def bucket_counts(model, column, start_time, end_time, interval, exclude_nil: false)
       start_epoch = start_time.to_i
-      expr = bucket_index_expr(column, start_epoch, interval)
+      expr = bucket_index_expr(model, column, start_epoch, interval)
 
       scope = model.where(column => start_time..end_time)
       scope = scope.where.not(column => nil) if exclude_nil
@@ -82,18 +82,23 @@ module SolidQueueMonitor
     # PostgreSQL: CAST((EXTRACT(EPOCH FROM col) - start) / interval AS INTEGER)
     # SQLite:     CAST((CAST(strftime('%s', col) AS INTEGER) - start) / interval AS INTEGER)
     # MySQL:      CAST((UNIX_TIMESTAMP(col) - start) / interval AS SIGNED)
-    def bucket_index_expr(column, start_epoch, interval_seconds)
-      if adapter?('sqlite')
+    #
+    # The adapter is detected from the model's own connection, not
+    # ActiveRecord::Base's. Solid Queue is commonly hosted on a dedicated
+    # database (config.solid_queue.connects_to), which may use a different
+    # engine than the host app's primary connection.
+    def bucket_index_expr(model, column, start_epoch, interval_seconds)
+      if adapter?(model, 'sqlite')
         "CAST((CAST(strftime('%s', #{column}) AS INTEGER) - #{start_epoch}) / #{interval_seconds} AS INTEGER)"
-      elsif adapter?('mysql') || adapter?('trilogy')
+      elsif adapter?(model, 'mysql') || adapter?(model, 'trilogy')
         "FLOOR((UNIX_TIMESTAMP(#{column}) - #{start_epoch}) / #{interval_seconds})"
       else
         "FLOOR((EXTRACT(EPOCH FROM #{column}) - #{start_epoch}) / #{interval_seconds})::integer"
       end
     end
 
-    def adapter?(name)
-      ActiveRecord::Base.connection.adapter_name.downcase.include?(name)
+    def adapter?(model, name)
+      model.connection.adapter_name.downcase.include?(name)
     end
   end
 end

@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- Activity chart no longer crashes the dashboard on multi-database setups where Solid Queue runs on a different engine than the host app's primary database (e.g. a MySQL primary with a dedicated PostgreSQL queue database via `config.solid_queue.connects_to`). The SQL dialect for the time-bucketing query is now detected from the Solid Queue model's own connection instead of `ActiveRecord::Base`, so a `PG::UndefinedFunction: function unix_timestamp(...) does not exist` error is no longer raised. Single-database and same-engine setups are unaffected. (#42)
+
 ## [2.2.0] - 2026-06-24
 
 ### Added

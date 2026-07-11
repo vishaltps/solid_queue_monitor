@@ -134,6 +134,53 @@ RSpec.describe SolidQueueMonitor::ChartDataService do
     end
   end
 
+  describe 'database adapter detection (multi-database safety)' do
+    let(:service) { described_class.new }
+
+    # Builds the bucket-index SQL for a model whose connection reports the given
+    # adapter, independent of the test database engine.
+    def expr_for(adapter_name)
+      connection = instance_double(ActiveRecord::ConnectionAdapters::AbstractAdapter,
+                                   adapter_name: adapter_name)
+      model = class_double(SolidQueue::Job, connection: connection)
+      service.send(:bucket_index_expr, model, 'created_at', 1000, 3600)
+    end
+
+    it 'uses PostgreSQL EXTRACT(EPOCH ...) syntax for a Postgres connection' do
+      expect(expr_for('PostgreSQL'))
+        .to eq('FLOOR((EXTRACT(EPOCH FROM created_at) - 1000) / 3600)::integer')
+    end
+
+    it 'uses MySQL UNIX_TIMESTAMP syntax for a MySQL connection' do
+      expect(expr_for('Mysql2')).to include('UNIX_TIMESTAMP(created_at)')
+    end
+
+    it 'uses MySQL syntax for a Trilogy connection' do
+      expect(expr_for('Trilogy')).to include('UNIX_TIMESTAMP(created_at)')
+    end
+
+    it 'uses SQLite strftime syntax for a SQLite connection' do
+      expect(expr_for('SQLite')).to include("strftime('%s', created_at)")
+    end
+
+    context 'when Solid Queue runs on a different engine than the primary database' do
+      # Regression for issue #42: MySQL primary + dedicated PostgreSQL queue
+      # database (config.solid_queue.connects_to). The dialect must follow the
+      # Solid Queue model's connection, not ActiveRecord::Base's.
+      before do
+        primary = instance_double(ActiveRecord::ConnectionAdapters::AbstractAdapter,
+                                  adapter_name: 'Mysql2')
+        allow(ActiveRecord::Base).to receive(:connection).and_return(primary)
+      end
+
+      it 'builds Postgres SQL when the queue model is on Postgres' do
+        expr = expr_for('PostgreSQL')
+        expect(expr).to include('EXTRACT(EPOCH FROM created_at)')
+        expect(expr).not_to include('UNIX_TIMESTAMP')
+      end
+    end
+  end
+
   describe 'constants' do
     it 'defines all time ranges' do
       expect(described_class::TIME_RANGES.keys).to eq(%w[15m 30m 1h 3h 6h 12h 1d 3d 1w])
