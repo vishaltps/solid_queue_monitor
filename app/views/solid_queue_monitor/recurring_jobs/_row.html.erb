@@ -5,4 +5,13 @@
   <td><%= queue_link(job.queue_name) %></td>
   <td><%= job.priority || 'Default' %></td>
   <td><%= format_datetime(job.updated_at) %></td>
+  <td class="actions-cell">
+    <form method="post"
+          action="<%= enqueue_recurring_job_path(job) %>"
+          class="inline-form"
+          data-confirm="Enqueue <%= job.key %> to run now? Its schedule will not change.">
+      <%= csrf_token_field_if_enabled %>
+      <button type="submit" class="action-button execute-button">Run now</button>
+    </form>
+  </td>
 </tr>

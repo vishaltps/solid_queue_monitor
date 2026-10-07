@@ -60,8 +60,31 @@ unless defined?(SolidQueue)
       self.table_name = 'solid_queue_pauses'
     end
 
+    class RecurringExecution < ApplicationRecord
+      self.table_name = 'solid_queue_recurring_executions'
+    end
+
     class RecurringTask < ApplicationRecord
       self.table_name = 'solid_queue_recurring_tasks'
+
+      # Mirrors SolidQueue::RecurringTask#enqueue for the test double.
+      # The real model records one execution per task and timestamp, then
+      # places the job on the ready queue immediately.
+      def enqueue(at:)
+        return false if RecurringExecution.exists?(task_key: key, run_at: at)
+
+        job = Job.create!(
+          queue_name: queue_name.presence || 'default',
+          class_name: class_name.presence || 'SolidQueue::RecurringJob',
+          arguments: arguments,
+          priority: priority || 0,
+          active_job_id: SecureRandom.uuid
+        )
+        ReadyExecution.create!(job: job, queue_name: job.queue_name, priority: job.priority)
+        RecurringExecution.create!(job_id: job.id, task_key: key, run_at: at)
+
+        Struct.new(:successfully_enqueued?).new(true)
+      end
     end
 
     class Process < ApplicationRecord

@@ -11,7 +11,9 @@ SolidQueueMonitor::Engine.routes.draw do
 
   resources :ready_jobs, only: [:index]
   resources :scheduled_jobs, only: [:index]
-  resources :recurring_jobs, only: [:index]
+  resources :recurring_jobs, only: [:index] do
+    post :enqueue, on: :member
+  end
   resources :failed_jobs, only: [:index]
   resources :in_progress_jobs, only: [:index]
   resources :queues, only: [:index]
