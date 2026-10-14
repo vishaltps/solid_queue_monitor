@@ -238,7 +238,7 @@ The dashboard provides several views:
 - **Overview**: Shows statistics, recent jobs, and job activity chart
 - **Ready Jobs**: Jobs that are ready to be executed
 - **Scheduled Jobs**: Jobs scheduled for future execution with execute and reject actions
-- **Recurring Jobs**: Jobs that run on a recurring schedule
+- **Recurring Jobs**: Jobs that run on a recurring schedule, with a Run now action that enqueues one task immediately without changing its schedule
 - **Failed Jobs**: Jobs that have failed with error details and retry/discard actions
 - **Queues**: Distribution of jobs across different queues with pause/resume controls
 - **Workers**: Real-time monitoring of all Solid Queue processes with health status

@@ -12,5 +12,11 @@ module SolidQueueMonitor
       @sort = sort_params
       @action_path = recurring_jobs_path
     end
+
+    def enqueue
+      result = SolidQueueMonitor::EnqueueRecurringTaskService.call(params[:id])
+      set_flash_message(result[:message], result[:success] ? 'success' : 'error')
+      redirect_to recurring_jobs_path
+    end
   end
 end
