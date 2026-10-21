@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.3.0] - 2026-10-21
+
+### Added
+
+- "Run now" action on the Recurring Jobs page. It enqueues a single recurring task immediately via `SolidQueue::RecurringTask#enqueue`, and the task's schedule stays the same. It is exposed as `POST /recurring_jobs/:id/enqueue`, asks for confirmation before submitting, and honours `csrf_protection_enabled`. If a run for the same task and time has already been enqueued, an error flash is shown instead. (#46, thanks @mikekytyzov)
+
 ## [2.2.1] - 2026-07-13
 
 ### Fixed
