@@ -39,6 +39,29 @@ RSpec.describe 'Failed Jobs' do
     end
   end
 
+  describe 'row actions on GET /failed_jobs' do
+    let!(:failed_job) { create(:solid_queue_failed_execution) }
+
+    it 'submits the first row Retry and Discard to their own actions' do
+      get '/failed_jobs'
+
+      doc = Nokogiri::HTML5(response.body)
+      retry_form = doc.at_xpath("//button[normalize-space()='Retry']/ancestor::form[1]")
+      discard_form = doc.at_xpath("//button[normalize-space()='Discard']/ancestor::form[1]")
+
+      expect(retry_form['action']).to eq("/retry_failed_job/#{failed_job.id}")
+      expect(discard_form['action']).to eq("/discard_failed_job/#{failed_job.id}")
+    end
+
+    it 'keeps the bulk form out of the table' do
+      get '/failed_jobs'
+
+      doc = Nokogiri::HTML5(response.body)
+      expect(doc.at_css('#failed-jobs-form')).to be_present
+      expect(doc.at_css('#failed-jobs-form table')).to be_nil
+    end
+  end
+
   describe 'POST /retry_failed_job/:id' do
     let!(:failed_job) { create(:solid_queue_failed_execution) }
 
