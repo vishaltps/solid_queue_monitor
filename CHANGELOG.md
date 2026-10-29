@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- Retry on the first row of the Failed Jobs page returned a 404 (`No route matches [POST] "/failed_jobs"`). The bulk-actions form wrapped the whole table, so each row's Retry/Discard form was nested inside it; the HTML parser drops a nested form, and the first row's buttons submitted the bulk form, which has no action. Every later row worked, because the first row's closing `</form>` ended the bulk form early, which is why this only showed with a single failed job (or on the first row). The bulk form now holds only the CSRF token and the `job_ids[]` the bulk buttons append, and closes before the table.
+
 ## [2.3.0] - 2026-10-21
 
 ### Added
