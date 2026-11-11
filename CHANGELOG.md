@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- Discard action on the Ready Jobs page, per row and as a "Discard Selected" bulk action, so ready jobs that no worker will ever claim (e.g. left on a queue that was renamed) can be removed from the UI. Like Discard on Failed Jobs and Reject on Scheduled Jobs, it marks each job finished and deletes its ready execution. A job is claimed for discarding the same way a worker claims it, by deleting its ready execution, so the two cannot both take it on any database (SQLite included); a job a worker claimed after the page loaded is skipped and counted as failed in the flash. Discarding a job with a concurrency limit gives back its slot and releases the next blocked job with the same key, and a ready execution whose job row is gone is simply removed. It is exposed as `POST /discard_ready_job/:id` and `POST /discard_ready_jobs`, asks for confirmation, and honours `csrf_protection_enabled`. (#45)
 ## [2.3.1] - 2026-10-29
 
 ### Fixed

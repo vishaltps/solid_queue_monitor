@@ -14,6 +14,7 @@
     initChartTooltip();
     initScheduledBulkActions();
     initFailedJobsBulkActions();
+    initReadyJobsBulkActions();
     initJobDetailsBehaviors();
     initGlobalBehaviors();
   });
@@ -352,6 +353,61 @@
     if (discardButton) {
       discardButton.addEventListener('click', function () {
         bulkSubmit(discardButton.dataset.actionUrl, 'Are you sure you want to discard the selected jobs?');
+      });
+    }
+
+    updateButtonState();
+  }
+
+  function initReadyJobsBulkActions() {
+    var form = document.getElementById('ready-jobs-form');
+    if (!form) return;
+
+    var selectAll = document.getElementById('ready-jobs-select-all');
+    var discardButton = document.getElementById('discard-ready-selected-top');
+
+    function checkboxes() {
+      return Array.prototype.slice.call(document.querySelectorAll('.ready-job-checkbox'));
+    }
+
+    function checkedBoxes() {
+      return checkboxes().filter(function (checkbox) { return checkbox.checked; });
+    }
+
+    function updateButtonState() {
+      if (discardButton) discardButton.disabled = checkedBoxes().length === 0;
+    }
+
+    if (selectAll) {
+      selectAll.addEventListener('change', function () {
+        checkboxes().forEach(function (checkbox) { checkbox.checked = selectAll.checked; });
+        updateButtonState();
+      });
+    }
+
+    checkboxes().forEach(function (checkbox) {
+      checkbox.addEventListener('change', function () {
+        if (selectAll) selectAll.checked = checkedBoxes().length === checkboxes().length;
+        updateButtonState();
+      });
+    });
+
+    if (discardButton) {
+      discardButton.addEventListener('click', function () {
+        var ids = checkedBoxes().map(function (checkbox) { return checkbox.value; });
+        if (ids.length === 0) return;
+        if (!window.confirm('Are you sure you want to discard the selected jobs? They will not run. This action cannot be undone.')) return;
+
+        Array.prototype.slice.call(form.querySelectorAll('input[type="hidden"][name="job_ids[]"]')).forEach(function (input) { input.remove(); });
+        form.action = discardButton.dataset.actionUrl;
+        ids.forEach(function (id) {
+          var input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = 'job_ids[]';
+          input.value = id;
+          form.appendChild(input);
+        });
+        form.submit();
       });
     }
 
