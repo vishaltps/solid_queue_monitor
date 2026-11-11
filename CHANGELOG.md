@@ -5,6 +5,11 @@
 ### Added
 
 - Discard action on the Ready Jobs page, per row and as a "Discard Selected" bulk action, so ready jobs that no worker will ever claim (e.g. left on a queue that was renamed) can be removed from the UI. Like Discard on Failed Jobs and Reject on Scheduled Jobs, it marks each job finished and deletes its ready execution. A job is claimed for discarding the same way a worker claims it, by deleting its ready execution, so the two cannot both take it on any database (SQLite included); a job a worker claimed after the page loaded is skipped and counted as failed in the flash. Discarding a job with a concurrency limit gives back its slot and releases the next blocked job with the same key, and a ready execution whose job row is gone is simply removed. It is exposed as `POST /discard_ready_job/:id` and `POST /discard_ready_jobs`, asks for confirmation, and honours `csrf_protection_enabled`. (#45)
+## [2.3.1] - 2026-10-29
+
+### Fixed
+
+- Retry on the first row of the Failed Jobs page returned a 404 (`No route matches [POST] "/failed_jobs"`). The bulk-actions form wrapped the whole table, so each row's Retry/Discard form was nested inside it; the HTML parser drops a nested form, and the first row's buttons submitted the bulk form, which has no action. Every later row worked, because the first row's closing `</form>` ended the bulk form early, which is why this only showed with a single failed job (or on the first row). The bulk form now holds only the CSRF token and the `job_ids[]` the bulk buttons append, and closes before the table.
 
 ## [2.3.0] - 2026-10-21
 
