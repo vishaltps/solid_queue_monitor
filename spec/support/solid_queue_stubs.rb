@@ -37,11 +37,12 @@ unless defined?(SolidQueue)
       self.table_name = 'solid_queue_failed_executions'
       belongs_to :job
 
+      # Mirrors SolidQueue::FailedExecution#retry: one locked transaction.
       def retry
-        # Stub implementation for testing
-        job&.update(finished_at: nil)
-        destroy
-        true
+        with_lock do
+          ReadyExecution.create!(job_id: job_id, queue_name: job.queue_name, priority: job.priority)
+          destroy!
+        end
       end
 
       def discard
