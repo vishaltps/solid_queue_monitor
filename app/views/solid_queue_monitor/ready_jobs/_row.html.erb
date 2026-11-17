@@ -1,7 +1,19 @@
 <tr>
+  <td><input type="checkbox" class="ready-job-checkbox" value="<%= job.id %>"></td>
   <td><%= link_to job.job.class_name, job_path(job.job), class: 'job-class-link' %></td>
   <td><%= queue_link(job.queue_name) %></td>
   <td><%= job.priority %></td>
   <td><%= format_arguments(job.job.arguments) %></td>
   <td><%= format_datetime(job.created_at) %></td>
+  <td class="actions-cell">
+    <div class="job-actions">
+      <form method="post"
+            action="<%= discard_ready_job_path(id: job.id) %>"
+            class="inline-form"
+            data-confirm="Are you sure you want to discard this job? It will not run.">
+        <%= csrf_token_field_if_enabled %>
+        <button type="submit" class="action-button discard-button">Discard</button>
+      </form>
+    </div>
+  </td>
 </tr>

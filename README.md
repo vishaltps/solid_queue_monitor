@@ -28,7 +28,7 @@ A lightweight, zero-dependency web interface for monitoring Solid Queue backgrou
   - Complete error details with backtrace for failed jobs
   - Job arguments displayed in formatted JSON
 - **Queue Details Page**: Detailed view for individual queues with job counts and filtering
-- **Ready Jobs**: View jobs that are ready to be executed
+- **Ready Jobs**: View jobs that are ready to be executed, with the ability to discard them (e.g. jobs stranded on a queue no worker polls)
 - **In Progress Jobs**: Monitor jobs currently being processed by workers
 - **Scheduled Jobs**: See upcoming jobs scheduled for future execution with ability to execute immediately or reject permanently
 - **Recurring Jobs**: Manage periodic jobs that run on a schedule
@@ -38,7 +38,7 @@ A lightweight, zero-dependency web interface for monitoring Solid Queue backgrou
 - **Global Search**: Search across all job types by class name, queue, arguments, job ID, and error messages
 - **Sortable Columns**: Click column headers to sort job tables by any column with ascending/descending toggle
 - **Advanced Job Filtering**: Filter jobs by class name, queue, status, and job arguments
-- **Quick Actions**: Retry or discard failed jobs, execute or reject scheduled jobs directly from any view
+- **Quick Actions**: Retry or discard failed jobs, discard ready jobs, execute or reject scheduled jobs directly from any view
 - **Performance Optimized**: Designed for high-volume applications with smart pagination
 - **Auto-refresh**: Real-time monitoring with configurable auto-refresh interval and toggle
 - **Optional Authentication**: Secure your dashboard with HTTP Basic Authentication
@@ -236,7 +236,7 @@ After installation, visit `/solid_queue` in your browser to access the dashboard
 The dashboard provides several views:
 
 - **Overview**: Shows statistics, recent jobs, and job activity chart
-- **Ready Jobs**: Jobs that are ready to be executed
+- **Ready Jobs**: Jobs that are ready to be executed, with a discard action
 - **Scheduled Jobs**: Jobs scheduled for future execution with execute and reject actions
 - **Recurring Jobs**: Jobs that run on a recurring schedule, with a Run now action that enqueues one task immediately without changing its schedule
 - **Failed Jobs**: Jobs that have failed with error details and retry/discard actions

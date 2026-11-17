@@ -21,6 +21,9 @@ SolidQueueMonitor::Engine.routes.draw do
   resources :workers, only: [:index]
   resources :jobs, only: [:show]
 
+  post 'discard_ready_job/:id', to: 'ready_jobs#discard', as: :discard_ready_job
+  post 'discard_ready_jobs', to: 'ready_jobs#discard_all', as: :discard_ready_jobs
+
   post 'execute_jobs', to: 'scheduled_jobs#create', as: :execute_jobs
   post 'execute_scheduled_job/:id', to: 'scheduled_jobs#execute', as: :execute_scheduled_job
   post 'reject_jobs', to: 'scheduled_jobs#reject_all', as: :reject_jobs

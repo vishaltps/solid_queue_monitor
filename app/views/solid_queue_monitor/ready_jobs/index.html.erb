@@ -5,12 +5,24 @@
            filters: @filters,
            show_status: false %>
 
+<div class="bulk-actions-bar">
+  <button type="button" class="action-button discard-button" id="discard-ready-selected-top" data-action-url="<%= discard_ready_jobs_path %>" disabled>
+    Discard Selected
+  </button>
+</div>
+
+<form method="post" id="ready-jobs-form">
+  <%= csrf_token_field_if_enabled %>
+</form>
+
 <% columns = [
+  { sort_key: nil, label: tag.input(type: 'checkbox', id: 'ready-jobs-select-all') },
   { sort_key: :class_name, label: 'Job' },
   { sort_key: :queue_name, label: 'Queue' },
   { sort_key: :priority, label: 'Priority' },
   { sort_key: nil, label: 'Arguments' },
-  { sort_key: :created_at, label: 'Created At' }
+  { sort_key: :created_at, label: 'Created At' },
+  { sort_key: nil, label: 'Actions' }
 ] %>
 
 <%= render 'solid_queue_monitor/shared/jobs_table',
