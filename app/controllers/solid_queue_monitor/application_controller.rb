@@ -36,6 +36,14 @@ module SolidQueueMonitor
 
     private
 
+    # Only follow redirect_to within the dashboard: url_from drops other hosts
+    # and anything Rails' open-redirect check would reject with a 500.
+    def redirect_to_return_path(fallback)
+      target = url_from(params[:redirect_to])
+      target = nil unless target&.start_with?("#{request.script_name}/")
+      redirect_to(target || fallback)
+    end
+
     def authenticate
       authenticate_or_request_with_http_basic do |username, password|
         SolidQueueMonitor::AuthenticationService.authenticate(username, password)
