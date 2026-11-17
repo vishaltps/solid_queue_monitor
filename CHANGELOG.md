@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- The Overview's "Active Jobs" card no longer counts failed jobs. It was the sum of ready, scheduled, in-progress and failed jobs, and since failed jobs pile up until someone retries or discards them while the others drain within seconds, it usually showed the same number as the Failed card. It now counts the jobs waiting to run or running: ready, scheduled, in-progress and blocked. Failed jobs keep their own card. Expect the number to drop after upgrading.
+
+### Added
+
+- "Blocked" card on the Overview, counting jobs held back by a concurrency limit (`limits_concurrency`) until a slot frees up. They were not shown anywhere on the dashboard before. Like the other cards, it reads its execution table (`solid_queue_blocked_executions`), not the jobs table.
+
 ## [2.4.0] - 2026-11-17
 
 ### Added

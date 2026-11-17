@@ -9,6 +9,7 @@ RSpec.describe SolidQueueMonitor::StatsCalculator do
       create(:solid_queue_scheduled_execution)
       create(:solid_queue_ready_execution)
       create(:solid_queue_claimed_execution)
+      create(:solid_queue_blocked_execution)
     end
 
     it 'returns a hash with all required statistics' do
@@ -18,6 +19,7 @@ RSpec.describe SolidQueueMonitor::StatsCalculator do
         :active_jobs,
         :scheduled,
         :ready,
+        :blocked,
         :failed,
         :in_progress,
         :recurring
@@ -29,16 +31,22 @@ RSpec.describe SolidQueueMonitor::StatsCalculator do
 
       expect(stats[:scheduled]).to eq(1)
       expect(stats[:ready]).to eq(1)
+      expect(stats[:blocked]).to eq(1)
       expect(stats[:failed]).to eq(1)
       expect(stats[:in_progress]).to eq(1)
       expect(stats[:recurring]).to eq(0)
     end
 
-    it 'derives active_jobs from execution table counts' do
+    it 'counts ready, scheduled, in-progress and blocked jobs as active' do
       stats = described_class.calculate
 
-      expected_active = stats[:ready] + stats[:scheduled] + stats[:in_progress] + stats[:failed]
+      expected_active = stats[:ready] + stats[:scheduled] + stats[:in_progress] + stats[:blocked]
       expect(stats[:active_jobs]).to eq(expected_active)
+    end
+
+    it 'does not count failed jobs as active' do
+      expect { create(:solid_queue_failed_execution) }
+        .not_to(change { described_class.calculate[:active_jobs] })
     end
 
     it 'does not query the jobs table for counts' do

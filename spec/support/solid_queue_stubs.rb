@@ -56,6 +56,11 @@ unless defined?(SolidQueue)
       belongs_to :job
     end
 
+    class BlockedExecution < ApplicationRecord
+      self.table_name = 'solid_queue_blocked_executions'
+      belongs_to :job
+    end
+
     class Pause < ApplicationRecord
       self.table_name = 'solid_queue_pauses'
     end
