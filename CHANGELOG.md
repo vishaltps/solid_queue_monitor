@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- The `redirect_to` parameter on Retry/Discard (failed jobs), Execute (scheduled jobs) and Pause/Resume (queues) was passed straight to `redirect_to`, so a crafted link or form could send the user to another site after the action. Hosts on Rails' default open-redirect protection (`load_defaults 7.0` or later) got a 500 error instead, after the action had already run. Only paths within the dashboard are followed now, checked with Rails' `url_from`; anything else (other hosts, protocol-relative or backslash URLs, other schemes, paths outside the dashboard, or paths Rails can't parse) falls back to the page's usual redirect.
+
 ## [2.4.0] - 2026-11-17
 
 ### Added
