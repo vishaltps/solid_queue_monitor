@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- Retrying a failed job could leave it with no execution at all, so it never ran again and was shown as pending forever. The monitor moved the job back to the ready queue and deleted its failed execution itself, inside an `ActiveRecord::Base` transaction. That is the app's primary database: when Solid Queue has its own database (`config.solid_queue.connects_to`, the Rails 8 default), the two steps committed separately. A worker could pick the job up in between and fail it again, Solid Queue recorded that failure on the same failed execution, and the monitor then deleted it. Retry, per row and bulk, now calls Solid Queue's own `FailedExecution#retry`, which does both in one transaction on Solid Queue's database. Retried jobs now also get their execution counters reset (so `retry_on ... attempts:` starts over) and respect `limits_concurrency`, as a retry from Solid Queue itself does. Retrying a failed job that someone else retried or discarded after it was loaded no longer raises an error, and a bulk retry now counts a job whose retry raises (e.g. a lock timeout) as failed and carries on with the rest instead of stopping halfway with an error page. The service's success message now reads "Job queued for retry", since a job with a concurrency limit can go to blocked executions instead of the ready queue.
+
 ## [2.4.0] - 2026-11-17
 
 ### Added
