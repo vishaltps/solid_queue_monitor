@@ -131,6 +131,8 @@ GEM
     mini_portile2 (2.8.9)
     minitest (6.0.1)
       prism (~> 1.5)
+    mysql2 (0.5.7)
+      bigdecimal
     net-imap (0.6.2)
       date
       net-protocol
@@ -150,6 +152,8 @@ GEM
     parser (3.3.7.1)
       ast (~> 2.4.1)
       racc
+    pg (1.7.0)
+    pg (1.7.0-arm64-darwin)
     pp (0.6.3)
       prettyprint
     prettyprint (0.2.0)
@@ -294,6 +298,8 @@ PLATFORMS
 
 DEPENDENCIES
   factory_bot_rails
+  mysql2
+  pg
   rails-controller-testing
   rspec-rails
   rubocop

@@ -44,3 +44,64 @@ jobs:
 
       - name: Run RSpec
         run: bundle exec rspec
+
+  # The default suite runs on in-memory SQLite; these re-run it on the other
+  # engines Solid Queue is hosted on, so adapter-specific SQL (filters, chart
+  # buckets) is proven where it actually executes.
+  test-mysql:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+          MYSQL_DATABASE: solid_queue_monitor_test
+          # A non-UTC server is what exposes time-zone bugs in the SQL.
+          TZ: America/Sao_Paulo
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    env:
+      BUNDLE_WITH: mysql
+      DATABASE_URL: mysql2://root@127.0.0.1:3306/solid_queue_monitor_test
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+
+      - name: Run RSpec
+        run: bundle exec rspec
+
+  test-postgresql:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: solid_queue_monitor_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    env:
+      BUNDLE_WITH: postgresql
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/solid_queue_monitor_test
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+
+      - name: Run RSpec
+        run: bundle exec rspec

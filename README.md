@@ -327,6 +327,15 @@ Please make sure to update tests as appropriate and follow the existing code sty
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
+The suite runs on in-memory SQLite by default. Because some queries differ between adapters, it can also run on MySQL or PostgreSQL, the way CI does. Install the matching optional Bundler group, create an empty database, and point `DATABASE_URL` at it:
+
+```bash
+bundle config set --local with mysql   # or: postgresql
+bundle install
+DATABASE_URL=mysql2://root@127.0.0.1/solid_queue_monitor_test bundle exec rspec
+DATABASE_URL=postgresql://postgres@127.0.0.1/solid_queue_monitor_test bundle exec rspec
+```
+
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).

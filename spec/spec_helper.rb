@@ -11,11 +11,13 @@ abort('The Rails environment is running in production mode!') if Rails.env.produ
 require 'rspec/rails'
 require 'factory_bot_rails'
 
-# Set up the test database
-ActiveRecord::Base.establish_connection(
-  adapter: 'sqlite3',
-  database: ':memory:'
-)
+# Set up the test database: in-memory SQLite by default. Set DATABASE_URL to
+# run the suite against another adapter, e.g.
+#   DATABASE_URL=mysql2://root@127.0.0.1/solid_queue_monitor_test
+#   DATABASE_URL=postgresql://postgres@127.0.0.1/solid_queue_monitor_test
+# (the database must exist; the bundle needs the matching optional group —
+# BUNDLE_WITH=mysql or BUNDLE_WITH=postgresql).
+ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'] || { adapter: 'sqlite3', database: ':memory:' })
 
 # Load the schema
 ActiveRecord::Schema.verbose = false
