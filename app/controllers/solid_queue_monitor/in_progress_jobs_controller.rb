@@ -22,9 +22,7 @@ module SolidQueueMonitor
         relation = relation.where(job_id: SolidQueue::Job.where('class_name LIKE ?', "%#{params[:class_name]}%").select(:id))
       end
 
-      if params[:arguments].present?
-        relation = relation.where(job_id: SolidQueue::Job.where('arguments::text ILIKE ?', "%#{params[:arguments]}%").select(:id))
-      end
+      relation = relation.where(job_id: jobs_matching_arguments) if params[:arguments].present?
 
       relation
     end

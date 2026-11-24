@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :solid_queue_job, class: 'SolidQueue::Job' do
     queue_name { 'default' }
     class_name { 'TestJob' }
-    arguments { '[]' }
+    arguments { [] }
     priority { 0 }
     active_job_id { SecureRandom.uuid }
     scheduled_at { nil }

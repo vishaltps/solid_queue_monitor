@@ -13,6 +13,10 @@ unless defined?(SolidQueue)
     class Job < ApplicationRecord
       self.table_name = 'solid_queue_jobs'
 
+      # As in solid_queue's own model. It matters for queries: Arel casts a
+      # value compared with `arguments` through this coder.
+      serialize :arguments, coder: JSON
+
       has_one :ready_execution, dependent: :destroy
       has_one :scheduled_execution, dependent: :destroy
       has_one :failed_execution, dependent: :destroy
@@ -66,6 +70,10 @@ unless defined?(SolidQueue)
 
     class RecurringTask < ApplicationRecord
       self.table_name = 'solid_queue_recurring_tasks'
+
+      # solid_queue uses its own ActiveJob-arguments coder here; JSON behaves
+      # the same way for the purpose of these specs (it casts query values).
+      serialize :arguments, coder: JSON, default: []
 
       # Mirrors SolidQueue::RecurringTask#enqueue for the test double.
       # The real model records one execution per task and timestamp, then

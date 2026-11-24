@@ -77,8 +77,16 @@ module SolidQueueMonitor
     end
 
     def filter_by_arguments(relation)
-      # Use ILIKE for case-insensitive search in PostgreSQL
-      relation.where('arguments::text ILIKE ?', "%#{params[:arguments]}%")
+      relation.where(arguments_match(relation))
+    end
+
+    def arguments_match(relation = SolidQueue::Job)
+      pattern = "%#{ActiveRecord::Base.sanitize_sql_like(params[:arguments])}%"
+      relation.arel_table[:arguments].matches(Arel::Nodes.build_quoted(pattern), '\\')
+    end
+
+    def jobs_matching_arguments
+      SolidQueue::Job.where(arguments_match).select(:id)
     end
 
     def filter_ready_jobs(relation)
@@ -90,9 +98,7 @@ module SolidQueueMonitor
 
       relation = relation.where('queue_name LIKE ?', "%#{params[:queue_name]}%") if params[:queue_name].present?
 
-      if params[:arguments].present?
-        relation = relation.where(job_id: SolidQueue::Job.where('arguments::text ILIKE ?', "%#{params[:arguments]}%").select(:id))
-      end
+      relation = relation.where(job_id: jobs_matching_arguments) if params[:arguments].present?
 
       relation
     end
@@ -106,9 +112,7 @@ module SolidQueueMonitor
 
       relation = relation.where('queue_name LIKE ?', "%#{params[:queue_name]}%") if params[:queue_name].present?
 
-      if params[:arguments].present?
-        relation = relation.where(job_id: SolidQueue::Job.where('arguments::text ILIKE ?', "%#{params[:arguments]}%").select(:id))
-      end
+      relation = relation.where(job_id: jobs_matching_arguments) if params[:arguments].present?
 
       relation
     end
@@ -120,10 +124,7 @@ module SolidQueueMonitor
       relation = relation.where('queue_name LIKE ?', "%#{params[:queue_name]}%") if params[:queue_name].present?
 
       # Add arguments filtering if the model has arguments column
-      if params[:arguments].present? && relation.column_names.include?('arguments')
-        relation = relation.where('arguments::text ILIKE ?',
-                                  "%#{params[:arguments]}%")
-      end
+      relation = filter_by_arguments(relation) if params[:arguments].present? && relation.column_names.include?('arguments')
 
       relation
     end
@@ -143,9 +144,7 @@ module SolidQueueMonitor
                    end
       end
 
-      if params[:arguments].present?
-        relation = relation.where(job_id: SolidQueue::Job.where('arguments::text ILIKE ?', "%#{params[:arguments]}%").select(:id))
-      end
+      relation = relation.where(job_id: jobs_matching_arguments) if params[:arguments].present?
 
       relation
     end

@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- The arguments filter returned a 500 on MySQL and SQLite on every page that offers it (Failed, Ready, Scheduled, In Progress and Recurring Jobs, and the queue details page). It was built as `arguments::text ILIKE ?`, which only PostgreSQL accepts. It now goes through Arel's `matches`, which renders `ILIKE` on PostgreSQL and `LIKE` on the other adapters, and still ignores case on all three. `%` and `_` in the search term now match literally instead of acting as wildcards.
+- On MySQL, the overview chart put jobs in the wrong time bucket whenever the database server's time zone was not UTC, and jobs near the edge of the window disappeared from it. `UNIX_TIMESTAMP` reads a `DATETIME` in the session time zone, but Rails stores UTC. The bucket index now uses `TIMESTAMPDIFF(SECOND, '1970-01-01 00:00:00', col)`, which does not depend on the time zone.
+
+### Changed
+
+- The test suite can run on MySQL or PostgreSQL by setting `DATABASE_URL` (SQLite in memory is still the default), and CI now runs it on MySQL 8 (with a non-UTC server) and PostgreSQL 16 as well. The adapter gems are in the optional `mysql` and `postgresql` Bundler groups.
+
 ## [2.4.0] - 2026-11-17
 
 ### Added
