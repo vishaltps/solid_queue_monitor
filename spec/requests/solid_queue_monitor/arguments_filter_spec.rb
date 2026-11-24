@@ -27,6 +27,12 @@ RSpec.describe 'Arguments filter' do
       expect(response.body).to include('MatchingJob')
       expect(response.body).not_to include('OtherJob')
     end
+
+    it 'does not fail when the parameter is not a string' do
+      get "#{path}?arguments[]=webcorpem"
+
+      expect(response).to have_http_status(:ok)
+    end
   end
 
   let(:matching_arguments) { ['Failed to open TCP connection to webcorpem.no-ip.info:20009', '100%'] }

@@ -81,7 +81,7 @@ module SolidQueueMonitor
     end
 
     def arguments_match(relation = SolidQueue::Job)
-      pattern = "%#{ActiveRecord::Base.sanitize_sql_like(params[:arguments])}%"
+      pattern = "%#{ActiveRecord::Base.sanitize_sql_like(params[:arguments].to_s)}%"
       relation.arel_table[:arguments].matches(Arel::Nodes.build_quoted(pattern), '\\')
     end
 

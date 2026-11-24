@@ -11,15 +11,15 @@ module SolidQueueMonitor
     def search
       return empty_results if @query.blank?
 
-      term = "%#{sanitize_query(@query)}%"
+      pattern = Arel::Nodes.build_quoted("%#{ActiveRecord::Base.sanitize_sql_like(@query.to_s)}%")
 
       {
-        ready: search_ready_jobs(term),
-        scheduled: search_scheduled_jobs(term),
-        failed: search_failed_jobs(term),
-        in_progress: search_in_progress_jobs(term),
-        completed: search_completed_jobs(term),
-        recurring: search_recurring_tasks(term)
+        ready: search_ready_jobs(pattern),
+        scheduled: search_scheduled_jobs(pattern),
+        failed: search_failed_jobs(pattern),
+        in_progress: search_in_progress_jobs(pattern),
+        completed: search_completed_jobs(pattern),
+        recurring: search_recurring_tasks(pattern)
       }
     end
 
@@ -36,91 +36,64 @@ module SolidQueueMonitor
       }
     end
 
-    def sanitize_query(query)
-      # Escape % to prevent LIKE pattern injection
-      # We don't escape _ because it requires database-specific ESCAPE clauses
-      query.to_s.gsub('%', '\%')
-    end
-
-    def search_ready_jobs(term)
+    def search_ready_jobs(pattern)
       SolidQueue::ReadyExecution
         .joins(:job)
-        .where(job_search_conditions, term: term)
+        .where(matching_any(job_columns, pattern))
         .includes(:job)
         .limit(RESULTS_LIMIT)
     end
 
-    def search_scheduled_jobs(term)
+    def search_scheduled_jobs(pattern)
       SolidQueue::ScheduledExecution
         .joins(:job)
-        .where(job_search_conditions, term: term)
+        .where(matching_any(job_columns, pattern))
         .includes(:job)
         .limit(RESULTS_LIMIT)
     end
 
-    def search_failed_jobs(term)
+    def search_failed_jobs(pattern)
       SolidQueue::FailedExecution
         .joins(:job)
-        .where(failed_job_search_conditions, term: term)
+        .where(matching_any(job_columns + [SolidQueue::FailedExecution.arel_table[:error]], pattern))
         .includes(:job)
         .limit(RESULTS_LIMIT)
     end
 
-    def search_in_progress_jobs(term)
+    def search_in_progress_jobs(pattern)
       SolidQueue::ClaimedExecution
         .joins(:job)
-        .where(job_search_conditions, term: term)
+        .where(matching_any(job_columns, pattern))
         .includes(:job)
         .limit(RESULTS_LIMIT)
     end
 
-    def search_completed_jobs(term)
+    def search_completed_jobs(pattern)
       SolidQueue::Job
         .where.not(finished_at: nil)
-        .where(completed_job_search_conditions, term: term)
+        .where(matching_any(job_columns, pattern))
         .order(finished_at: :desc)
         .limit(RESULTS_LIMIT)
     end
 
-    def search_recurring_tasks(term)
+    def search_recurring_tasks(pattern)
       SolidQueue::RecurringTask
-        .where(recurring_task_search_conditions, term: term)
+        .where(matching_any(recurring_task_columns, pattern))
         .limit(RESULTS_LIMIT)
     end
 
-    def job_search_conditions
-      <<~SQL.squish
-        solid_queue_jobs.class_name LIKE :term
-        OR solid_queue_jobs.queue_name LIKE :term
-        OR solid_queue_jobs.arguments LIKE :term
-        OR solid_queue_jobs.active_job_id LIKE :term
-      SQL
+    def matching_any(columns, pattern)
+      columns.map { |column| column.matches(pattern, '\\') }.reduce(:or)
     end
 
-    def failed_job_search_conditions
-      <<~SQL.squish
-        solid_queue_jobs.class_name LIKE :term
-        OR solid_queue_jobs.queue_name LIKE :term
-        OR solid_queue_jobs.arguments LIKE :term
-        OR solid_queue_jobs.active_job_id LIKE :term
-        OR solid_queue_failed_executions.error LIKE :term
-      SQL
+    def job_columns
+      jobs = SolidQueue::Job.arel_table
+      [jobs[:class_name], jobs[:queue_name], jobs[:arguments], jobs[:active_job_id]]
     end
 
-    def completed_job_search_conditions
-      <<~SQL.squish
-        class_name LIKE :term
-        OR queue_name LIKE :term
-        OR arguments LIKE :term
-        OR active_job_id LIKE :term
-      SQL
-    end
-
-    def recurring_task_search_conditions
-      <<~SQL.squish
-        solid_queue_recurring_tasks.key LIKE :term
-        OR solid_queue_recurring_tasks.class_name LIKE :term
-      SQL
+    def recurring_task_columns
+      tasks = SolidQueue::RecurringTask.arel_table
+      [tasks[:key], tasks[:class_name]]
     end
   end
 end
