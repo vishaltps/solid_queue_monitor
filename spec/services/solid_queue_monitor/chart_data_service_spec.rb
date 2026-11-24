@@ -151,12 +151,12 @@ RSpec.describe SolidQueueMonitor::ChartDataService do
         .to eq('FLOOR((EXTRACT(EPOCH FROM created_at) - 1000) / 3600)::integer')
     end
 
-    it 'uses MySQL UNIX_TIMESTAMP syntax for a MySQL connection' do
-      expect(expr_for('Mysql2')).to include('UNIX_TIMESTAMP(created_at)')
+    it 'uses MySQL TIMESTAMPDIFF syntax for a MySQL connection' do
+      expect(expr_for('Mysql2')).to include("TIMESTAMPDIFF(SECOND, '1970-01-01 00:00:00', created_at)")
     end
 
     it 'uses MySQL syntax for a Trilogy connection' do
-      expect(expr_for('Trilogy')).to include('UNIX_TIMESTAMP(created_at)')
+      expect(expr_for('Trilogy')).to include("TIMESTAMPDIFF(SECOND, '1970-01-01 00:00:00', created_at)")
     end
 
     it 'uses SQLite strftime syntax for a SQLite connection' do
@@ -176,7 +176,7 @@ RSpec.describe SolidQueueMonitor::ChartDataService do
       it 'builds Postgres SQL when the queue model is on Postgres' do
         expr = expr_for('PostgreSQL')
         expect(expr).to include('EXTRACT(EPOCH FROM created_at)')
-        expect(expr).not_to include('UNIX_TIMESTAMP')
+        expect(expr).not_to include('TIMESTAMPDIFF')
       end
     end
   end

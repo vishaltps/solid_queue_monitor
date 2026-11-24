@@ -81,7 +81,10 @@ module SolidQueueMonitor
     # Cross-DB bucket index expression.
     # PostgreSQL: CAST((EXTRACT(EPOCH FROM col) - start) / interval AS INTEGER)
     # SQLite:     CAST((CAST(strftime('%s', col) AS INTEGER) - start) / interval AS INTEGER)
-    # MySQL:      CAST((UNIX_TIMESTAMP(col) - start) / interval AS SIGNED)
+    # MySQL:      FLOOR((TIMESTAMPDIFF(SECOND, '1970-01-01', col) - start) / interval)
+    #             (not UNIX_TIMESTAMP: it reads a DATETIME in the session time
+    #             zone, while Rails stores UTC — any non-UTC server shifts every
+    #             bucket by its offset and drops rows out of the window)
     #
     # The adapter is detected from the model's own connection, not
     # ActiveRecord::Base's. Solid Queue is commonly hosted on a dedicated
@@ -91,7 +94,7 @@ module SolidQueueMonitor
       if adapter?(model, 'sqlite')
         "CAST((CAST(strftime('%s', #{column}) AS INTEGER) - #{start_epoch}) / #{interval_seconds} AS INTEGER)"
       elsif adapter?(model, 'mysql') || adapter?(model, 'trilogy')
-        "FLOOR((UNIX_TIMESTAMP(#{column}) - #{start_epoch}) / #{interval_seconds})"
+        "FLOOR((TIMESTAMPDIFF(SECOND, '1970-01-01 00:00:00', #{column}) - #{start_epoch}) / #{interval_seconds})"
       else
         "FLOOR((EXTRACT(EPOCH FROM #{column}) - #{start_epoch}) / #{interval_seconds})::integer"
       end
