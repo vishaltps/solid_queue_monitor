@@ -35,7 +35,7 @@ module SolidQueueMonitor
       result = QueuePauseService.new(queue_name).pause
 
       set_flash_message(result[:message], result[:success] ? 'success' : 'error')
-      redirect_to params[:redirect_to] || queues_path
+      redirect_to_return_path(queues_path)
     end
 
     def resume
@@ -43,7 +43,7 @@ module SolidQueueMonitor
       result = QueuePauseService.new(queue_name).resume
 
       set_flash_message(result[:message], result[:success] ? 'success' : 'error')
-      redirect_to params[:redirect_to] || queues_path
+      redirect_to_return_path(queues_path)
     end
 
     private
