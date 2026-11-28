@@ -60,7 +60,7 @@ module SolidQueueMonitor
     # The bucket index is computed as: (epoch(column) - epoch(start_time)) / interval
     # This works identically on PostgreSQL and SQLite.
     def bucket_counts(model, column, start_time, end_time, interval, exclude_nil: false)
-      start_epoch = start_time.to_i
+      start_epoch = stored_epoch(start_time)
       expr = bucket_index_expr(model, column, start_epoch, interval)
 
       scope = model.where(column => start_time..end_time)
@@ -74,6 +74,19 @@ module SolidQueueMonitor
       # rubocop:enable Style/HashTransformKeys
     end
 
+    # The epoch of `time` in the frame the database computes for a stored
+    # timestamp. Every bucket expression below reads the zone-less stored
+    # value as if it were UTC. That is true when Rails stores UTC (the
+    # default). With `ActiveRecord.default_timezone = :local`, Rails stores the
+    # process's local wall time instead, so the start of the window is shifted
+    # by the same local offset to keep both sides in one frame.
+    def stored_epoch(time)
+      return time.to_i if ActiveRecord.default_timezone == :utc
+
+      epoch = time.to_i
+      epoch + Time.at(epoch).getlocal.utc_offset
+    end
+
     def fill_buckets(buckets, index_counts)
       buckets.map { |b| index_counts.fetch(b[:index], 0) }
     end
@@ -81,7 +94,13 @@ module SolidQueueMonitor
     # Cross-DB bucket index expression.
     # PostgreSQL: CAST((EXTRACT(EPOCH FROM col) - start) / interval AS INTEGER)
     # SQLite:     CAST((CAST(strftime('%s', col) AS INTEGER) - start) / interval AS INTEGER)
-    # MySQL:      CAST((UNIX_TIMESTAMP(col) - start) / interval AS SIGNED)
+    # MySQL:      FLOOR((TIMESTAMPDIFF(SECOND, '1970-01-01', col) - start) / interval)
+    #             (not UNIX_TIMESTAMP: it reads a DATETIME in the session time
+    #             zone, which need not match the zone Rails stored it in — a
+    #             mismatch shifts every bucket and drops rows out of the window)
+    #
+    # All three read the stored value as UTC wall time; `stored_epoch` puts
+    # `start` in the same frame.
     #
     # The adapter is detected from the model's own connection, not
     # ActiveRecord::Base's. Solid Queue is commonly hosted on a dedicated
@@ -91,7 +110,7 @@ module SolidQueueMonitor
       if adapter?(model, 'sqlite')
         "CAST((CAST(strftime('%s', #{column}) AS INTEGER) - #{start_epoch}) / #{interval_seconds} AS INTEGER)"
       elsif adapter?(model, 'mysql') || adapter?(model, 'trilogy')
-        "FLOOR((UNIX_TIMESTAMP(#{column}) - #{start_epoch}) / #{interval_seconds})"
+        "FLOOR((TIMESTAMPDIFF(SECOND, '1970-01-01 00:00:00', #{column}) - #{start_epoch}) / #{interval_seconds})"
       else
         "FLOOR((EXTRACT(EPOCH FROM #{column}) - #{start_epoch}) / #{interval_seconds})::integer"
       end

@@ -2,10 +2,10 @@
 
 ## [Unreleased]
 
-
 ### Changed
 
 - The Overview's "Active Jobs" card no longer counts failed jobs. It was the sum of ready, scheduled, in-progress and failed jobs, and since failed jobs pile up until someone retries or discards them while the others drain within seconds, it usually showed the same number as the Failed card. It now counts the jobs waiting to run or running: ready, scheduled, in-progress and blocked. Failed jobs keep their own card. Expect the number to drop after upgrading.
+- The test suite can run on MySQL or PostgreSQL by setting `DATABASE_URL` (SQLite in memory is still the default), and CI now runs it on MySQL 8 (with a non-UTC server) and PostgreSQL 16 as well. The adapter gems are in the optional `mysql` and `postgresql` Bundler groups.
 
 ### Added
 
@@ -15,8 +15,10 @@
 
 - The `redirect_to` parameter on Retry/Discard (failed jobs), Execute (scheduled jobs) and Pause/Resume (queues) was passed straight to `redirect_to`, so a crafted link or form could send the user to another site after the action. Hosts on Rails' default open-redirect protection (`load_defaults 7.0` or later) got a 500 error instead, after the action had already run. Only paths within the dashboard are followed now, checked with Rails' `url_from`; anything else (other hosts, protocol-relative or backslash URLs, other schemes, paths outside the dashboard, or paths Rails can't parse) falls back to the page's usual redirect.
 - Retrying a failed job could leave it with no execution at all, so it never ran again and was shown as pending forever. The monitor moved the job back to the ready queue and deleted its failed execution itself, inside an `ActiveRecord::Base` transaction. That is the app's primary database: when Solid Queue has its own database (`config.solid_queue.connects_to`, the Rails 8 default), the two steps committed separately. A worker could pick the job up in between and fail it again, Solid Queue recorded that failure on the same failed execution, and the monitor then deleted it. Retry, per row and bulk, now calls Solid Queue's own `FailedExecution#retry`, which does both in one transaction on Solid Queue's database. Retried jobs now also get their execution counters reset (so `retry_on ... attempts:` starts over) and respect `limits_concurrency`, as a retry from Solid Queue itself does. Retrying a failed job that someone else retried or discarded after it was loaded no longer raises an error, and a bulk retry now counts a job whose retry raises (e.g. a lock timeout) as failed and carries on with the rest instead of stopping halfway with an error page. The service's success message now reads "Job queued for retry", since a job with a concurrency limit can go to blocked executions instead of the ready queue.
-
-
+- The arguments filter returned a 500 on MySQL and SQLite on every page that offers it (Failed, Ready, Scheduled, In Progress and Recurring Jobs, and the queue details page). It was built as `arguments::text ILIKE ?`, which only PostgreSQL accepts. It now goes through Arel's `matches`, which renders `ILIKE` on PostgreSQL and `LIKE` on the other adapters. It ignores case on PostgreSQL and SQLite, and on MySQL it follows the column's collation (case-insensitive under the default `utf8mb4_0900_ai_ci`, case-sensitive under `utf8mb4_bin`). `%` and `_` in the search term now match literally instead of acting as wildcards.
+- The global search was case-sensitive on PostgreSQL, where plain `LIKE` respects case, so `usermailer` did not find `UserMailerJob`. It now uses the same Arel `matches` as the filters. Its `%` escaping also did nothing on SQLite, which has no default escape character. `%` and `_` now match literally on every adapter.
+- On MySQL, the overview chart put jobs in the wrong time bucket whenever the database server's time zone was not UTC, and jobs near the edge of the window disappeared from it. `UNIX_TIMESTAMP` reads a `DATETIME` in the session time zone, but Rails stores UTC. The bucket index now uses `TIMESTAMPDIFF(SECOND, '1970-01-01 00:00:00', col)`, which does not depend on the session time zone.
+- With `ActiveRecord.default_timezone = :local`, the overview chart put jobs in the wrong time bucket on every adapter, and on short ranges dropped recent jobs entirely. Rails then stores local wall time, but the bucket math read it as UTC. The window start is now shifted by the same local offset.
 
 ## [2.4.0] - 2026-11-17
 

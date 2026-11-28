@@ -62,8 +62,8 @@ RSpec.describe SolidQueueMonitor::SearchService do
 
     context 'when searching by arguments' do
       let(:query) { 'user@example.com' }
-      let!(:matching_job) { create(:solid_queue_job, arguments: '["user@example.com"]') }
-      let!(:non_matching_job) { create(:solid_queue_job, arguments: '["other@test.com"]') }
+      let!(:matching_job) { create(:solid_queue_job, arguments: ['user@example.com']) }
+      let!(:non_matching_job) { create(:solid_queue_job, arguments: ['other@test.com']) }
       let!(:ready_execution) { create(:solid_queue_ready_execution, job: matching_job) }
 
       it 'returns matching ready jobs' do
@@ -151,7 +151,7 @@ RSpec.describe SolidQueueMonitor::SearchService do
 
     context 'when searching completed jobs by arguments' do
       let(:query) { 'order_123' }
-      let!(:completed_job) { create(:solid_queue_job, :completed, arguments: '{"order_id":"order_123"}') }
+      let!(:completed_job) { create(:solid_queue_job, :completed, arguments: { 'order_id' => 'order_123' }) }
 
       it 'returns matching completed jobs by arguments' do
         expect(subject[:completed]).to include(completed_job)
@@ -229,6 +229,33 @@ RSpec.describe SolidQueueMonitor::SearchService do
         expect(subject[:in_progress]).to be_empty
         expect(subject[:completed]).to be_empty
         expect(subject[:recurring]).to be_empty
+      end
+    end
+
+    # LIKE wildcards typed in the search box must match literally on every
+    # adapter. SQLite has no default escape character, so this only holds
+    # with an explicit ESCAPE clause.
+    context 'with LIKE wildcards in the query' do
+      let!(:matching_job) { create(:solid_queue_job, class_name: 'Discount100PercentJob', arguments: ['100%', 'a_b']) }
+      let!(:other_job) { create(:solid_queue_job, class_name: 'Discount1000Job', arguments: %w[1000 axb]) }
+
+      before do
+        create(:solid_queue_ready_execution, job: matching_job)
+        create(:solid_queue_ready_execution, job: other_job)
+      end
+
+      it 'treats % literally' do
+        jobs = described_class.new('100%').search[:ready].map(&:job)
+
+        expect(jobs).to include(matching_job)
+        expect(jobs).not_to include(other_job)
+      end
+
+      it 'treats _ literally' do
+        jobs = described_class.new('a_b').search[:ready].map(&:job)
+
+        expect(jobs).to include(matching_job)
+        expect(jobs).not_to include(other_job)
       end
     end
 

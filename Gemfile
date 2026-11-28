@@ -14,3 +14,13 @@ group :development, :test do
   gem 'rubocop-rspec'
   gem 'sqlite3'
 end
+
+# Database adapters for running the suite beyond SQLite (see spec_helper.rb).
+# Optional so a plain `bundle install` needs no MySQL or PostgreSQL client libs.
+group :mysql, optional: true do
+  gem 'mysql2'
+end
+
+group :postgresql, optional: true do
+  gem 'pg'
+end
