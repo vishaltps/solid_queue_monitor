@@ -61,6 +61,15 @@ ActiveRecord::Schema.define(version: 1) do
     t.datetime :created_at, null: false
   end
 
+  create_table :solid_queue_blocked_executions, force: true do |t|
+    t.integer :job_id, null: false
+    t.string :queue_name, null: false
+    t.integer :priority, default: 0, null: false
+    t.string :concurrency_key, null: false
+    t.datetime :expires_at, null: false
+    t.datetime :created_at, null: false
+  end
+
   create_table :solid_queue_pauses, force: true do |t|
     t.string :queue_name, null: false
     t.datetime :created_at, null: false

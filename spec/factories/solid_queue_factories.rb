@@ -33,6 +33,14 @@ FactoryBot.define do
     scheduled_at { 1.hour.from_now }
   end
 
+  factory :solid_queue_blocked_execution, class: 'SolidQueue::BlockedExecution' do
+    association :job, factory: :solid_queue_job
+    queue_name { 'default' }
+    priority { 0 }
+    concurrency_key { 'TestJob/1' }
+    expires_at { 1.hour.from_now }
+  end
+
   factory :solid_queue_failed_execution, class: 'SolidQueue::FailedExecution' do
     association :job, factory: :solid_queue_job
     error { 'StandardError: Test error message' }

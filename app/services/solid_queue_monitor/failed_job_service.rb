@@ -5,21 +5,16 @@ module SolidQueueMonitor
     def retry_job(failed_execution_id)
       failed_execution = SolidQueue::FailedExecution.find_by(id: failed_execution_id)
       return { success: false, message: 'Failed job not found' } unless failed_execution
+      return { success: false, message: 'Associated job not found' } unless failed_execution.job
 
-      job = failed_execution.job
-      return { success: false, message: 'Associated job not found' } unless job
+      # Solid Queue's retry runs in one transaction on its own database; doing it
+      # here with ActiveRecord::Base.transaction left orphaned jobs when the queue
+      # has a separate database.
+      failed_execution.retry
 
-      ActiveRecord::Base.transaction do
-        SolidQueue::ReadyExecution.create!(
-          job_id: job.id,
-          queue_name: get_queue_name(failed_execution, job),
-          priority: job.priority
-        )
-
-        failed_execution.destroy!
-      end
-
-      { success: true, message: 'Job moved to ready queue for retry' }
+      { success: true, message: 'Job queued for retry' }
+    rescue ActiveRecord::RecordNotFound
+      { success: false, message: 'Failed job not found' }
     end
 
     def discard_job(failed_execution_id)
@@ -51,6 +46,8 @@ module SolidQueueMonitor
         else
           failed_count += 1
         end
+      rescue StandardError
+        failed_count += 1
       end
 
       if success_count.positive? && failed_count.zero?
@@ -83,16 +80,6 @@ module SolidQueueMonitor
         { success: true, message: "#{success_count} jobs discarded, #{failed_count} failed" }
       else
         { success: false, message: 'Failed to discard jobs' }
-      end
-    end
-
-    private
-
-    def get_queue_name(failed_execution, job)
-      if failed_execution.respond_to?(:queue_name) && failed_execution.queue_name.present?
-        failed_execution.queue_name
-      else
-        job.queue_name
       end
     end
   end
