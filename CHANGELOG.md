@@ -2,10 +2,20 @@
 
 ## [Unreleased]
 
+
+### Changed
+
+- The Overview's "Active Jobs" card no longer counts failed jobs. It was the sum of ready, scheduled, in-progress and failed jobs, and since failed jobs pile up until someone retries or discards them while the others drain within seconds, it usually showed the same number as the Failed card. It now counts the jobs waiting to run or running: ready, scheduled, in-progress and blocked. Failed jobs keep their own card. Expect the number to drop after upgrading.
+
+### Added
+
+- "Blocked" card on the Overview, counting jobs held back by a concurrency limit (`limits_concurrency`) until a slot frees up. They were not shown anywhere on the dashboard before. Like the other cards, it reads its execution table (`solid_queue_blocked_executions`), not the jobs table.
+
 ### Fixed
 
 - The `redirect_to` parameter on Retry/Discard (failed jobs), Execute (scheduled jobs) and Pause/Resume (queues) was passed straight to `redirect_to`, so a crafted link or form could send the user to another site after the action. Hosts on Rails' default open-redirect protection (`load_defaults 7.0` or later) got a 500 error instead, after the action had already run. Only paths within the dashboard are followed now, checked with Rails' `url_from`; anything else (other hosts, protocol-relative or backslash URLs, other schemes, paths outside the dashboard, or paths Rails can't parse) falls back to the page's usual redirect.
 - Retrying a failed job could leave it with no execution at all, so it never ran again and was shown as pending forever. The monitor moved the job back to the ready queue and deleted its failed execution itself, inside an `ActiveRecord::Base` transaction. That is the app's primary database: when Solid Queue has its own database (`config.solid_queue.connects_to`, the Rails 8 default), the two steps committed separately. A worker could pick the job up in between and fail it again, Solid Queue recorded that failure on the same failed execution, and the monitor then deleted it. Retry, per row and bulk, now calls Solid Queue's own `FailedExecution#retry`, which does both in one transaction on Solid Queue's database. Retried jobs now also get their execution counters reset (so `retry_on ... attempts:` starts over) and respect `limits_concurrency`, as a retry from Solid Queue itself does. Retrying a failed job that someone else retried or discarded after it was loaded no longer raises an error, and a bulk retry now counts a job whose retry raises (e.g. a lock timeout) as failed and carries on with the rest instead of stopping halfway with an error page. The service's success message now reads "Job queued for retry", since a job with a concurrency limit can go to blocked executions instead of the ready queue.
+
 
 
 ## [2.4.0] - 2026-11-17

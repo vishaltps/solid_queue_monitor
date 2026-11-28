@@ -32,6 +32,15 @@ RSpec.describe 'Overview' do
       expect(response.body).to include('Active Jobs')
     end
 
+    it 'shows the number of blocked jobs' do
+      create_list(:solid_queue_blocked_execution, 2)
+
+      get '/'
+
+      card = Nokogiri::HTML5(response.body).at_xpath("//div[@class='stat-card'][h3[normalize-space()='Blocked']]")
+      expect(card.at_css('p').text.strip).to eq('2')
+    end
+
     it 'displays navigation links' do
       get '/'
 
