@@ -23,7 +23,7 @@ module SolidQueueMonitor
         set_flash_message("Failed to retry job #{id}.", 'error')
       end
 
-      redirect_to(params[:redirect_to].presence || failed_jobs_path)
+      redirect_to_return_path(failed_jobs_path)
     end
 
     def discard
@@ -36,7 +36,7 @@ module SolidQueueMonitor
         set_flash_message("Failed to discard job #{id}.", 'error')
       end
 
-      redirect_to(params[:redirect_to].presence || failed_jobs_path)
+      redirect_to_return_path(failed_jobs_path)
     end
 
     def retry_all
